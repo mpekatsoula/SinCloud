@@ -1,7 +1,9 @@
-package erebus.sincloud;
+package erebus.sincloud.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import erebus.sincloud.R;
 
 public class LoginActivity extends AppCompatActivity {
 
