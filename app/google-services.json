@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "942729372464",
+    "firebase_url": "https://sincloud-3c2ea.firebaseio.com",
+    "project_id": "sincloud-3c2ea",
+    "storage_bucket": "sincloud-3c2ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942729372464:android:9c0a72646a994d61",
+        "android_client_info": {
+          "package_name": "erebus.sincloud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "942729372464-2dr9k5084sba1af335ambt38ho3goeh7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8WLq-IVsMqIfYOwESqBhc7ZVWZfJd7oM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

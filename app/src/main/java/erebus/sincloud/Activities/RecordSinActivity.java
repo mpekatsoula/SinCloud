@@ -65,8 +65,8 @@ public class RecordSinActivity extends AppCompatActivity
                         Log.d("RecordSinActivity", "State:recordSinButton  PAUSE_RECORDING" );
                         recordSinButton.setImageResource(R.drawable.ic_round_mic_24px);
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
-                        cancelRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
-                        uploadRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
+                        cancelRecordingButton.setImageResource(R.drawable.ic_round_cancel_24px);
+                        uploadRecordingButton.setImageResource(R.drawable.ic_round_cloud_upload_24px);
                         audioRecorder.stop();
                         audioRecorder.reset();
                         audioRecorder.release();
@@ -122,7 +122,9 @@ public class RecordSinActivity extends AppCompatActivity
                 nextRecordButtonState = RecordButtonStates.START_RECORDING;
                 recordSinButton.show();
                 setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
+                uploadSinToFirebase();
             }
+
         });
     }
 
@@ -151,4 +153,7 @@ public class RecordSinActivity extends AppCompatActivity
                 + Environment.DIRECTORY_DCIM + File.separator + "thesaurus");
     }
 
+    private void uploadSinToFirebase()
+    {
+    }
 }
