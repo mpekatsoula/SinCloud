@@ -1,51 +1,70 @@
 package erebus.sincloud.Activities;
 
+import android.Manifest;
 import android.media.MediaRecorder;
-import android.os.Environment;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 import erebus.sincloud.Helpers.ButtonVisibility;
 import erebus.sincloud.R;
 import erebus.sincloud.Helpers.RecordButtonStates;
+import erebus.sincloud.Utils.UploadFirebase;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class RecordSinActivity extends AppCompatActivity
+public class RecordSinActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks
 {
+    private static final String TAG = "RecordSinActivity";
     private MediaRecorder audioRecorder;
     private FloatingActionButton recordSinButton;
     private FloatingActionButton pauseRecordingButton;
     private FloatingActionButton cancelRecordingButton;
     private FloatingActionButton uploadRecordingButton;
     private RecordButtonStates nextRecordButtonState;
+    private boolean has_permissions = false;
+    private String sinFilename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_sin);
-        nextRecordButtonState = RecordButtonStates.START_RECORDING;
 
+        nextRecordButtonState = RecordButtonStates.START_RECORDING;
         recordSinButton = findViewById(R.id.record_start_stop);
         pauseRecordingButton = findViewById(R.id.record_pause);
         cancelRecordingButton = findViewById(R.id.record_cancel);
         uploadRecordingButton = findViewById(R.id.record_upload);
 
+        checkPermissions();
         recordSinButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                if(!has_permissions)
+                {
+                    checkPermissions();
+                    return;
+                }
                 switch (nextRecordButtonState)
                 {
                     case START_RECORDING:
+                        // Disable the button in cate the user clicks it very fast
+                        recordSinButton.setClickable(false);
+
                         MediaRecorderReady();
-                        Log.d("RecordSinActivity", "State: recordSinButton START_RECORDING" );
+                        Log.d(TAG, "State: recordSinButton START_RECORDING" );
                         recordSinButton.setImageResource(R.drawable.ic_round_stop_24px);
                         try
                         {
@@ -58,11 +77,14 @@ public class RecordSinActivity extends AppCompatActivity
                         audioRecorder.start();
                         nextRecordButtonState = RecordButtonStates.STOP_RECORDING;
                         pauseRecordingButton.show();
+
+                        // Enable the button again
+                        recordSinButton.setClickable(true);
                         break;
                     case STOP_RECORDING:
-                        Log.d("RecordSinActivity", "State:recordSinButton  STOP_RECORDING" );
+                        Log.d(TAG, "State:recordSinButton  STOP_RECORDING" );
                     case PAUSE_RECORDING:
-                        Log.d("RecordSinActivity", "State:recordSinButton  PAUSE_RECORDING" );
+                        Log.d(TAG, "State:recordSinButton  PAUSE_RECORDING" );
                         recordSinButton.setImageResource(R.drawable.ic_round_mic_24px);
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
                         cancelRecordingButton.setImageResource(R.drawable.ic_round_cancel_24px);
@@ -88,13 +110,13 @@ public class RecordSinActivity extends AppCompatActivity
                 switch (nextRecordButtonState)
                 {
                     case STOP_RECORDING:
-                        Log.d("RecordSinActivity", "State: pauseRecordingButton STOP_RECORDING" );
+                        Log.d(TAG, "State: pauseRecordingButton STOP_RECORDING" );
                         audioRecorder.pause();
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_mic_24px);
                         nextRecordButtonState = RecordButtonStates.PAUSE_RECORDING;
                         break;
                     case PAUSE_RECORDING:
-                        Log.d("RecordSinActivity", "State: pauseRecordingButton PAUSE_RECORDING" );
+                        Log.d(TAG, "State: pauseRecordingButton PAUSE_RECORDING" );
                         audioRecorder.resume();
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
                         nextRecordButtonState = RecordButtonStates.STOP_RECORDING;
@@ -149,11 +171,67 @@ public class RecordSinActivity extends AppCompatActivity
         audioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         audioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        audioRecorder.setOutputFile(Environment.getExternalStorageDirectory() + File.separator
-                + Environment.DIRECTORY_DCIM + File.separator + "thesaurus");
+
+        sinFilename = Objects.requireNonNull(getExternalFilesDir("recordings")).getAbsolutePath();
+        sinFilename += "/" + System.currentTimeMillis() + "_sincloud.3gp";
+        Log.d(TAG, "Filename for recorded audio: " + sinFilename);
+        audioRecorder.setOutputFile(sinFilename);
     }
 
     private void uploadSinToFirebase()
     {
+        UploadFirebase uploadFile = new UploadFirebase();
+        uploadFile.UploadFileFirebase(sinFilename, "sins", ".3gp");
+    }
+
+    private void checkPermissions()
+    {
+        String[] perms = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms))
+        {
+            has_permissions = true;
+        }
+        else
+        {
+            // Do not have permissions, request them now
+            int RC_AUDIO_AND_STORAGE = 1;
+            EasyPermissions.requestPermissions(this, getString(R.string.audio_and_storage_rationale),
+                    RC_AUDIO_AND_STORAGE, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms)
+    {
+        Log.d(TAG, "Permissions grated!");
+        has_permissions = true;
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms)
+    {
+        has_permissions = false;
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms))
+        {
+            new AppSettingsDialog.Builder(this).build().show();
+        }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (audioRecorder != null)
+        {
+            audioRecorder.release();
+            audioRecorder = null;
+        }
     }
 }

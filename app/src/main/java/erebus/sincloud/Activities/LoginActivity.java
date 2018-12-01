@@ -12,8 +12,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,10 +21,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import erebus.sincloud.R;
 
@@ -51,6 +45,7 @@ public class LoginActivity extends AppCompatActivity
         LoginButton loginButton = findViewById(R.id.login_button);
         loginButton.setReadPermissions("email", "public_profile");
 
+        openMainActivity(null);
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
         {
