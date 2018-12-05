@@ -28,11 +28,13 @@ public class LoadPictureToView
                 // check if the provider id matches "facebook.com"
                 if (profile.getProviderId().equals("facebook.com"))
                 {
+                    Log.d(TAG, "Facebook authentication");
                     String facebookUserId = profile.getUid();
                     photoUrl = Uri.parse("https://graph.facebook.com/" + facebookUserId + "/picture?height=500");
                 }
                 else if (profile.getProviderId().equals("google.com"))
                 {
+                    Log.d(TAG, "Google authentication");
                     photoUrl = user.getPhotoUrl();
                 }
                 // For now handle only one profile

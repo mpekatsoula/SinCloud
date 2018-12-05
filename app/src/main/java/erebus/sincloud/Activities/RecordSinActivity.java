@@ -4,12 +4,17 @@ import android.Manifest;
 import android.media.MediaRecorder;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +27,12 @@ import erebus.sincloud.Utils.UploadFirebase;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class RecordSinActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks
+interface setUploadCancelButtonsVisibilityCallback
+{
+    void setUploadCancelButtonsVisibility(ButtonVisibility visibility);
+}
+
+public class RecordSinActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, setUploadCancelButtonsVisibilityCallback
 {
     private static final String TAG = "RecordSinActivity";
     private MediaRecorder audioRecorder;
@@ -30,6 +40,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private FloatingActionButton pauseRecordingButton;
     private FloatingActionButton cancelRecordingButton;
     private FloatingActionButton uploadRecordingButton;
+    private ProgressBar uploadProgressBar;
     private RecordButtonStates nextRecordButtonState;
     private boolean has_permissions = false;
     private String sinFilename;
@@ -45,6 +56,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         pauseRecordingButton = findViewById(R.id.record_pause);
         cancelRecordingButton = findViewById(R.id.record_cancel);
         uploadRecordingButton = findViewById(R.id.record_upload);
+        uploadProgressBar = findViewById(R.id.record_activity_progress_bar);
 
         checkPermissions();
         recordSinButton.setOnClickListener(new View.OnClickListener()
@@ -62,6 +74,9 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     case START_RECORDING:
                         // Disable the button in cate the user clicks it very fast
                         recordSinButton.setClickable(false);
+
+                        // Don't forget to reset the state of cancel button after the user has uploaded a sin
+                        cancelRecordingButton.setClickable(true);
 
                         MediaRecorderReady();
                         Log.d(TAG, "State: recordSinButton START_RECORDING" );
@@ -142,15 +157,14 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             public void onClick(View v)
             {
                 nextRecordButtonState = RecordButtonStates.START_RECORDING;
-                recordSinButton.show();
-                setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                 uploadSinToFirebase();
             }
 
         });
     }
 
-    private void setUploadCancelButtonsVisibility(ButtonVisibility visibility)
+    @Override
+    public void setUploadCancelButtonsVisibility(ButtonVisibility visibility)
     {
         switch (visibility)
         {
@@ -180,8 +194,21 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
     private void uploadSinToFirebase()
     {
-        UploadFirebase uploadFile = new UploadFirebase();
-        uploadFile.UploadFileFirebase(sinFilename, "sins", ".3gp");
+        final UploadFirebase uploadFile = new UploadFirebase();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference sinRef = null;
+
+        if(user != null)
+        {
+            String sinId = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").push().getKey();
+            if(sinId != null)
+            {
+                sinRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").child(sinId);
+                Log.d(TAG, "Database reference for audio upload: " + sinRef.toString());
+            }
+        }
+        uploadFile.UploadSinToFirebase(sinFilename, "sins", ".3gp", sinRef, recordSinButton, uploadProgressBar, this);
+        cancelRecordingButton.setClickable(false);
     }
 
     private void checkPermissions()

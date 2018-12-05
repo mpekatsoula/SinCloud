@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "942729372464-rr96u77kot5c3ek2rlemt8l7p8burisd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "erebus.sincloud",
+            "certificate_hash": "867115e72bd1645a9ce623cd10eac7b40d349906"
+          }
+        },
+        {
           "client_id": "942729372464-2dr9k5084sba1af335ambt38ho3goeh7.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "942729372464-2dr9k5084sba1af335ambt38ho3goeh7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
