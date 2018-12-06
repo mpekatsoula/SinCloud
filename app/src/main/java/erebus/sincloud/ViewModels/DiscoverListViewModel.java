@@ -14,38 +14,40 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import erebus.sincloud.Models.Sin;
 
-public class PopularListViewModel extends AndroidViewModel
+public class DiscoverListViewModel extends AndroidViewModel
 {
-    private final PopularListLiveData data;
-    private static ArrayList<String> friendsData;
-    private final String TAG = "PopularListVM";
+    private final DiscoverListLiveData data;
+    private static ArrayList<Sin> sinsData;
+    private final String TAG = "DiscoverListVM";
 
-    public PopularListViewModel(Application application)
+    public DiscoverListViewModel(Application application)
     {
         super(application);
-        data = new PopularListLiveData(application);
+        data = new DiscoverListLiveData(application);
     }
 
-    public LiveData<ArrayList<String>> getData()
+    public LiveData<ArrayList<Sin>> getData()
     {
         return data;
     }
 
-    private class PopularListLiveData extends LiveData<ArrayList<String>> implements ChildEventListener
+    private class DiscoverListLiveData extends LiveData<ArrayList<Sin>> implements ChildEventListener
     {
         private final DatabaseReference sinsRef;
         private final Context context;
 
-        PopularListLiveData(Context context)
+        DiscoverListLiveData(Context context)
         {
             this.context = context;
-            Log.d(TAG, "ShoutsLiveData() constructor is called");
+            Log.d(TAG, "DiscoverListLiveData constructor is called");
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            friendsData = new ArrayList<>();
+            sinsData = new ArrayList<>();
             sinsRef = FirebaseDatabase.getInstance().getReference("sins");
         }
 
@@ -63,49 +65,44 @@ public class PopularListViewModel extends AndroidViewModel
             sinsRef.removeEventListener(this);
         }
 
-
         @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s)
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s)
         {
             Log.d(TAG, "onChildAdded() is called");
-            Object friendPendingObj = dataSnapshot.child("pending").getValue();
-            if (friendPendingObj != null && friendPendingObj.toString().equals("false"))
+            Sin keyObj = (Sin) dataSnapshot.getValue();
+            if (keyObj != null && !sinsData.contains(keyObj))
             {
-                Object keyObj = dataSnapshot.getKey();
-                if (keyObj != null && !friendsData.contains(keyObj.toString()))
-                {
-                    friendsData.add(keyObj.toString());
-                }
+                sinsData.add(keyObj);
             }
-            super.setValue(friendsData);
+            super.setValue(sinsData);
         }
 
         @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s)
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s)
         {
 
         }
 
         @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot)
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot)
         {
             Log.d(TAG, "onChildRemoved() is called");
-            Object keyObj = dataSnapshot.getKey();
+            Sin keyObj = (Sin) dataSnapshot.getValue();
             if (keyObj != null)
             {
-                friendsData.remove(keyObj.toString());
+                sinsData.remove(keyObj);
             }
-            super.setValue(friendsData);
+            super.setValue(sinsData);
         }
 
         @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s)
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s)
         {
 
         }
 
         @Override
-        public void onCancelled(DatabaseError databaseError)
+        public void onCancelled(@NonNull DatabaseError databaseError)
         {
         }
     }

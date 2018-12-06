@@ -1,43 +1,37 @@
 package erebus.sincloud.Adapters;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import erebus.sincloud.Fragments.DiscoverFragment;
-import erebus.sincloud.Fragments.PopularFragment;
 
 public class MainActivityAdapter extends FragmentPagerAdapter
 {
-    private final int NUMBER_OF_FRAGMENTS = 4;
+    private final List<Fragment> fragmentList = new ArrayList<>();
+    private final List<String> fragmentTitleList = new ArrayList<>();
 
     public MainActivityAdapter(FragmentManager fm)
     {
         super(fm);
     }
+    public void addFragment(Fragment fragment, String title)
+    {
+        fragmentList.add(fragment);
+        fragmentTitleList.add(title);
+    }
 
     @Override
     public Fragment getItem(int position)
     {
-        switch (position)
-        {
-            case 0:
-                return new PopularFragment();
-            case 1:
-                return new DiscoverFragment();
-            case 2:
-                return new PopularFragment();
-            case 3:
-                return new PopularFragment();
-            default:
-                return null;
-        }
+        return fragmentList.get(position);
     }
 
     @Override
     public int getCount()
     {
-        return NUMBER_OF_FRAGMENTS;
+        return fragmentList.size();
     }
-
 }

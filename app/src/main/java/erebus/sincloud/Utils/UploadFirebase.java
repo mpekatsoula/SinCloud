@@ -8,7 +8,10 @@ import android.widget.ProgressBar;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -21,6 +24,7 @@ import java.util.UUID;
 import androidx.annotation.NonNull;
 import erebus.sincloud.Activities.RecordSinActivity;
 import erebus.sincloud.Helpers.ButtonVisibility;
+import erebus.sincloud.Models.Sin;
 
 public class UploadFirebase
 {
@@ -28,20 +32,18 @@ public class UploadFirebase
 
     /**
      * @param localFilename Local object filename
-     * @param remotePath Remote path without '/'
-     * @param fileExtension File extension
-     * @param databaseRef If not null, create an entry with the file URL in the specified database path.
+     * @param timeRecored Time in seconds for the recorded sin
      * @param recordSinButton
      * @param recordSinActivity
      */
-    public void UploadSinToFirebase(String localFilename, String remotePath, String fileExtension, final DatabaseReference databaseRef, final FloatingActionButton recordSinButton, final ProgressBar uploadProgressBar, final RecordSinActivity recordSinActivity)
+    public void UploadSinToFirebase(String localFilename, final long timeRecored, final FloatingActionButton recordSinButton, final ProgressBar uploadProgressBar,final RecordSinActivity recordSinActivity)
     {
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
 
-        // Create a reference to "mountains.jpg"
-        final StorageReference fileRef = storageRef.child(remotePath + "/" + UUID.randomUUID().toString() + fileExtension);
+        // Create a reference to sin
+        final StorageReference fileRef = storageRef.child("/sins" + UUID.randomUUID().toString() + ".3gp");
 
         Log.d(TAG, "Local filename: " + localFilename);
         Uri file = Uri.fromFile(new File(localFilename));
@@ -61,22 +63,34 @@ public class UploadFirebase
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
             {
-                if(databaseRef != null)
-                {
                     fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
                     {
                         @Override
                         public void onSuccess(Uri uri)
                         {
-                            Log.d(TAG, "File Uri: " + uri.toString());
-                            Log.d(TAG, "Database ref: " + databaseRef.toString());
-                            databaseRef.setValue(uri.toString());
+
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user != null)
+                            {
+                                String sinId = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").push().getKey();
+                                if(sinId != null)
+                                {
+                                    DatabaseReference sinRefUser = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").child(sinId);
+                                    sinRefUser.setValue(true);
+
+                                    // Store sin to sin database
+                                    Sin newSin = new Sin(uri.toString(), "Title", timeRecored, 0, 0);
+                                    DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinId);
+                                    sinRef.setValue(newSin);
+                                }
+                            }
+
                             recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                             recordSinButton.show();
                             uploadProgressBar.setVisibility(View.INVISIBLE);
+
                         }
                     });
-                }
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>()
         {

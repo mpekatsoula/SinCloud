@@ -195,19 +195,8 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private void uploadSinToFirebase()
     {
         final UploadFirebase uploadFile = new UploadFirebase();
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference sinRef = null;
-
-        if(user != null)
-        {
-            String sinId = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").push().getKey();
-            if(sinId != null)
-            {
-                sinRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").child(sinId);
-                Log.d(TAG, "Database reference for audio upload: " + sinRef.toString());
-            }
-        }
-        uploadFile.UploadSinToFirebase(sinFilename, "sins", ".3gp", sinRef, recordSinButton, uploadProgressBar, this);
+        long timeRecored = 22;
+        uploadFile.UploadSinToFirebase(sinFilename, timeRecored, recordSinButton, uploadProgressBar, this);
         cancelRecordingButton.setClickable(false);
     }
 
