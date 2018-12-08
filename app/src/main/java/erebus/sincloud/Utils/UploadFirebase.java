@@ -33,10 +33,11 @@ public class UploadFirebase
     /**
      * @param localFilename Local object filename
      * @param timeRecored Time in seconds for the recorded sin
+     * @param sinName Name of the sin given by the user
      * @param recordSinButton
      * @param recordSinActivity
      */
-    public void UploadSinToFirebase(String localFilename, final long timeRecored, final FloatingActionButton recordSinButton, final ProgressBar uploadProgressBar,final RecordSinActivity recordSinActivity)
+    public void UploadSinToFirebase(String localFilename, final String sinName, final long timeRecored, final FloatingActionButton recordSinButton, final ProgressBar uploadProgressBar, final RecordSinActivity recordSinActivity)
     {
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -79,7 +80,7 @@ public class UploadFirebase
                                     sinRefUser.setValue(true);
 
                                     // Store sin to sin database
-                                    Sin newSin = new Sin(uri.toString(), "Title", timeRecored, 0, 0);
+                                    Sin newSin = new Sin(uri.toString(), sinName, timeRecored, 0, 0);
                                     DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinId);
                                     sinRef.setValue(newSin);
                                 }

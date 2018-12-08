@@ -1,5 +1,7 @@
 package erebus.sincloud.UI;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
+import erebus.sincloud.Utils.AudioPlayer;
 
 public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHolder>
 {
     private ArrayList<Sin> mDataset;
     private String TAG = "SinsMenuAdapter";
+    private MediaPlayer mediaPlayer = null;
+    private AudioPlayer audioPlayer = null;
+    private int previousHolderPosition = -1;
+    private int currentPlayingPosition = -1;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -27,6 +34,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         TextView likesTxtView;
         TextView timeTxtView;
         Button playButton;
+        private boolean isPlaying = false;
 
         ViewHolder(View v)
         {
@@ -36,6 +44,19 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
             commentsTxtView = v.findViewById(R.id.sin_view_comments);
             timeTxtView = v.findViewById(R.id.sin_view_time);
             playButton = v.findViewById(R.id.sin_view_play_button);
+        }
+
+        private void setPlayButtonSrc(boolean playing)
+        {
+            Log.d("SinsMenuAdapter", "setPlayButtonSrc " + playing);
+            if(playing)
+            {
+                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
+            }
+            else
+            {
+                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+            }
         }
     }
 
@@ -58,19 +79,69 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         return new ViewHolder(itemView);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position)
     {
         Log.d(TAG, "onBindViewHolder() position: " + position);
 
-        Sin sinInfo = mDataset.get(position);
+        // If case we get notified and we were playing an audio file before
+        // toggle the play button.
+        if(currentPlayingPosition != -1 && currentPlayingPosition != holder.getAdapterPosition())
+        {
+            holder.setPlayButtonSrc(true);
+            previousHolderPosition = currentPlayingPosition;
+        }
 
-        Log.d(TAG, "Position: " + position + " title: " + sinInfo.getTitle());
+        final Sin sinInfo = mDataset.get(position);
+
         holder.titleTxtView.setText(sinInfo.getTitle());
         holder.commentsTxtView.setText(String.valueOf(sinInfo.getComments()));
         holder.likesTxtView.setText(String.valueOf(sinInfo.getLikes()));
         holder.timeTxtView.setText(String.valueOf(sinInfo.getTime()));
+
+        // Set up listener for play button
+        holder.playButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(mediaPlayer == null)
+                {
+                    mediaPlayer = new MediaPlayer();
+                }
+                else
+                {
+                    if(holder.isPlaying)
+                    {
+                        mediaPlayer.stop();
+                        holder.setPlayButtonSrc(false);
+                        return;
+                    }
+                    else
+                    {
+                        mediaPlayer.reset();
+                        audioPlayer.cancel(true);
+                        audioPlayer = null;
+                    }
+                }
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+                audioPlayer = new AudioPlayer(mediaPlayer);
+                audioPlayer.execute(sinInfo.getUrl());
+                holder.setPlayButtonSrc(false);
+                currentPlayingPosition = holder.getAdapterPosition();
+                if(previousHolderPosition == -1)
+                {
+                    previousHolderPosition = currentPlayingPosition;
+                }
+                // if the user hits a new play button while the previous hasn't stopped,
+                // notify the previous view in order to reset it
+                if(previousHolderPosition != currentPlayingPosition)
+                {
+                    Log.d(TAG, "Notifying " + previousHolderPosition);
+                    notifyItemChanged(previousHolderPosition);
+                }
+            }
+        });
     }
 
     @Override

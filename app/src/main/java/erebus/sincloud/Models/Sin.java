@@ -1,5 +1,9 @@
 package erebus.sincloud.Models;
 
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+
 public class Sin
 {
     // Sin class
@@ -8,6 +12,7 @@ public class Sin
     private long time;
     private long likes;
     private long comments;
+    private HashMap<String, Object> sinTime;
 
     public Sin()
     {
@@ -19,6 +24,10 @@ public class Sin
         this.time = time;
         this.likes = likes;
         this.comments = comments;
+
+
+        sinTime = new HashMap<>();
+        sinTime.put("timestamp", ServerValue.TIMESTAMP);
     }
 
     public String getUrl() {
@@ -33,9 +42,11 @@ public class Sin
     public long getLikes() {
         return likes;
     }
-
     public long getComments() {
         return comments;
+    }
+    public HashMap<String, Object> getsinTime() {
+        return sinTime;
     }
 
 }

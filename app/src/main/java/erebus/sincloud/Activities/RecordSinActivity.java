@@ -1,6 +1,7 @@
 package erebus.sincloud.Activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.media.MediaRecorder;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,11 +11,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +52,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private RecordButtonStates nextRecordButtonState;
     private boolean has_permissions = false;
     private String sinFilename;
+    private int MAX_CHARACTER_LIMIT = 128;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -77,6 +86,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
                         // Don't forget to reset the state of cancel button after the user has uploaded a sin
                         cancelRecordingButton.setClickable(true);
+                        uploadRecordingButton.setClickable(true);
 
                         MediaRecorderReady();
                         Log.d(TAG, "State: recordSinButton START_RECORDING" );
@@ -156,8 +166,60 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             @Override
             public void onClick(View v)
             {
-                nextRecordButtonState = RecordButtonStates.START_RECORDING;
-                uploadSinToFirebase();
+                // Set up the input
+                final EditText input = new EditText(RecordSinActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_CHARACTER_LIMIT) });
+
+                input.addTextChangedListener(new TextWatcher()
+                {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s)
+                    {
+//                        TextView tv = findViewById(R.id.yourTextViewId);
+//                        tv.setText(String.valueOf(MAX_CHARACTER_LIMIT - s.length()));
+                    }
+                });
+
+                // Create an alert dialog to get title
+                AlertDialog.Builder builder = new AlertDialog.Builder(RecordSinActivity.this);
+                builder.setTitle("What is your sin");
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        String sinName = input.getText().toString();
+                        if(sinName.length() == 0)
+                        {
+                            return;
+                        }
+                        nextRecordButtonState = RecordButtonStates.START_RECORDING;
+                        uploadSinToFirebase(sinName);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
 
         });
@@ -182,7 +244,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private void MediaRecorderReady()
     {
         audioRecorder = new MediaRecorder();
-        audioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        audioRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
         audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         audioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
 
@@ -192,12 +254,13 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         audioRecorder.setOutputFile(sinFilename);
     }
 
-    private void uploadSinToFirebase()
+    private void uploadSinToFirebase(String sinName)
     {
         final UploadFirebase uploadFile = new UploadFirebase();
         long timeRecored = 22;
-        uploadFile.UploadSinToFirebase(sinFilename, timeRecored, recordSinButton, uploadProgressBar, this);
+        uploadFile.UploadSinToFirebase(sinFilename, sinName, timeRecored, recordSinButton, uploadProgressBar, this);
         cancelRecordingButton.setClickable(false);
+        uploadRecordingButton.setClickable(false);
     }
 
     private void checkPermissions()

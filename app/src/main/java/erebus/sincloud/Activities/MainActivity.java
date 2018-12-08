@@ -7,7 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import erebus.sincloud.Adapters.MainActivityAdapter;
 import erebus.sincloud.Fragments.DiscoverFragment;
-import erebus.sincloud.Fragments.PopularFragment;
+import erebus.sincloud.Fragments.TrendingFragment;
 import erebus.sincloud.R;
 import erebus.sincloud.Utils.LoadPictureToView;
 
@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager)
     {
-        pageAdapter.addFragment(new PopularFragment(), "Popular");
+        pageAdapter.addFragment(new TrendingFragment(), "Popular");
         pageAdapter.addFragment(new DiscoverFragment(), "Discover");
-//        pageAdapter.addFragment(new PopularFragment(), "Popular 2");
-//        pageAdapter.addFragment(new PopularFragment(), "Popular 3");
+//        pageAdapter.addFragment(new TrendingFragment(), "Popular 2");
+//        pageAdapter.addFragment(new TrendingFragment(), "Popular 3");
         viewPager.setAdapter(pageAdapter);
     }
 }
