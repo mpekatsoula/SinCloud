@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,8 +32,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import erebus.sincloud.R;
 
-public class LoginActivity extends AppCompatActivity
-{
+public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private CallbackManager callbackManager;
@@ -42,51 +42,44 @@ public class LoginActivity extends AppCompatActivity
     private static final int GOOGLE_RC_SIGN_IN = 1337;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize Facebook Login button
+        // Configure Facebook Login button
         callbackManager = CallbackManager.Factory.create();
         LoginButton facebookLoginButton = findViewById(R.id.facebook_login_button);
         facebookLoginButton.setReadPermissions("email", "public_profile");
 
-        // Callback registration
-        facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>()
-        {
+        facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(final LoginResult loginResult)
-            {
-                handleFacebookAccessToken(loginResult.getAccessToken());
+            public void onSuccess(final LoginResult loginResult) {
+                handleAccessToken(loginResult.getAccessToken());
             }
 
             @Override
-            public void onCancel()
-            {
+            public void onCancel() {
             }
 
             @Override
-            public void onError(FacebookException error)
-            {
+            public void onError(FacebookException error) {
             }
         });
 
         // Configure Google Sign In
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken("942729372464-rr96u77kot5c3ek2rlemt8l7p8burisd.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
-        findViewById(R.id.google_login_button).setOnClickListener(new View.OnClickListener()
-        {
+
+        findViewById(R.id.google_login_button).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, GOOGLE_RC_SIGN_IN);
             }
@@ -94,74 +87,85 @@ public class LoginActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null)
-        {
+        if (currentUser != null) {
             openMainActivity();
         }
 
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // If the requestCode is the Google Sign In code that we defined at starting
-        if (requestCode == GOOGLE_RC_SIGN_IN)
-        {
+        // means that user successfully signed in to his google account
+        if (requestCode == GOOGLE_RC_SIGN_IN) {
             //Getting the GoogleSignIn Task
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try
-            {
+            try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
 
                 // Authenticating with firebase
                 assert account != null;
-                handleGoogleAccessToken(account);
-            }
-            catch (ApiException e)
-            {
+                handleAccessToken(account);
+            } catch (ApiException e) {
                 Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
         // Else the requested code comes from Facebook
-        else
-        {
+        else {
             // Pass the activity result back to the Facebook SDK
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void handleGoogleAccessToken(GoogleSignInAccount acct)
-    {
-        Log.d(TAG, "handleGoogleAccessToken:" + acct.getId());
+    /**
+     * Registers user in our firebase
+     *
+     * @param acct google/facebook access token
+     */
+    private void handleAccessToken(Object acct) {
+        AuthCredential credential;
+        String _api;
 
-        // Get the auth credential
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        // Token is from Google account
+        if (acct instanceof GoogleSignInAccount) {
+
+            GoogleSignInAccount _acct = (GoogleSignInAccount) acct;
+            _api = "Google";
+            Log.d(TAG, "handle" + _api + "AccessToken:" + _acct.getId());
+            credential = GoogleAuthProvider.getCredential(_acct.getIdToken(), null);
+
+        }
+        // Token is from Facebook account
+        else {
+
+            AccessToken _acct = (AccessToken) acct;
+            _api = "Facebook";
+            Log.d(TAG, "handle" + _api + "AccessToken:" + _acct.getUserId());
+            credential = FacebookAuthProvider.getCredential(_acct.getToken());
+
+        }
+
+        final String api = _api;
 
         // Now using firebase we are signing in the user here
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
-                {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task)
-                    {
-                        if (task.isSuccessful())
-                        {
-                            Log.d(TAG, "handleGoogleAccessToken:success");
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "handle" + api + "AccessToken:success");
                             openMainActivity();
-                        }
-                        else
-                        {
+                        } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "handleGoogleAccessToken:failure", task.getException());
+                            Log.w(TAG, "handle" + api + "AccessToken:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -169,34 +173,7 @@ public class LoginActivity extends AppCompatActivity
                 });
     }
 
-    private void handleFacebookAccessToken(final AccessToken token)
-    {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>()
-                {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task)
-                    {
-                        if (task.isSuccessful())
-                        {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "handleFacebookAccessToken:success");
-                            openMainActivity();
-                        }
-                        else
-                        {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "handleFacebookAccessToken:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Facebook login failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    private void openMainActivity()
-    {
+    private void openMainActivity() {
         // [BUG FIX] MainActivity Intent should clear top so user can exit the app when presses back
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
