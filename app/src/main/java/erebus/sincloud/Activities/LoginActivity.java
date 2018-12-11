@@ -33,7 +33,6 @@ import erebus.sincloud.R;
 
 public class LoginActivity extends AppCompatActivity
 {
-
     private static final String TAG = "LoginActivity";
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
@@ -198,5 +197,6 @@ public class LoginActivity extends AppCompatActivity
     {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }

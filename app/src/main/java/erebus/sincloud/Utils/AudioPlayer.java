@@ -2,7 +2,6 @@ package erebus.sincloud.Utils;
 
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.Log;
 
 public class AudioPlayer extends AsyncTask<String, Void, Boolean>
@@ -18,8 +17,7 @@ public class AudioPlayer extends AsyncTask<String, Void, Boolean>
     @Override
     protected Boolean doInBackground(String... strings)
     {
-        Boolean prepared = false;
-
+        Boolean prepared;
         try
         {
             mediaPlayer.setDataSource(strings[0]);

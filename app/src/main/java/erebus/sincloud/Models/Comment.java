@@ -1,22 +1,29 @@
 package erebus.sincloud.Models;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+
 public class Comment
 {
     // Sin class
     private String username;
     private String comment;
-    private long time;
+    private HashMap<String, Object> commentTime;
     private long likes;
 
     public Comment()
     {
     }
-    public Comment(String username, String comment, long time, long likes)
+    public Comment(String username, String comment, long likes)
     {
         this.username = username;
         this.comment = comment;
-        this.time = time;
         this.likes = likes;
+
+        commentTime = new HashMap<>();
+        commentTime.put("timestamp", ServerValue.TIMESTAMP);
     }
 
     public String getUsername() {
@@ -25,10 +32,20 @@ public class Comment
     public String getComment() {
         return comment;
     }
-    public long getTime() {
-        return time;
+    public HashMap<String, Object> getCommentTime() {
+        return commentTime;
     }
     public long getLikes() {
         return likes;
+    }
+
+    @Exclude
+    public long getMessageTimeLong()
+    {
+        if(getCommentTime() != null)
+        {
+            return (long) commentTime.get("timestamp");
+        }
+        return 1;
     }
 }

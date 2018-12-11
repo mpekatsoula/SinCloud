@@ -18,6 +18,7 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -28,6 +29,9 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Enable firebase's cache system
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
