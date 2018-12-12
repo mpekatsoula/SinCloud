@@ -102,4 +102,5 @@
     <string name="like_image">Like image</string>
     <string name="comments_image">Comments image</string>
     <string name="title_activity_test">Test</string>
+    <string name="logout">Logout</string>
 </resources>

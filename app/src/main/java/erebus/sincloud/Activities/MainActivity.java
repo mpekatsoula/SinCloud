@@ -13,11 +13,15 @@ import erebus.sincloud.Utils.LoadPictureToView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity
@@ -29,9 +33,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Enable firebase's cache system
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -45,17 +46,6 @@ public class MainActivity extends AppCompatActivity
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
-
-        Button settingsButton = findViewById(R.id.main_activity_settings);
-        settingsButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -78,8 +68,45 @@ public class MainActivity extends AppCompatActivity
     {
         pageAdapter.addFragment(new TrendingFragment(), "Popular");
         pageAdapter.addFragment(new DiscoverFragment(), "Discover");
-//        pageAdapter.addFragment(new TrendingFragment(), "Popular 2");
-//        pageAdapter.addFragment(new TrendingFragment(), "Popular 3");
         viewPager.setAdapter(pageAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_main_action_settings:
+                openSettingsActivity();
+                return true;
+            case R.id.menu_main_action_logout:
+                logout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openSettingsActivity()
+    {
+        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    private void logout()
+    {
+        FirebaseAuth.getInstance().signOut();
+        finish();
+
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
 }

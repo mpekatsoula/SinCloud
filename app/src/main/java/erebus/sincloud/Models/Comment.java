@@ -10,17 +10,19 @@ public class Comment
     // Sin class
     private String username;
     private String comment;
+    private String key;
     private HashMap<String, Object> commentTime;
     private long likes;
 
     public Comment()
     {
     }
-    public Comment(String username, String comment, long likes)
+    public Comment(String username, String comment, long likes, String key)
     {
         this.username = username;
         this.comment = comment;
         this.likes = likes;
+        this.key = key;
 
         commentTime = new HashMap<>();
         commentTime.put("timestamp", ServerValue.TIMESTAMP);
@@ -31,6 +33,9 @@ public class Comment
     }
     public String getComment() {
         return comment;
+    }
+    public String getKey() {
+        return key;
     }
     public HashMap<String, Object> getCommentTime() {
         return commentTime;

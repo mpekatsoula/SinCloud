@@ -28,6 +28,10 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 import erebus.sincloud.R;
 
@@ -101,7 +105,7 @@ public class LoginActivity extends AppCompatActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
         {
-            openMainActivity();
+            openMainActivity(true);
         }
     }
 
@@ -154,7 +158,7 @@ public class LoginActivity extends AppCompatActivity
                         if (task.isSuccessful())
                         {
                             Log.d(TAG, "handleGoogleAccessToken:success");
-                            openMainActivity();
+                            openMainActivity(false);
                         }
                         else
                         {
@@ -180,7 +184,7 @@ public class LoginActivity extends AppCompatActivity
                         {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "handleFacebookAccessToken:success");
-                            openMainActivity();
+                            openMainActivity(false);
                         }
                         else
                         {
@@ -193,8 +197,22 @@ public class LoginActivity extends AppCompatActivity
                 });
     }
 
-    private void openMainActivity()
+    private void openMainActivity(boolean returningLogin)
     {
+        // If it's the first time the user logs in,
+        // create/update the firebase database with the username
+        // and photoURL
+        if(!returningLogin)
+        {
+            FirebaseUser user = mAuth.getCurrentUser();
+            if(user != null)
+            {
+                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+                userRef.child("displayName").setValue(user.getDisplayName());
+                userRef.child("photoURL").setValue(user.getPhotoUrl().toString());
+            }
+        }
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();

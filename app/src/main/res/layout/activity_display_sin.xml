@@ -111,7 +111,7 @@
         tools:layout_constraintRight_creator="1">
 
         <EditText
-            android:id="@+id/activity_display_chat_message_text"
+            android:id="@+id/display_sin_activity_chat_message_text"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -128,4 +128,54 @@
             android:background="@drawable/ic_baseline_send_24px"/>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/display_sin_activity_like_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintStart_toEndOf="@+id/display_sin_activity_play_button"
+        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
+        app:layout_constraintVertical_bias="0.0"
+        android:background="@drawable/ic_baseline_thumb_up_alt_24px"/>
+
+    <TextView
+        android:id="@+id/display_sin_activity_likes_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintStart_toEndOf="@+id/display_sin_activity_like_button"
+        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
+        app:layout_constraintVertical_bias="0.0"/>
+
+    <ImageView
+        android:id="@+id/display_sin_activity_comment_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintStart_toEndOf="@+id/display_sin_activity_likes_textview"
+        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_baseline_mode_comment_24px"/>
+
+    <TextView
+        android:id="@+id/display_sin_activity_comment_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintStart_toEndOf="@+id/display_sin_activity_comment_image"
+        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
+        app:layout_constraintVertical_bias="0.0"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,7 +89,6 @@ public class UploadFirebase
                             recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                             recordSinButton.show();
                             uploadProgressBar.setVisibility(View.INVISIBLE);
-
                         }
                     });
             }
