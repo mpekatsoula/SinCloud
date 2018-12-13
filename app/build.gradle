@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.5'
     implementation 'com.firebaseui:firebase-ui-database:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.7'
     implementation 'com.facebook.android:facebook-login:4.28.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'pub.devrel:easypermissions:2.0.0'
