@@ -52,7 +52,7 @@
                     android:id="@+id/main_activity_toolbar_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/app_name"
@@ -75,29 +75,15 @@
                 android:id="@+id/main_activity_popular_tab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_home_24px"
-                />
+                android:text="@string/trending"
+                android:visibility="visible"/>
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/main_activity_discover_tag"
+                android:id="@+id/main_activity_trending_tag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_search_24px"
-                />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/main_activity_favourites_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_favorite_24px"
-                />
-
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/main_activity_profile_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:icon="@drawable/ic_baseline_account_circle_24px"
-                />
+                android:text="@string/discover"
+                android:visibility="visible"/>
 
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>

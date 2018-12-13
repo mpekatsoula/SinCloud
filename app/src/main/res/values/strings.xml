@@ -103,4 +103,6 @@
     <string name="comments_image">Comments image</string>
     <string name="title_activity_test">Test</string>
     <string name="logout">Logout</string>
+    <string name="discover">Discover</string>
+    <string name="trending">Trending</string>
 </resources>

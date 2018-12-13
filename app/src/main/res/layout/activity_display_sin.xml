@@ -72,18 +72,31 @@
         app:touchable="true"
         app:waveColor="@android:color/holo_blue_dark"/>
 
-    <ListView
-        android:id="@+id/display_sin_activity_listview"
-        android:layout_width="0dp"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/display_sin_activity_refresh"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/activity_display_chat_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_play_button"/>
+        app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_play_button">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/display_sin_activity_recycleview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/activity_display_chat_linear_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_play_button"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/display_sin_activity_play_button"
@@ -126,7 +139,6 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="16dp"
             android:background="@drawable/ic_baseline_send_24px"/>
-
     </LinearLayout>
 
     <Button
@@ -136,7 +148,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_refresh"
         app:layout_constraintStart_toEndOf="@+id/display_sin_activity_play_button"
         app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
         app:layout_constraintVertical_bias="0.0"
@@ -149,7 +161,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_refresh"
         app:layout_constraintStart_toEndOf="@+id/display_sin_activity_like_button"
         app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
         app:layout_constraintVertical_bias="0.0"/>
@@ -161,7 +173,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_refresh"
         app:layout_constraintStart_toEndOf="@+id/display_sin_activity_likes_textview"
         app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
         app:layout_constraintVertical_bias="0.0"
@@ -174,7 +186,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_listview"
+        app:layout_constraintBottom_toTopOf="@+id/display_sin_activity_refresh"
         app:layout_constraintStart_toEndOf="@+id/display_sin_activity_comment_image"
         app:layout_constraintTop_toBottomOf="@+id/display_sin_activity_waveform"
         app:layout_constraintVertical_bias="0.0"/>

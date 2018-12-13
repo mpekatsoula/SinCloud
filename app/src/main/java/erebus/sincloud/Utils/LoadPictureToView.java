@@ -1,52 +1,53 @@
 package erebus.sincloud.Utils;
 
 import android.content.Context;
-import android.util.Log;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import android.net.Uri;
-import android.widget.ImageView;
+import androidx.annotation.NonNull;
 
 
 public class LoadPictureToView
 {
     private static final String TAG = "GetProfilePicture";
 
-    public void LoadProfilePictureToView(Context context, ImageView imageView)
+    public void GetAndLoadProfilePictureToView(final Context context, final ImageView imageView)
     {
-        Uri photoUrl = null;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null)
         {
-            for (UserInfo profile : user.getProviderData())
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+            userRef.addListenerForSingleValueEvent(new ValueEventListener()
             {
-                Log.d(TAG, profile.getProviderId());
-                // check if the provider id matches "facebook.com"
-                if (profile.getProviderId().equals("facebook.com"))
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                 {
-                    Log.d(TAG, "Facebook authentication");
-                    String facebookUserId = profile.getUid();
-                    photoUrl = Uri.parse("https://graph.facebook.com/" + facebookUserId + "/picture?height=500");
+                    Object photoURLObj = dataSnapshot.child("photoURL").getValue();
+                    if(photoURLObj != null)
+                    {
+                        LoadProfilePictureToView(context, imageView, photoURLObj.toString());
+                    }
                 }
-                else if (profile.getProviderId().equals("google.com"))
-                {
-                    Log.d(TAG, "Google authentication");
-                    photoUrl = user.getPhotoUrl();
-                }
-                // For now handle only one profile
-                break;
-            }
-            Log.w(TAG, "Loading profile pic: " + photoUrl);
-            Glide.with(context).load(photoUrl).into(imageView);
-        }
-        else
-        {
-            Log.w(TAG, "Firebase user is null");
-        }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError)
+                {
+
+                }
+            });
+        }
+    }
+
+    public void LoadProfilePictureToView(final Context context, final ImageView imageView, final String photoURL)
+    {
+        Glide.with(context).load(photoURL).into(imageView);
     }
 }

@@ -3,6 +3,10 @@ package erebus.sincloud.Activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Models.Comment;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
@@ -10,7 +14,6 @@ import erebus.sincloud.UI.CommentAdapter;
 import erebus.sincloud.Utils.AudioPlayer;
 import rm.com.audiowave.AudioWaveView;
 
-import android.database.DataSetObserver;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,10 +23,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseListOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,10 +40,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DisplaySinActivity extends AppCompatActivity
+public class DisplaySinActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
 {
     private String TAG = "DisplaySinActivity";
     private Sin sin;
@@ -59,7 +63,11 @@ public class DisplaySinActivity extends AppCompatActivity
     private String sinRefString;
     private byte[] audioFileRAW;
     final long MAX_DATA_SIZE = 1024 * 1024;
-    private CommentAdapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
+    private ArrayList<Comment> commentsArray = new ArrayList<>();
+    private ArrayList<String> commentsRefs = new ArrayList<>();
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -76,6 +84,8 @@ public class DisplaySinActivity extends AppCompatActivity
         sendMessageButton = findViewById(R.id.activity_display_chat_send_button);
         likeSinButton = findViewById(R.id.display_sin_activity_like_button);
         Button backToolbarButton = findViewById(R.id.display_activity_back);
+        mSwipeRefreshLayout = findViewById(R.id.display_sin_activity_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         // Get sin reference and create database reference
         sinRefString = getIntent().getStringExtra("sinRef");
@@ -106,7 +116,6 @@ public class DisplaySinActivity extends AppCompatActivity
                 playAudio();
             }
         });
-
         backToolbarButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -268,6 +277,7 @@ public class DisplaySinActivity extends AppCompatActivity
     private void loadWaveform()
     {
         waveform.setRawData(audioFileRAW);
+        waveform.setTouchable(false);
     }
 
     private void playAudio()
@@ -314,26 +324,47 @@ public class DisplaySinActivity extends AppCompatActivity
     {
         Log.d(TAG, "displayChatMessages");
 
+        RecyclerView mRecyclerView = findViewById(R.id.display_sin_activity_recycleview);
+        mAdapter = new CommentAdapter(commentsArray, commentsRefs, sinRefString);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+
+        // Use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+        getComments();
+    }
+
+    private void getComments()
+    {
         final DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString);
         Query commentsQuery = commentsRef.orderByChild("likes");
-        final ListView listOfCommentsView = findViewById(R.id.display_sin_activity_listview);
-        FirebaseListOptions<Comment> options = new FirebaseListOptions.Builder<Comment>()
-                .setQuery(commentsQuery, Comment.class)
-                .setLayout(R.layout.comment_layout)
-                .build();
-        mAdapter = new CommentAdapter(options, this, sinRefString);
-        listOfCommentsView.setAdapter(mAdapter);
-        mAdapter.registerDataSetObserver(new DataSetObserver()
+        commentsQuery.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onChanged()
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                super.onChanged();
-                listOfCommentsView.setSelection(mAdapter.getCount() - 1);
-                commentsTextView.setText(String.valueOf(mAdapter.getCount()));
+                commentsArray.clear();
+                commentsRefs.clear();
+                for(DataSnapshot data : dataSnapshot.getChildren())
+                {
+                    commentsArray.add(data.getValue(Comment.class));
+                    commentsRefs.add(data.getKey());
+                }
+                Collections.reverse(commentsArray);
+                Collections.reverse(commentsRefs);
+                mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        mAdapter.startListening();
     }
 
     private void getFirebaseFile()
@@ -359,4 +390,9 @@ public class DisplaySinActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    public void onRefresh()
+    {
+        getComments();
+    }
 }

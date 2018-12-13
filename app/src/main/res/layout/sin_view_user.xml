@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
                                                    android:id="@+id/chat_user_constraint_layout"
                                                  android:layout_width="match_parent"
                                                  android:layout_height="wrap_content"
@@ -10,7 +11,7 @@
                                                  android:orientation="vertical">
 
     <Button
-        android:id="@+id/sin_view_play_button"
+        android:id="@+id/sin_view_user_play_button"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="8dp"
@@ -22,17 +23,17 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/sin_view_title"
+        android:id="@+id/sin_view_user_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
-        app:layout_constraintTop_toTopOf="@+id/sin_view_play_button"/>
+        app:layout_constraintStart_toEndOf="@+id/sin_view_user_play_button"
+        app:layout_constraintTop_toTopOf="@+id/sin_view_user_play_button"/>
 
     <TextView
-        android:id="@+id/sin_view_time"
+        android:id="@+id/sin_view_user_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -42,46 +43,58 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/sin_view_likes"
+        android:id="@+id/sin_view_user_likes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sin_view_like_image"
-        app:layout_constraintTop_toBottomOf="@+id/sin_view_title"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_user_like_image"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_user_title"
         app:layout_constraintVertical_bias="0.0"/>
 
     <TextView
-        android:id="@+id/sin_view_comments"
+        android:id="@+id/sin_view_user_comments"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sin_view_comments_image"
-        app:layout_constraintTop_toBottomOf="@+id/sin_view_title"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_user_comments_image"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_user_title"
         app:layout_constraintVertical_bias="0.0"/>
 
     <ImageView
-        android:id="@+id/sin_view_like_image"
+        android:id="@+id/sin_view_user_like_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
-        app:layout_constraintTop_toBottomOf="@+id/sin_view_title"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_user_play_button"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_user_title"
         app:srcCompat="@drawable/ic_baseline_thumb_up_alt_24px"
         android:contentDescription="@string/like_image"/>
 
     <ImageView
-        android:id="@+id/sin_view_comments_image"
+        android:id="@+id/sin_view_user_comments_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sin_view_likes"
-        app:layout_constraintTop_toBottomOf="@+id/sin_view_title"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_user_likes"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_user_title"
         app:srcCompat="@drawable/ic_baseline_mode_comment_24px"
         android:contentDescription="@string/comments_image"/>
+
+    <Button
+        android:id="@+id/sin_view_user_delete_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/ic_baseline_delete_24px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_user_time"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

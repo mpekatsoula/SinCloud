@@ -1,16 +1,15 @@
 package erebus.sincloud.UI;
 
+import android.content.Context;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.firebase.ui.database.FirebaseListOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,64 +20,102 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.Models.Comment;
 import erebus.sincloud.R;
+import erebus.sincloud.Utils.LoadPictureToView;
 
-public class CommentAdapter extends FirebaseListAdapter<Comment>
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>
 {
-    private DisplaySinActivity activity;
+    private ArrayList<Comment> commentsDataset;
+    private ArrayList<String> commentsRefs;
     private String sinRefString;
     private String TAG = "CommentAdapter";
+    private Context context;
 
-    public CommentAdapter(FirebaseListOptions<Comment> options, DisplaySinActivity activity, String sinRefString)
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    static class ViewHolder extends RecyclerView.ViewHolder
     {
-        super(options);
-        this.activity = activity;
+        CircleImageView imageViewProfile;
+        TextView usernameTextView;
+        TextView commentTextView;
+        TextView messageTimeTextView;
+        TextView likesTextView;
+        Button likeCommentButton;
+
+        ViewHolder(View v)
+        {
+            super(v);
+            imageViewProfile = v.findViewById(R.id.comment_layout_user_photo);
+            usernameTextView = v.findViewById(R.id.comment_layout_username);
+            commentTextView = v.findViewById(R.id.comment_layout_text);
+            messageTimeTextView = v.findViewById(R.id.comment_layout_time);
+            likesTextView = v.findViewById(R.id.comment_layout_likes_textview);
+            likeCommentButton = v.findViewById(R.id.comment_layout_like_button);
+        }
+    }
+
+    public CommentAdapter(ArrayList<Comment> commentsDataset, ArrayList<String> commentsRefs, String sinRefString)
+    {
+        this.commentsDataset = commentsDataset;
+        this.commentsRefs = commentsRefs;
         this.sinRefString = sinRefString;
         Log.d(TAG, "Constructor()");
     }
 
+    // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    protected void populateView(final View v, final Comment model, int position)
+    public CommentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
+        Log.d(TAG, "onCreateViewHolder()");
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_layout, parent, false);
+        context = itemView.getContext();
+
+        return new CommentAdapter.ViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final CommentAdapter.ViewHolder holder, final int position)
+    {
+        final Comment comment = commentsDataset.get(position);
         // Get data from firebase
-        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(model.getUsername());
+        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(comment.getUsername());
         userRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                final ImageView imageViewProfile = v.findViewById(R.id.comment_layout_user_photo);
                 Object photoURLObject = dataSnapshot.child("photoURL").getValue();
+
+                // Load profile picture
+                LoadPictureToView profileImageLoader = new LoadPictureToView();
                 if(photoURLObject != null)
                 {
-                    Glide.
-                            with(v.getContext()).
-                            load(photoURLObject.toString()).
-                            into(imageViewProfile);
+                    profileImageLoader.LoadProfilePictureToView(context, holder.imageViewProfile, photoURLObject.toString());
                 }
                 else
                 {
-                    Glide.
-                            with(v.getContext()).
-                            load("https://d50m6q67g4bn3.cloudfront.net/avatars/f38ca4f8-4cf8-4d43-b54f-a46c417aadd7_1519597926301").
-                            into(imageViewProfile);
+                    profileImageLoader.LoadProfilePictureToView(context,  holder.imageViewProfile, "https://d50m6q67g4bn3.cloudfront.net/avatars/f38ca4f8-4cf8-4d43-b54f-a46c417aadd7_1519597926301");
                 }
 
-                TextView usernameTextView = v.findViewById(R.id.comment_layout_username);
                 Object userameObject = dataSnapshot.child("username").getValue();
                 if(userameObject != null)
                 {
-                    usernameTextView.setText(userameObject.toString());
+                    holder.usernameTextView.setText(userameObject.toString());
                 }
                 else
                 {
-                    usernameTextView.setText("Anonymous");
+                    holder.usernameTextView.setText("Anonymous");
                 }
             }
 
@@ -89,37 +126,33 @@ public class CommentAdapter extends FirebaseListAdapter<Comment>
             }
         });
 
-        TextView commentTextView = v.findViewById(R.id.comment_layout_text);
-        commentTextView.setText(model.getComment());
+        holder.commentTextView.setText(comment.getComment());
 
         // Convert time to the correct timezone before displaying.
         // If message is older than a day, display date.
-        TextView messageTime = v.findViewById(R.id.comment_layout_time);
-        long messageLocalTime = model.getMessageTimeLong() + TimeZone.getDefault().getRawOffset();
+        long messageLocalTime = comment.getMessageTimeLong() + TimeZone.getDefault().getRawOffset();
         long timeDiff = ( System.currentTimeMillis() - messageLocalTime) / (1000*60*60*24);
         if (timeDiff > 1 )
         {
-            messageTime.setText(DateFormat.format("dd/MM", model.getMessageTimeLong()));
+            holder.messageTimeTextView.setText(DateFormat.format("dd/MM", comment.getMessageTimeLong()));
         }
         else
         {
-            messageTime.setText(DateFormat.format("HH:mm", model.getMessageTimeLong()));
+            holder.messageTimeTextView.setText(DateFormat.format("HH:mm", comment.getMessageTimeLong()));
         }
 
-        final TextView likesTextView = v.findViewById(R.id.comment_layout_likes_textview);
-        likesTextView.setText(String.valueOf(model.getLikes()));
+        holder.likesTextView.setText(String.valueOf(comment.getLikes()));
 
-        Button likeCommentButton = v.findViewById(R.id.comment_layout_like_button);
-        likeCommentButton.setOnClickListener(new View.OnClickListener()
+        holder.likeCommentButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                // Check if the user has liked the sin before.
+                // Check if the user has liked the comment before.
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("clikes").child(model.getKey());
+                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("clikes").child(comment.getKey());
                     userRef.addListenerForSingleValueEvent(new ValueEventListener()
                     {
                         @Override
@@ -131,13 +164,14 @@ public class CommentAdapter extends FirebaseListAdapter<Comment>
                             {
                                 likedStatus = (boolean) likedStatusObject;
                             }
-                            final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString).child(model.getKey()).child("likes");
                             userRef.setValue(!likedStatus);
 
+                            final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString).child(comment.getKey()).child("likes");
                             // Increase/decrease the like counter
                             if(!likedStatus)
                             {
-                                likesTextView.setText(String.valueOf(model.getLikes() + 1));
+                                comment.setLikes(comment.getLikes() + 1);
+                                holder.likesTextView.setText(String.valueOf(comment.getLikes()));
                                 commentRef.runTransaction(new Transaction.Handler()
                                 {
                                     @NonNull
@@ -157,7 +191,8 @@ public class CommentAdapter extends FirebaseListAdapter<Comment>
                             }
                             else
                             {
-                                likesTextView.setText(String.valueOf(model.getLikes() - 1));
+                                comment.setLikes(comment.getLikes() - 1);
+                                holder.likesTextView.setText(String.valueOf(comment.getLikes()));
                                 commentRef.runTransaction(new Transaction.Handler()
                                 {
                                     @NonNull
@@ -189,26 +224,8 @@ public class CommentAdapter extends FirebaseListAdapter<Comment>
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup)
+    public int getItemCount()
     {
-        Comment comment = getItem(position);
-        Log.d(TAG, "getView!");
-
-        if(view == null)
-        {
-            view = activity.getLayoutInflater().inflate(R.layout.comment_layout, viewGroup, false);
-        }
-
-        // Generating view
-        populateView(view, comment, position);
-
-        return view;
-    }
-
-    @Override
-    public Comment getItem(int position)
-    {
-        // Reverse list
-        return super.getItem(this.getCount() - position - 1);
+        return commentsDataset.size();
     }
 }

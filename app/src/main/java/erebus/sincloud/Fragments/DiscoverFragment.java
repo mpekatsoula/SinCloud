@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Activities.DisplaySinActivity;
+import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.onRecycleViewClickListener;
 import erebus.sincloud.Models.Sin;
@@ -53,7 +53,7 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.discover_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.DISCOVER);
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -96,6 +96,7 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 sinsArray.clear();
+                sinsRefs.clear();
                 for(DataSnapshot sin : dataSnapshot.getChildren())
                 {
                     Sin new_sin = sin.getValue(Sin.class);

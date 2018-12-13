@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.onRecycleViewClickListener;
 import erebus.sincloud.Models.Sin;
@@ -31,6 +32,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
     private static final String TAG = "TrendingFragment";
     private RecyclerView.Adapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
+    private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
@@ -47,7 +49,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.trending_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.TRENDING);
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

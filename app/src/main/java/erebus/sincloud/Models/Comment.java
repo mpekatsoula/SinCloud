@@ -53,4 +53,9 @@ public class Comment
         }
         return 1;
     }
+    @Exclude
+    public void setLikes(long likes)
+    {
+        this.likes = likes;
+    }
 }

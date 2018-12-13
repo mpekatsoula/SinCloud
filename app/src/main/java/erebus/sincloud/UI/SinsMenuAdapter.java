@@ -8,9 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
 import erebus.sincloud.Utils.AudioPlayer;
@@ -18,11 +27,13 @@ import erebus.sincloud.Utils.AudioPlayer;
 public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHolder>
 {
     private ArrayList<Sin> mDataset;
+    private ArrayList<String> sinsRefs;
     private String TAG = "SinsMenuAdapter";
     private MediaPlayer mediaPlayer = null;
     private AudioPlayer audioPlayer = null;
     private int previousHolderPosition = -1;
     private int currentPlayingPosition = -1;
+    private SinMenuAdapterTypes adapterType;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,16 +45,29 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         TextView likesTxtView;
         TextView timeTxtView;
         Button playButton;
+        Button deleteButton = null;
         private boolean isPlaying = false;
 
-        ViewHolder(View v)
+        ViewHolder(View v, SinMenuAdapterTypes adapterType)
         {
             super(v);
-            titleTxtView = v.findViewById(R.id.sin_view_title);
-            likesTxtView = v.findViewById(R.id.sin_view_likes);
-            commentsTxtView = v.findViewById(R.id.sin_view_comments);
-            timeTxtView = v.findViewById(R.id.sin_view_time);
-            playButton = v.findViewById(R.id.sin_view_play_button);
+            if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
+            {
+                titleTxtView = v.findViewById(R.id.sin_view_user_title);
+                likesTxtView = v.findViewById(R.id.sin_view_user_likes);
+                commentsTxtView = v.findViewById(R.id.sin_view_user_comments);
+                timeTxtView = v.findViewById(R.id.sin_view_user_time);
+                playButton = v.findViewById(R.id.sin_view_user_play_button);
+                deleteButton = v.findViewById(R.id.sin_view_user_delete_button);
+            }
+            else
+            {
+                titleTxtView = v.findViewById(R.id.sin_view_title);
+                likesTxtView = v.findViewById(R.id.sin_view_likes);
+                commentsTxtView = v.findViewById(R.id.sin_view_comments);
+                timeTxtView = v.findViewById(R.id.sin_view_time);
+                playButton = v.findViewById(R.id.sin_view_play_button);
+            }
         }
 
         private void setPlayButtonSrc(boolean playing)
@@ -61,10 +85,12 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     }
 
     // Constructor
-    public SinsMenuAdapter(ArrayList<Sin> myDataset)
+    public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs, SinMenuAdapterTypes userSettings)
     {
         Log.d(TAG, "SinsMenuAdapter()");
-        mDataset = myDataset;
+        mDataset = sinsDataset;
+        adapterType = userSettings;
+        this.sinsRefs = sinsRefs;
     }
 
     // Create new views (invoked by the layout manager)
@@ -73,14 +99,24 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     public SinsMenuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         Log.d(TAG, "onCreateViewHolder()");
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.sin_view, parent, false);
-
-        return new ViewHolder(itemView);
+        View itemView;
+        switch (adapterType)
+        {
+            case DISCOVER:
+            case TRENDING:
+                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sin_view, parent, false);
+                break;
+            case USER_SETTINGS:
+                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sin_view_user, parent, false);
+                break;
+            default:
+                itemView = null;
+        }
+        return new ViewHolder(itemView, adapterType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position)
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position)
     {
         Log.d(TAG, "onBindViewHolder() position: " + position);
 
@@ -142,6 +178,23 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 }
             }
         });
+
+        // Set listener for delete button
+        if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
+        {
+            holder.deleteButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    DatabaseReference sinUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("sins").child(sinsRefs.get(position));
+                    sinUserRef.removeValue();
+                    DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinsRefs.get(position));
+                    sinRef.removeValue();
+                }
+            });
+        }
     }
 
     @Override

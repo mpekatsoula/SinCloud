@@ -17,12 +17,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
+        setupTabNames(tabLayout);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -61,7 +62,21 @@ public class MainActivity extends AppCompatActivity
         // Load profile picture
         CircleImageView profilePicToolbar = findViewById(R.id.main_activity_profile_image);
         LoadPictureToView profileImageLoader = new LoadPictureToView();
-        profileImageLoader.LoadProfilePictureToView(this, profilePicToolbar);
+        profileImageLoader.GetAndLoadProfilePictureToView(this, profilePicToolbar);
+        profilePicToolbar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                openUserProfileActivity();
+            }
+        });
+    }
+
+    private void setupTabNames(TabLayout tabLayout)
+    {
+        Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.trending);
+        Objects.requireNonNull(tabLayout.getTabAt(1)).setText(R.string.discover);
     }
 
     private void setupViewPager(ViewPager viewPager)
@@ -84,9 +99,9 @@ public class MainActivity extends AppCompatActivity
     {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_main_action_settings:
-                openSettingsActivity();
-                return true;
+//            case R.id.menu_main_action_settings:
+//
+//                return true;
             case R.id.menu_main_action_logout:
                 logout();
                 return true;
@@ -95,9 +110,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void openSettingsActivity()
+    private void openUserProfileActivity()
     {
-        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
         startActivity(intent);
     }
 
