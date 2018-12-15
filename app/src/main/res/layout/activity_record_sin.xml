@@ -27,24 +27,38 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteX="16dp">
 
+            <Button
+                android:id="@+id/record_sin_activity_back"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/ic_baseline_arrow_back_24px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
             <TextView
                 android:id="@+id/record_sin_activity_toolbar_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/record_sin_activity_toolbar_text"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toEndOf="@+id/record_sin_activity_back"
+                app:layout_constraintTop_toTopOf="parent"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/record_start_stop"
+        android:id="@+id/record_sin_activity_start_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -56,18 +70,18 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/record_pause"
+        android:id="@+id/record_sin_activity_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_round_pause_24px"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/record_start_stop"
-        app:layout_constraintEnd_toEndOf="@+id/record_start_stop"
-        app:layout_constraintStart_toStartOf="@+id/record_start_stop"/>
+        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_start_stop"
+        app:layout_constraintEnd_toEndOf="@+id/record_sin_activity_start_stop"
+        app:layout_constraintStart_toStartOf="@+id/record_sin_activity_start_stop"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/record_cancel"
+        android:id="@+id/record_sin_activity_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -77,7 +91,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/record_upload"
+        android:id="@+id/record_sin_activity_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -87,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ProgressBar
-        android:id="@+id/record_activity_progress_bar"
+        android:id="@+id/record_sin_activity_progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -95,5 +109,27 @@
         app:layout_constraintStart_toStartOf="parent"
         android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/main_activity_toolbar"/>
+
+    <cn.iwgang.countdownview.CountdownView
+        android:id="@+id/record_sin_activity_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="8dp"
+        app:isHideTimeBackground="true"
+        app:isShowMinute="true"
+        app:isShowSecond="true"
+        app:isTimeTextBold="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/record_sin_activity_progress_bar"
+        app:suffixGravity="bottom"
+        app:suffixMinute="min"
+        app:suffixSecond="sec"
+        app:suffixTextColor="#3747B1"
+        app:suffixTextSize="12sp"
+        app:timeTextColor="#000000"
+        app:timeTextSize="22sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

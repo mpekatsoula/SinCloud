@@ -128,12 +128,12 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
             previousHolderPosition = currentPlayingPosition;
         }
 
-        final Sin sinInfo = mDataset.get(position);
+        final Sin sin = mDataset.get(position);
 
-        holder.titleTxtView.setText(sinInfo.getTitle());
-        holder.commentsTxtView.setText(String.valueOf(sinInfo.getComments()));
-        holder.likesTxtView.setText(String.valueOf(sinInfo.getLikes()));
-        holder.timeTxtView.setText(String.valueOf(sinInfo.getTime()));
+        holder.titleTxtView.setText(sin.getTitle());
+        holder.commentsTxtView.setText(String.valueOf(sin.getComments()));
+        holder.likesTxtView.setText(String.valueOf(sin.getLikes()));
+        holder.timeTxtView.setText(String.valueOf(sin.getTime()));
 
         // Set up listener for play button
         holder.playButton.setOnClickListener(new View.OnClickListener()
@@ -162,7 +162,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 }
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
                 audioPlayer = new AudioPlayer(mediaPlayer);
-                audioPlayer.execute(sinInfo.getUrl());
+                audioPlayer.execute(sin.getUrl());
                 holder.setPlayButtonSrc(false);
                 currentPlayingPosition = holder.getAdapterPosition();
                 if(previousHolderPosition == -1)
