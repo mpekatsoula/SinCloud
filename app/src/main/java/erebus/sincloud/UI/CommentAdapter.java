@@ -115,7 +115,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
                 else
                 {
-                    holder.usernameTextView.setText("Anonymous");
+                    holder.usernameTextView.setText(context.getString(R.string.anonymous));
                 }
             }
 

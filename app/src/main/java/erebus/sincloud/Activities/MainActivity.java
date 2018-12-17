@@ -5,8 +5,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
-import erebus.sincloud.Adapters.MainActivityAdapter;
+import erebus.sincloud.Adapters.FragmentAdapter;
 import erebus.sincloud.Fragments.DiscoverFragment;
+import erebus.sincloud.Fragments.NotificationsFragment;
 import erebus.sincloud.Fragments.TrendingFragment;
 import erebus.sincloud.R;
 import erebus.sincloud.Utils.LoadPictureToView;
@@ -26,7 +27,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
 {
-    private MainActivityAdapter pageAdapter;
+    private FragmentAdapter pageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         ViewPager viewPager = findViewById(R.id.main_activity_view_pager);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        pageAdapter = new MainActivityAdapter(fragmentManager);
+        pageAdapter = new FragmentAdapter(fragmentManager);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -77,12 +78,14 @@ public class MainActivity extends AppCompatActivity
     {
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(R.string.trending);
         Objects.requireNonNull(tabLayout.getTabAt(1)).setText(R.string.discover);
+        Objects.requireNonNull(tabLayout.getTabAt(2)).setText(R.string.notifications);
     }
 
     private void setupViewPager(ViewPager viewPager)
     {
         pageAdapter.addFragment(new TrendingFragment(), "Popular");
         pageAdapter.addFragment(new DiscoverFragment(), "Discover");
+        pageAdapter.addFragment(new NotificationsFragment(), "Notifications");
         viewPager.setAdapter(pageAdapter);
     }
 

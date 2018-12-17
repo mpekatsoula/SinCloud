@@ -51,7 +51,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private boolean has_permissions = false;
     private String sinFilename;
     private int MAX_CHARACTER_LIMIT = 128;
-    private final int RECORD_TIME_IN_SEC = 3;
+    private final int RECORD_TIME_IN_SEC = 60;
     private final int RECORD_TIME_IN_MS = 1000 * RECORD_TIME_IN_SEC;
 
     @Override
@@ -238,7 +238,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
                 // Create an alert dialog to get title
                 AlertDialog.Builder builder = new AlertDialog.Builder(RecordSinActivity.this);
-                builder.setTitle("What is your sin");
+                builder.setTitle(getString(R.string.sin_name_promt));
                 builder.setView(input);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {

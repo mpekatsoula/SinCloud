@@ -1,7 +1,9 @@
 package erebus.sincloud.UI;
 
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,18 +13,23 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
 import erebus.sincloud.Utils.AudioPlayer;
+import erebus.sincloud.Utils.TimeUtils;
 
 public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHolder>
 {
@@ -43,7 +50,8 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         TextView titleTxtView;
         TextView commentsTxtView;
         TextView likesTxtView;
-        TextView timeTxtView;
+        TextView dateTxtView;
+        TextView nicknameTxtView;
         Button playButton;
         Button deleteButton = null;
         private boolean isPlaying = false;
@@ -56,7 +64,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 titleTxtView = v.findViewById(R.id.sin_view_user_title);
                 likesTxtView = v.findViewById(R.id.sin_view_user_likes);
                 commentsTxtView = v.findViewById(R.id.sin_view_user_comments);
-                timeTxtView = v.findViewById(R.id.sin_view_user_time);
+                dateTxtView = v.findViewById(R.id.sin_view_user_date);
                 playButton = v.findViewById(R.id.sin_view_user_play_button);
                 deleteButton = v.findViewById(R.id.sin_view_user_delete_button);
             }
@@ -65,8 +73,9 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 titleTxtView = v.findViewById(R.id.sin_view_title);
                 likesTxtView = v.findViewById(R.id.sin_view_likes);
                 commentsTxtView = v.findViewById(R.id.sin_view_comments);
-                timeTxtView = v.findViewById(R.id.sin_view_time);
+                dateTxtView = v.findViewById(R.id.sin_view_date);
                 playButton = v.findViewById(R.id.sin_view_play_button);
+                nicknameTxtView = v.findViewById(R.id.sin_view_nickname);
             }
         }
 
@@ -133,7 +142,17 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         holder.titleTxtView.setText(sin.getTitle());
         holder.commentsTxtView.setText(String.valueOf(sin.getComments()));
         holder.likesTxtView.setText(String.valueOf(sin.getLikes()));
-        holder.timeTxtView.setText(String.valueOf(sin.getTime()));
+
+        TimeUtils timeUtils = new TimeUtils();
+        long timeDiff = timeUtils.ConvertServerTimeToLocal(sin.getMessageTimeLong());
+        if (timeDiff > 1 )
+        {
+            holder.dateTxtView.setText(DateFormat.format("dd/MM", sin.getMessageTimeLong()));
+        }
+        else
+        {
+            holder.dateTxtView.setText(DateFormat.format("HH:mm", sin.getMessageTimeLong()));
+        }
 
         // Set up listener for play button
         holder.playButton.setOnClickListener(new View.OnClickListener()
@@ -187,11 +206,62 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 @Override
                 public void onClick(View v)
                 {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    DatabaseReference sinUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("sins").child(sinsRefs.get(position));
-                    sinUserRef.removeValue();
-                    DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinsRefs.get(position));
-                    sinRef.removeValue();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle("Are you sure you want to delete this sin?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            DatabaseReference sinUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("sins").child(sinsRefs.get(position));
+                            sinUserRef.removeValue();
+                            DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinsRefs.get(position));
+                            sinRef.removeValue();
+                            sinsRefs.remove(position);
+                            mDataset.remove(position);
+                            notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+
+                }
+            });
+        }
+
+        // Load user's nickname
+        if (adapterType == SinMenuAdapterTypes.TRENDING || adapterType == SinMenuAdapterTypes.DISCOVER)
+        {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(sin.getUserid()).child("nickname");
+            userRef.addListenerForSingleValueEvent(new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                {
+                    Object nicknameObj = dataSnapshot.getValue();
+
+                    if(nicknameObj == null)
+                    {
+                        holder.nicknameTxtView.setText("Anonymous");
+                    }
+                    else
+                    {
+                        holder.nicknameTxtView.setText(dataSnapshot.getValue().toString());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError)
+                {
+
                 }
             });
         }

@@ -105,4 +105,16 @@
     <string name="logout">Logout</string>
     <string name="discover">Discover</string>
     <string name="trending">Trending</string>
+    <string name="profile">Profile</string>
+    <string name="my_sins">My sins</string>
+    <string name="notifications">notifications</string>
+    <string name="sins">Sins</string>
+    <string name="comments">Comments</string>
+    <string name="zero">0</string>
+    <string name="nickname">Nickname:</string>
+    <string name="click_to_change_username">Click here to enter a nickname!</string>
+    <string name="setup_nickname_dialog_promt">What is your nickname?</string>
+    <string name="history">history</string>
+    <string name="sin_name_promt">What is your sin?</string>
+    <string name="anonymous">Anonymous</string>
 </resources>

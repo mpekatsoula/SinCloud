@@ -80,7 +80,7 @@ public class UploadFirebase
                                     sinRefUser.setValue(true);
 
                                     // Store sin to sin database
-                                    Sin newSin = new Sin(uri.toString(), sinName, timeRecored, 0, 0);
+                                    Sin newSin = new Sin(uri.toString(), sinName, user.getUid(), timeRecored, 0, 0);
                                     DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinId);
                                     sinRef.setValue(newSin);
                                 }

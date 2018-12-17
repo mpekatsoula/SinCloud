@@ -7,31 +7,163 @@
     android:layout_height="match_parent"
     tools:context=".Activities.UserProfileActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:src="@drawable/ic_baseline_account_circle_24px"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/activity_user_profile_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/colorPrimary"
+        android:padding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_user_profile_recycleview"
-        android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="0dp"
+            tools:layout_editor_absoluteX="16dp">
+
+            <Button
+                android:id="@+id/activity_user_profile_back"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/ic_baseline_arrow_back_24px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/activity_user_profile_toolbar_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/profile"
+                android:textAlignment="viewStart"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/activity_user_profile_back"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/activity_user_profile_image"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_baseline_account_circle_24px"
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_name"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_name"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_toolbar"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/activity_user_profile_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_nickname">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/main_activity_popular_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_sins"
+            android:visibility="visible"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/main_activity_trending_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notifications"
+            android:visibility="visible"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/activity_user_profile_view_pager"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image"/>
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_tabs"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_sins_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/sins"
+        android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/activity_user_profile_comment_text"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_toolbar"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_comment_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/comments"
+        android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_toolbar"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_comment_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/zero"
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_comment_text"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_comment_text"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_comment_text"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_sins_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/zero"
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_sins_text"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_sins_text"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_sins_text"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_image"/>
+
+    <TextView
+        android:id="@+id/activity_user_profile_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/md_black_1000"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_name"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_name"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_name"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
