@@ -37,7 +37,7 @@ public class UploadFirebase
      * @param recordSinButton
      * @param recordSinActivity
      */
-    public void UploadSinToFirebase(String localFilename, final String sinName, final long timeRecored, final FloatingActionButton recordSinButton, final ProgressBar uploadProgressBar, final RecordSinActivity recordSinActivity)
+    public void UploadSinToFirebase(String localFilename, final String sinName, final long timeRecored, final FloatingActionButton recordSinButton, final RecordSinActivity recordSinActivity)
     {
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -50,7 +50,6 @@ public class UploadFirebase
         Uri file = Uri.fromFile(new File(localFilename));
         final UploadTask uploadTask = fileRef.putFile(file);
 
-        uploadProgressBar.setVisibility(View.VISIBLE);
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener()
         {
@@ -88,7 +87,6 @@ public class UploadFirebase
 
                             recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                             recordSinButton.show();
-                            uploadProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
             }
@@ -99,8 +97,6 @@ public class UploadFirebase
             {
                 double progress = (100.f * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 Log.d(TAG, "Upload is " + progress + "% done");
-                int currentprogress = (int) progress;
-                uploadProgressBar.setProgress(currentprogress);
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>()
         {

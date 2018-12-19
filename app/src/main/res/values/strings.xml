@@ -117,4 +117,6 @@
     <string name="history">history</string>
     <string name="sin_name_promt">What is your sin?</string>
     <string name="anonymous">Anonymous</string>
+    <string name="confession_animation_description">Confession_animation</string>
+    <string name="feedback">Feedback</string>
 </resources>

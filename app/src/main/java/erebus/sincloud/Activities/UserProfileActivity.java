@@ -143,14 +143,11 @@ public class UserProfileActivity extends AppCompatActivity
 
     private void loadUserInfo()
     {
-        TextView name = findViewById(R.id.activity_user_profile_name);
         final TextView sinsNumber = findViewById(R.id.activity_user_profile_sins_number);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null)
         {
-            name.setText(user.getDisplayName());
-
             final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
             userRef.addValueEventListener(new ValueEventListener()
             {

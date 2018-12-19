@@ -102,15 +102,21 @@ public class MainActivity extends AppCompatActivity
     {
         // Handle item selection
         switch (item.getItemId()) {
-//            case R.id.menu_main_action_settings:
-//
-//                return true;
+            case R.id.menu_main_action_feedback:
+                feedback();
+                return true;
             case R.id.menu_main_action_logout:
                 logout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void feedback()
+    {
+//        Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
+//        startActivity(intent);
     }
 
     private void openUserProfileActivity()

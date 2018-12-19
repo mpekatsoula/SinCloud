@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import erebus.sincloud.Helpers.PlayingState;
 import erebus.sincloud.Models.Comment;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
@@ -41,7 +42,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -67,6 +67,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     private ArrayList<Comment> commentsArray = new ArrayList<>();
     private ArrayList<String> commentsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private PlayingState audioState = PlayingState.STOPPED_STATE;
 
 
     @Override
@@ -113,7 +114,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void onClick(View v)
             {
-                playAudio();
+                handleAudioPlayback();
             }
         });
         backToolbarButton.setOnClickListener(new View.OnClickListener()
@@ -267,9 +268,13 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 }
                 chatMessageText.setText("");
 
+                // Store a reference in the user's database that he made a comment
+                FirebaseDatabase.getInstance().getReference().child("users").child(userUid).child("scomments").child(sinRefString).setValue(true);
+
                 final DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString).push();
                 Comment comment = new Comment(userUid, message, 0, commentsRef.getKey());
                 commentsRef.setValue(comment);
+                getComments();
             }
         });
     }
@@ -280,42 +285,77 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         waveform.setTouchable(false);
     }
 
-    private void playAudio()
+    private void handleAudioPlayback()
     {
         if(mediaPlayer == null)
         {
             mediaPlayer = new MediaPlayer();
         }
-
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-        audioPlayer = new AudioPlayer(mediaPlayer);
-        audioPlayer.execute(sin.getUrl());
-
-        // Needs to run on UI thread
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
+        switch (audioState)
         {
-            @Override
-            public void onPrepared(MediaPlayer mp)
-            {
-                Timer audioTimer = new Timer();
-                final int duration = mediaPlayer.getDuration();
-                final int amoungToupdate = duration / 100;
-                audioTimer.schedule(new TimerTask()
+            case PLAYING_STATE:
+                mediaPlayer.pause();
+                audioState = PlayingState.PAUSED_STATE;
+                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
+                break;
+            case PAUSED_STATE:
+                mediaPlayer.start();
+                audioState = PlayingState.PLAYING_STATE;
+                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+                break;
+            case STOPPED_STATE:
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+                audioPlayer = new AudioPlayer(mediaPlayer);
+                audioPlayer.execute(sin.getUrl());
+                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+                audioState = PlayingState.PLAYING_STATE;
+
+                // Needs to run on UI thread
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
                 {
                     @Override
-                    public void run()
+                    public void onPrepared(MediaPlayer mp)
                     {
-                        runOnUiThread(new Runnable() {
-
+                        Timer audioTimer = new Timer();
+                        final int duration = mediaPlayer.getDuration();
+                        final int amoungToupdate = duration / 100;
+                        audioTimer.schedule(new TimerTask()
+                        {
                             @Override
                             public void run()
                             {
-                                float audioProgress = 100.f * mediaPlayer.getCurrentPosition() / (float)mediaPlayer.getDuration();
-                                waveform.setProgress(audioProgress);
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run()
+                                    {
+                                        if(mediaPlayer != null)
+                                        {
+                                            float audioProgress = 100.f * mediaPlayer.getCurrentPosition() / (float)mediaPlayer.getDuration();
+                                            waveform.setProgress(audioProgress);
+                                        }
+
+                                    }
+                                });
                             }
-                        });
+                        }, 0, amoungToupdate);
                     }
-                }, 0, amoungToupdate);
+                });
+                break;
+        }
+
+        // Reset media player state
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+        {
+            @Override
+            public void onCompletion(MediaPlayer mp)
+            {
+                audioState = PlayingState.STOPPED_STATE;
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                mediaPlayer = null;
+                waveform.setProgress(0);
+                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
             }
         });
     }

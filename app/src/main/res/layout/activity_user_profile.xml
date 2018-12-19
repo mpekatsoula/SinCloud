@@ -57,12 +57,12 @@
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/activity_user_profile_image"
-        android:layout_width="52dp"
+        android:layout_width="48dp"
         android:layout_height="52dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/ic_baseline_account_circle_24px"
-        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_name"
-        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_name"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_toolbar"/>
 
     <com.google.android.material.tabs.TabLayout
@@ -145,25 +145,15 @@
         app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_sins_text"/>
 
     <TextView
-        android:id="@+id/activity_user_profile_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/md_black_1000"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_image"/>
-
-    <TextView
         android:id="@+id/activity_user_profile_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:textAlignment="center"
         android:textColor="@color/md_black_1000"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_name"
-        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_name"
-        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_name"/>
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_image"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_image"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

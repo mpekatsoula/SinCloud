@@ -2,6 +2,7 @@ package erebus.sincloud.Activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,7 +46,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private FloatingActionButton pauseRecordingButton;
     private FloatingActionButton cancelRecordingButton;
     private FloatingActionButton uploadRecordingButton;
-    private ProgressBar uploadProgressBar;
     private RecordButtonStates nextRecordButtonState;
     private CountdownView countdownView;
     private Button backToolbarButton;
@@ -53,6 +54,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private int MAX_CHARACTER_LIMIT = 128;
     private final int RECORD_TIME_IN_SEC = 60;
     private final int RECORD_TIME_IN_MS = 1000 * RECORD_TIME_IN_SEC;
+    private AnimationDrawable confessionAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -65,7 +67,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         pauseRecordingButton = findViewById(R.id.record_sin_activity_pause);
         cancelRecordingButton = findViewById(R.id.record_sin_activity_cancel);
         uploadRecordingButton = findViewById(R.id.record_sin_activity_upload);
-        uploadProgressBar = findViewById(R.id.record_sin_activity_progress_bar);
         countdownView = findViewById(R.id.record_sin_activity_countdown);
         backToolbarButton = findViewById(R.id.record_sin_activity_back);
 
@@ -79,9 +80,21 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         });
 
         countdownView.updateShow(RECORD_TIME_IN_MS);
+
         checkPermissions();
         setupRecordingButtons();
         setupCountdown();
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+        ImageView rocketImage = findViewById(R.id.record_sin_activity_animation);
+        rocketImage.setBackgroundResource(R.drawable.confession_animation);
+        confessionAnimation = (AnimationDrawable) rocketImage.getBackground();
+        confessionAnimation.setOneShot(false);
     }
 
     private void setupCountdown()
@@ -93,6 +106,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             public void onEnd(CountdownView cv)
             {
                 pauseStopRecordingAction();
+                confessionAnimation.stop();
             }
         });
     }
@@ -131,6 +145,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     case START_RECORDING:
                         // Disable the button in case the user clicks it very fast
                         recordSinButton.setClickable(false);
+                        confessionAnimation.start();
 
                         // Don't forget to reset the state of cancel button after the user has uploaded a sin
                         cancelRecordingButton.setClickable(true);
@@ -162,6 +177,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     case PAUSE_RECORDING:
                         Log.d(TAG, "State:recordSinButton  PAUSE_RECORDING" );
                         pauseStopRecordingAction();
+                        confessionAnimation.stop();
                         break;
                 }
             }
@@ -178,6 +194,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         Log.d(TAG, "State: pauseRecordingButton STOP_RECORDING" );
                         audioRecorder.pause();
                         countdownView.stop();
+                        confessionAnimation.stop();
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_mic_24px);
                         nextRecordButtonState = RecordButtonStates.PAUSE_RECORDING;
                         break;
@@ -185,6 +202,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         Log.d(TAG, "State: pauseRecordingButton PAUSE_RECORDING" );
                         audioRecorder.resume();
                         countdownView.start(countdownView.getRemainTime());
+                        confessionAnimation.start();
                         pauseRecordingButton.setImageResource(R.drawable.ic_round_pause_24px);
                         nextRecordButtonState = RecordButtonStates.STOP_RECORDING;
                         break;
@@ -201,6 +219,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                 recordSinButton.show();
                 setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                 countdownView.updateShow(RECORD_TIME_IN_MS);
+                confessionAnimation.stop();
             }
         });
 
@@ -254,6 +273,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         uploadSinToFirebase(sinName);
                         // Reset countdown
                         countdownView.updateShow(RECORD_TIME_IN_MS);
+                        confessionAnimation.stop();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -304,7 +324,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     {
         final UploadFirebase uploadFile = new UploadFirebase();
         long timeRecored = RECORD_TIME_IN_SEC - countdownView.getRemainTime() / 1000;
-        uploadFile.UploadSinToFirebase(sinFilename, sinName, timeRecored, recordSinButton, uploadProgressBar, this);
+        uploadFile.UploadSinToFirebase(sinFilename, sinName, timeRecored, recordSinButton, this);
         cancelRecordingButton.setClickable(false);
         uploadRecordingButton.setClickable(false);
     }
@@ -350,6 +370,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             new AppSettingsDialog.Builder(this).build().show();
         }
     }
+
     @Override
     public void onStop()
     {

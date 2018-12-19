@@ -1,12 +1,22 @@
 package erebus.sincloud.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +24,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.onRecycleViewClickListener;
@@ -54,16 +65,12 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onClick(View view, int position)
             {
-                Sin userInfo = sinsArray.get(position);
-                Log.d(TAG, "onCLick: " + userInfo.getTitle());
-
-//                // Find the sin that the user selected and start activity
-//                Intent intent = new Intent(getActivity(), DisplaySinActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("users_key", userInfo.getUid());
-//                bundle.putString("users_photoURL", userInfo.getPhotoURL());
-//                intent.putExtras(bundle);
-//                startActivity(intent);
+                // Find the sin that the user selected and start activity
+                Intent intent = new Intent(getActivity(), DisplaySinActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("sinRef", sinsRefs.get(position));
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
 
             @Override
@@ -74,18 +81,71 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        // Get the list of the latest sins
-        getNotifications();
+        // Get the list of the user's history
+        getHistory();
     }
 
-    private void getNotifications()
+    private void getHistory()
     {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid());
 
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                sinsArray.clear();
+                sinsRefs.clear();
+
+                ArrayList<String> sinsStrRefs = new ArrayList<>();
+                // For each sin set sin data
+                for(DataSnapshot sin : dataSnapshot.child("scomments").getChildren())
+                {
+                    sinsStrRefs.add(sin.getKey());
+                }
+                for(DataSnapshot sin : dataSnapshot.child("likes").getChildren())
+                {
+                    if(!sinsStrRefs.contains(sin.getKey()))
+                    {
+                        sinsStrRefs.add(sin.getKey());
+                    }
+                }
+
+                for(String sinStrRef : sinsStrRefs)
+                {
+                    final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinStrRef);
+                    sinRef.addListenerForSingleValueEvent(new ValueEventListener()
+                    {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                        {
+                            Sin new_sin = dataSnapshot.getValue(Sin.class);
+                            sinsArray.add(new_sin);
+                            sinsRefs.add(dataSnapshot.getKey());
+                            mAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError)
+                        {
+                        }
+                    });
+                }
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
     public void onRefresh()
     {
-
+        getHistory();
     }
 }

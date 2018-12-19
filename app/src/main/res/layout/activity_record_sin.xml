@@ -70,15 +70,38 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/record_sin_activity_start_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/record_sin_activity_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_round_pause_24px"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_start_stop"
-        app:layout_constraintEnd_toEndOf="@+id/record_sin_activity_start_stop"
-        app:layout_constraintStart_toStartOf="@+id/record_sin_activity_start_stop"/>
+        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_start_container"
+        app:layout_constraintEnd_toEndOf="@+id/record_sin_activity_start_container"
+        app:layout_constraintStart_toStartOf="@+id/record_sin_activity_start_container"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/record_sin_activity_pause_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_round_pause_24px"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_start_container"
+        app:layout_constraintEnd_toEndOf="@+id/record_sin_activity_start_container"
+        app:layout_constraintStart_toStartOf="@+id/record_sin_activity_start_container"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/record_sin_activity_cancel"
@@ -100,30 +123,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ProgressBar
-        android:id="@+id/record_sin_activity_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/main_activity_toolbar"/>
-
     <cn.iwgang.countdownview.CountdownView
         android:id="@+id/record_sin_activity_countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="52dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="32dp"
         app:isHideTimeBackground="true"
         app:isShowMinute="true"
         app:isShowSecond="true"
         app:isTimeTextBold="true"
+        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_pause_container"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/record_sin_activity_progress_bar"
         app:suffixGravity="bottom"
         app:suffixMinute="min"
         app:suffixSecond="sec"
@@ -131,5 +145,20 @@
         app:suffixTextSize="12sp"
         app:timeTextColor="#000000"
         app:timeTextSize="22sp"/>
+
+    <ImageView
+        android:id="@+id/record_sin_activity_animation"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/confession_animation_description"
+        app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_countdown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_activity_toolbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
