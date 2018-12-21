@@ -2,7 +2,6 @@ package erebus.sincloud.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +25,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.onRecycleViewClickListener;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
+import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
     private static final String TAG = "NotificationsFragment";
-    private RecyclerView.Adapter mAdapter;
+    private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -55,6 +56,8 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.TRENDING);
+        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter));
+
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -87,7 +90,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private void getHistory()
     {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid());
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener()
@@ -112,7 +115,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }
                 }
 
-                for(String sinStrRef : sinsStrRefs)
+                for(final String sinStrRef : sinsStrRefs)
                 {
                     final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinStrRef);
                     sinRef.addListenerForSingleValueEvent(new ValueEventListener()
@@ -120,6 +123,12 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                         {
+                            if(dataSnapshot.getValue() == null)
+                            {
+                                FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("scomments").child(sinStrRef).removeValue();
+                                FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("likes").child(sinStrRef).removeValue();
+                                return;
+                            }
                             Sin new_sin = dataSnapshot.getValue(Sin.class);
                             sinsArray.add(new_sin);
                             sinsRefs.add(dataSnapshot.getKey());

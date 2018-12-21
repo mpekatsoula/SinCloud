@@ -1,8 +1,6 @@
 package erebus.sincloud.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +20,18 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
-import erebus.sincloud.Listeners.SinMenuListener;
-import erebus.sincloud.Listeners.onRecycleViewClickListener;
+import erebus.sincloud.Listeners.PlayButtonListener;
+import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
+import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
     private static final String TAG = "DiscoverFragment";
-    private RecyclerView.Adapter mAdapter;
+    private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -54,30 +52,13 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.DISCOVER);
+        mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
+        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter));
+
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-
-        mRecyclerView.addOnItemTouchListener(new SinMenuListener(view.getContext(), mRecyclerView, new onRecycleViewClickListener()
-        {
-            @Override
-            public void onClick(View view, int position)
-            {
-                Sin userInfo = sinsArray.get(position);
-                Log.d(TAG, "onCLick: " + userInfo.getTitle());
-
-                // Find the sin that the user selected and start activity
-                Intent intent = new Intent(getActivity(), DisplaySinActivity.class);
-                Bundle bundleSin = new Bundle();
-                bundleSin.putString("sinRef", sinsRefs.get(position));
-                intent.putExtras(bundleSin);
-                startActivity(intent);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {}
-        }));
 
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

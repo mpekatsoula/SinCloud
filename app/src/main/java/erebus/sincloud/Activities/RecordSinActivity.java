@@ -1,6 +1,7 @@
 package erebus.sincloud.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaRecorder;
@@ -78,7 +79,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                 finish();
             }
         });
-
         countdownView.updateShow(RECORD_TIME_IN_MS);
 
         checkPermissions();

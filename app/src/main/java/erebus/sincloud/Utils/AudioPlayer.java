@@ -3,15 +3,20 @@ package erebus.sincloud.Utils;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Button;
+
+import erebus.sincloud.R;
 
 public class AudioPlayer extends AsyncTask<String, Void, Boolean>
 {
     private MediaPlayer mediaPlayer;
+    private Button button;
     private String TAG = "AudioPlayer";
 
-    public AudioPlayer(MediaPlayer mediaPlayer)
+    public AudioPlayer(MediaPlayer mediaPlayer, Button button)
     {
         this.mediaPlayer = mediaPlayer;
+        this.button = button;
     }
 
     @Override
@@ -28,6 +33,10 @@ public class AudioPlayer extends AsyncTask<String, Void, Boolean>
                 {
                     mediaPlayer.stop();
                     mediaPlayer.reset();
+                    if(button != null)
+                    {
+                        button.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
+                    }
                 }
             });
 

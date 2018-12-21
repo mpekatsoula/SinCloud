@@ -33,6 +33,19 @@
         app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
         app:layout_constraintTop_toBottomOf="@+id/sin_view_nickname"/>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sin_view_inner_constraint_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sin_view_date"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/sin_view_date"
         android:layout_width="wrap_content"

@@ -1,8 +1,5 @@
 package erebus.sincloud.UI;
 
-import android.content.DialogInterface;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,15 +15,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
-import erebus.sincloud.Utils.AudioPlayer;
 import erebus.sincloud.Utils.TimeUtils;
 
 public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHolder>
@@ -36,25 +29,37 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     private ArrayList<Sin> mDataset;
     private ArrayList<String> sinsRefs;
     private String TAG = "SinsMenuAdapter";
-    private MediaPlayer mediaPlayer = null;
-    private AudioPlayer audioPlayer = null;
-    private int previousHolderPosition = -1;
-    private int currentPlayingPosition = -1;
     private SinMenuAdapterTypes adapterType;
+    private View.OnClickListener playButtonViewOnClickListener;
+    private View.OnClickListener deleteButtonViewOnClickListener;
+    private View.OnClickListener innerConstraintLayoutViewOnClickListener;
+
+    public void setPlayClickListener(View.OnClickListener clickListener)
+    {
+        playButtonViewOnClickListener = clickListener;
+    }
+    public void setDeleteClickListener(View.OnClickListener clickListener)
+    {
+        deleteButtonViewOnClickListener = clickListener;
+    }
+    public void setInnerConstraintLayoutClickListener(View.OnClickListener clickListener)
+    {
+        innerConstraintLayoutViewOnClickListener = clickListener;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder
+    class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView titleTxtView;
         TextView commentsTxtView;
         TextView likesTxtView;
         TextView dateTxtView;
         TextView nicknameTxtView;
+        ConstraintLayout innerConstraintLayout;
         Button playButton;
         Button deleteButton = null;
-        private boolean isPlaying = false;
 
         ViewHolder(View v, SinMenuAdapterTypes adapterType)
         {
@@ -67,6 +72,9 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 dateTxtView = v.findViewById(R.id.sin_view_user_date);
                 playButton = v.findViewById(R.id.sin_view_user_play_button);
                 deleteButton = v.findViewById(R.id.sin_view_user_delete_button);
+                innerConstraintLayout = v.findViewById(R.id.sin_view_user_inner_constraint_layout);
+                deleteButton.setTag(this);
+                deleteButton.setOnClickListener(deleteButtonViewOnClickListener);
             }
             else
             {
@@ -76,10 +84,16 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 dateTxtView = v.findViewById(R.id.sin_view_date);
                 playButton = v.findViewById(R.id.sin_view_play_button);
                 nicknameTxtView = v.findViewById(R.id.sin_view_nickname);
+                innerConstraintLayout = v.findViewById(R.id.sin_view_inner_constraint_layout);
             }
+
+            playButton.setTag(this);
+            playButton.setOnClickListener(playButtonViewOnClickListener);
+            innerConstraintLayout.setTag(this);
+            innerConstraintLayout.setOnClickListener(innerConstraintLayoutViewOnClickListener);
         }
 
-        private void setPlayButtonSrc(boolean playing)
+        public void setPlayButtonSrc(boolean playing)
         {
             Log.d("SinsMenuAdapter", "setPlayButtonSrc " + playing);
             if(playing)
@@ -128,15 +142,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position)
     {
         Log.d(TAG, "onBindViewHolder() position: " + position);
-
-        // If case we get notified and we were playing an audio file before
-        // toggle the play button.
-        if(currentPlayingPosition != -1 && currentPlayingPosition != holder.getAdapterPosition())
-        {
-            holder.setPlayButtonSrc(true);
-            previousHolderPosition = currentPlayingPosition;
-        }
-
         final Sin sin = mDataset.get(position);
 
         holder.titleTxtView.setText(sin.getTitle());
@@ -152,89 +157,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         else
         {
             holder.dateTxtView.setText(DateFormat.format("HH:mm", sin.getMessageTimeLong()));
-        }
-
-        // Set up listener for play button
-        holder.playButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if(mediaPlayer == null)
-                {
-                    mediaPlayer = new MediaPlayer();
-                }
-                else
-                {
-                    if(holder.isPlaying)
-                    {
-                        mediaPlayer.stop();
-                        holder.setPlayButtonSrc(false);
-                        return;
-                    }
-                    else
-                    {
-                        mediaPlayer.reset();
-                        audioPlayer.cancel(true);
-                        audioPlayer = null;
-                    }
-                }
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-                audioPlayer = new AudioPlayer(mediaPlayer);
-                audioPlayer.execute(sin.getUrl());
-                holder.setPlayButtonSrc(false);
-                currentPlayingPosition = holder.getAdapterPosition();
-                if(previousHolderPosition == -1)
-                {
-                    previousHolderPosition = currentPlayingPosition;
-                }
-                // if the user hits a new play button while the previous hasn't stopped,
-                // notify the previous view in order to reset it
-                if(previousHolderPosition != currentPlayingPosition)
-                {
-                    Log.d(TAG, "Notifying " + previousHolderPosition);
-                    notifyItemChanged(previousHolderPosition);
-                }
-            }
-        });
-
-        // Set listener for delete button
-        if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
-        {
-            holder.deleteButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle("Are you sure you want to delete this sin?");
-                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            DatabaseReference sinUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("sins").child(sinsRefs.get(position));
-                            sinUserRef.removeValue();
-                            DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinsRefs.get(position));
-                            sinRef.removeValue();
-                            sinsRefs.remove(position);
-                            mDataset.remove(position);
-                            notifyDataSetChanged();
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-
-                }
-            });
         }
 
         // Load user's nickname
@@ -272,4 +194,8 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     {
         return mDataset.size();
     }
+    public Sin getItem(int position){return mDataset.get(position);}
+    public String getItemRef(int position){return sinsRefs.get(position);}
+    public void removeItem(int position){mDataset.remove(position);}
+    public void removeItemRef(int position){sinsRefs.remove(position);}
 }

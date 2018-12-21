@@ -10,6 +10,7 @@ import erebus.sincloud.Fragments.DiscoverFragment;
 import erebus.sincloud.Fragments.NotificationsFragment;
 import erebus.sincloud.Fragments.TrendingFragment;
 import erebus.sincloud.R;
+import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.Utils.LoadPictureToView;
 
 import android.content.Intent;
@@ -72,6 +73,13 @@ public class MainActivity extends AppCompatActivity
                 openUserProfileActivity();
             }
         });
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        SinAudioPlayer.getInstance().stopPlayback();
     }
 
     private void setupTabNames(TabLayout tabLayout)

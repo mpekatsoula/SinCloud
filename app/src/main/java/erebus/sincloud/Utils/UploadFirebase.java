@@ -1,5 +1,6 @@
 package erebus.sincloud.Utils;
 
+import android.app.ProgressDialog;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +51,11 @@ public class UploadFirebase
         Uri file = Uri.fromFile(new File(localFilename));
         final UploadTask uploadTask = fileRef.putFile(file);
 
+        // Show waiting dialog
+        final ProgressDialog uploadingDialog = ProgressDialog.show(recordSinActivity, "Uploading sin",
+                "Sending to god, please wait...", true);
+        uploadingDialog.create();
+
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener()
         {
@@ -57,6 +63,9 @@ public class UploadFirebase
             public void onFailure(@NonNull Exception exception)
             {
                 // Handle unsuccessful uploads
+                recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
+                recordSinButton.show();
+                uploadingDialog.dismiss();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
         {
@@ -87,6 +96,7 @@ public class UploadFirebase
 
                             recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
                             recordSinButton.show();
+                            uploadingDialog.dismiss();
                         }
                     });
             }

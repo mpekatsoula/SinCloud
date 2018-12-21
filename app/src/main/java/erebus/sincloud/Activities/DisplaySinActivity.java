@@ -305,7 +305,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 break;
             case STOPPED_STATE:
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-                audioPlayer = new AudioPlayer(mediaPlayer);
+                audioPlayer = new AudioPlayer(mediaPlayer, null);
                 audioPlayer.execute(sin.getUrl());
                 playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
                 audioState = PlayingState.PLAYING_STATE;

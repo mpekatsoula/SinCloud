@@ -31,7 +31,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import erebus.sincloud.Adapters.FragmentAdapter;
 import erebus.sincloud.Fragments.HistoryFragment;
 import erebus.sincloud.Fragments.SinsViewFragment;
+import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.R;
+import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.Utils.LoadPictureToView;
 
 public class UserProfileActivity extends AppCompatActivity
@@ -48,7 +50,6 @@ public class UserProfileActivity extends AppCompatActivity
         setContentView(R.layout.activity_user_profile);
         Button backToolbarButton = findViewById(R.id.activity_user_profile_back);
         nicknameTxtView = findViewById(R.id.activity_user_profile_nickname);
-
         backToolbarButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -71,6 +72,13 @@ public class UserProfileActivity extends AppCompatActivity
         loadProfilePic();
         loadUserInfo();
         setupNicknameListener();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        SinAudioPlayer.getInstance().stopPlayback();
     }
 
     private void setupNicknameListener()
