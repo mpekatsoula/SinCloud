@@ -134,9 +134,12 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     protected void onStop()
     {
         super.onStop();
-        mediaPlayer.stop();
-        mediaPlayer.release();
-        mediaPlayer = null;
+        if(mediaPlayer != null)
+        {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
     private void setupLikeButton()
     {

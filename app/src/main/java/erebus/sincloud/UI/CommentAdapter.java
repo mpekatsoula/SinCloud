@@ -108,10 +108,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     profileImageLoader.LoadProfilePictureToView(context,  holder.imageViewProfile, "https://d50m6q67g4bn3.cloudfront.net/avatars/f38ca4f8-4cf8-4d43-b54f-a46c417aadd7_1519597926301");
                 }
 
-                Object userameObject = dataSnapshot.child("username").getValue();
-                if(userameObject != null)
+                Object usernameObject = dataSnapshot.child("nickname").getValue();
+                if(usernameObject != null)
                 {
-                    holder.usernameTextView.setText(userameObject.toString());
+                    holder.usernameTextView.setText(usernameObject.toString());
                 }
                 else
                 {
