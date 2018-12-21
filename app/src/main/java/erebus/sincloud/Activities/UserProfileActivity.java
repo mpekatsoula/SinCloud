@@ -7,6 +7,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class UserProfileActivity extends AppCompatActivity
     private TextView nicknameTxtView;
     private FragmentAdapter pageAdapter;
     private int MAX_NICKNAME_CHARACTER_LIMIT = 10;
+    private AlertDialog changeUsernameDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -110,16 +112,9 @@ public class UserProfileActivity extends AppCompatActivity
             }
         });
 
-        nicknameTxtView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                // Create an alert dialog to get new username
-                AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
-                builder.setTitle(getString(R.string.setup_nickname_dialog_promt));
-                builder.setView(input);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        changeUsernameDialog = new AlertDialog.Builder(UserProfileActivity.this)
+                .setTitle(getString(R.string.setup_nickname_dialog_promt))
+                .setView(input).setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
@@ -135,16 +130,23 @@ public class UserProfileActivity extends AppCompatActivity
                         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("nickname");
                         userRef.setValue(sinName);
                     }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
                         dialog.cancel();
                     }
-                });
-                builder.show();
+                })
+                .create();
+
+        nicknameTxtView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                changeUsernameDialog.show();
             }
         });
     }

@@ -36,7 +36,7 @@ public class SinAudioPlayer
 
     private void resetPlayerState()
     {
-        if(player.isPlaying())
+        if(audioPlayer != null)
         {
             audioPlayer.cancel(true);
             audioPlayer = null;
@@ -81,7 +81,7 @@ public class SinAudioPlayer
 
         resetPlayerState();
 
-        if(playingButton != null)
+        if(playingButton != null && playingButton.get() != null)
         {
             playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
         }

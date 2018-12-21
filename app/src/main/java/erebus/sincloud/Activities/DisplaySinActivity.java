@@ -69,7 +69,6 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private PlayingState audioState = PlayingState.STOPPED_STATE;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -131,6 +130,14 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         displayComments();
     }
 
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
     private void setupLikeButton()
     {
         likeSinButton.setOnClickListener(new View.OnClickListener()

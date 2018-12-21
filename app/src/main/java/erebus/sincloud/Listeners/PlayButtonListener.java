@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.recyclerview.widget.RecyclerView;
+import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
 import erebus.sincloud.Singletons.SinAudioPlayer;
@@ -12,9 +13,11 @@ import erebus.sincloud.UI.SinsMenuAdapter;
 public class PlayButtonListener implements View.OnClickListener
 {
     private SinsMenuAdapter mAdapter;
-    public PlayButtonListener(SinsMenuAdapter mAdapter)
+    private SinMenuAdapterTypes adapterType;
+    public PlayButtonListener(SinsMenuAdapter mAdapter, SinMenuAdapterTypes adapterType)
     {
         this.mAdapter = mAdapter;
+        this.adapterType = adapterType;
     }
 
     @Override
@@ -23,7 +26,15 @@ public class PlayButtonListener implements View.OnClickListener
         RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
         final int position = viewHolder.getAdapterPosition();
         final Sin sin = mAdapter.getItem(position);
-        Button button = v.findViewById(R.id.sin_view_user_play_button);
+        Button button;
+        if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
+        {
+            button = v.findViewById(R.id.sin_view_user_play_button);
+        }
+        else
+        {
+            button = v.findViewById(R.id.sin_view_play_button);
+        }
         SinAudioPlayer.getInstance().playSin(sin.getUrl(), button);
     }
 }

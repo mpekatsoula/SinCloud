@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,7 +55,7 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.USER_SETTINGS);
         mAdapter.setDeleteClickListener(new DeleteButtonListener(mAdapter));
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
-        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter));
+        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.USER_SETTINGS));
 
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
@@ -101,10 +100,10 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError)
                         {
-                            mSwipeRefreshLayout.setRefreshing(false);
                         }
                     });
                 }
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
