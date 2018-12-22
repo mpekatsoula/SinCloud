@@ -1,5 +1,19 @@
 package erebus.sincloud.Activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.instabug.library.Instabug;
+
+import java.util.Objects;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -12,19 +26,6 @@ import erebus.sincloud.Fragments.TrendingFragment;
 import erebus.sincloud.R;
 import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.Utils.LoadPictureToView;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity
 
     private void feedback()
     {
+        Instabug.showSurvey("M84VN19yoiBNEiuiKg4rzA");
 //        Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
 //        startActivity(intent);
     }
