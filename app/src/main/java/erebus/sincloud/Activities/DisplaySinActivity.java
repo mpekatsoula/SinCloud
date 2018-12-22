@@ -419,25 +419,28 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
 
     private void getFirebaseFile()
     {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(sin.getUrl());
-        Log.d(TAG, "loading url: " + sin.getUrl());
-        storageRef.getBytes(MAX_DATA_SIZE).addOnSuccessListener(new OnSuccessListener<byte[]>()
+        if(sin != null)
         {
-            @Override
-            public void onSuccess(byte[] bytes)
+            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(sin.getUrl());
+            Log.d(TAG, "loading url: " + sin.getUrl());
+            storageRef.getBytes(MAX_DATA_SIZE).addOnSuccessListener(new OnSuccessListener<byte[]>()
             {
-                Log.d(TAG, "getFirebaseFile success");
-                audioFileRAW = bytes;
-                loadWaveform();
-            }
-        }).addOnFailureListener(new OnFailureListener()
-        {
-            @Override
-            public void onFailure(@NonNull Exception exception)
+                @Override
+                public void onSuccess(byte[] bytes)
+                {
+                    Log.d(TAG, "getFirebaseFile success");
+                    audioFileRAW = bytes;
+                    loadWaveform();
+                }
+            }).addOnFailureListener(new OnFailureListener()
             {
-                Log.d(TAG, "getFirebaseFile failure");
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Exception exception)
+                {
+                    Log.d(TAG, "getFirebaseFile failure");
+                }
+            });
+        }
     }
 
     @Override

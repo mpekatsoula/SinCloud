@@ -10,8 +10,12 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.instabug.library.Instabug;
+import com.stepstone.apprating.AppRatingDialog;
+import com.stepstone.apprating.listener.RatingDialogListener;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +31,7 @@ import erebus.sincloud.R;
 import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.Utils.LoadPictureToView;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements RatingDialogListener
 {
     private FragmentAdapter pageAdapter;
 
@@ -124,9 +128,22 @@ public class MainActivity extends AppCompatActivity
 
     private void feedback()
     {
-        Instabug.showSurvey("M84VN19yoiBNEiuiKg4rzA");
-//        Intent intent = new Intent(getApplicationContext(), FeedbackActivity.class);
-//        startActivity(intent);
+        new AppRatingDialog.Builder()
+                .setPositiveButtonText("Submit")
+                .setNegativeButtonText("Cancel")
+                .setNeutralButtonText("Later")
+                .setNoteDescriptions(Arrays.asList("Very Bad", "Not good", "Quite ok", "Very Good", "Excellent !!!"))
+                .setDefaultRating(2)
+                .setTitle("Rate SinCloud")
+                .setDescription("How did you find the overall experience?")
+                .setCommentInputEnabled(true)
+                .setDefaultComment("This app is pretty cool !")
+                .setHint("Please write your comment here ...")
+                .setCommentBackgroundColor(R.color.md_grey_400)
+                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .create(MainActivity.this)
+                .show();
     }
 
     private void openUserProfileActivity()
@@ -142,5 +159,23 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onNegativeButtonClicked()
+    {
+
+    }
+
+    @Override
+    public void onNeutralButtonClicked()
+    {
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked(int i, @NotNull String s)
+    {
+
     }
 }
