@@ -25,7 +25,6 @@ import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
-import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
@@ -54,7 +53,6 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.DISCOVER);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.DISCOVER));
-
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

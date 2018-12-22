@@ -43,6 +43,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -87,7 +88,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         mSwipeRefreshLayout = findViewById(R.id.display_sin_activity_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        // Get sin reference and create database reference
+        // Get sin reference
         sinRefString = getIntent().getStringExtra("sinRef");
         final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinRefString);
         sinRef.addValueEventListener(new ValueEventListener()
@@ -99,6 +100,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 getFirebaseFile();
                 toolbarTextView.setText(sin.getTitle());
                 likesTextView.setText(String.valueOf(sin.getLikes()));
+                // Update notify
+                if(sin.getUserid().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                {
+                    FirebaseDatabase.getInstance().getReference().child("notify").child("sin").child(sinRefString).setValue(false);
+                }
             }
 
             @Override
@@ -107,6 +113,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
 
             }
         });
+
 
         playButton.setOnClickListener(new View.OnClickListener()
         {
@@ -126,7 +133,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         });
 
         setupLikeButton();
-        setupChatInput();
+        setupCommentInput();
         displayComments();
     }
 
@@ -218,7 +225,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         });
     }
 
-    private void setupChatInput()
+    private void setupCommentInput()
     {
         chatMessageText.addTextChangedListener(new TextWatcher()
         {
@@ -280,6 +287,13 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
 
                 // Store a reference in the user's database that he made a comment
                 FirebaseDatabase.getInstance().getReference().child("users").child(userUid).child("scomments").child(sinRefString).setValue(true);
+
+                // Update notifications db
+                // Update notify
+                if(sin != null && !sin.getUserid().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
+                {
+                    FirebaseDatabase.getInstance().getReference().child("notify").child("sin").child(sinRefString).setValue(true);
+                }
 
                 final DatabaseReference commentsRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString).push();
                 Comment comment = new Comment(userUid, message, 0, commentsRef.getKey());

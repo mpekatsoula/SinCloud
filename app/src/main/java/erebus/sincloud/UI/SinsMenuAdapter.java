@@ -92,19 +92,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
             innerConstraintLayout.setTag(this);
             innerConstraintLayout.setOnClickListener(innerConstraintLayoutViewOnClickListener);
         }
-
-        public void setPlayButtonSrc(boolean playing)
-        {
-            Log.d("SinsMenuAdapter", "setPlayButtonSrc " + playing);
-            if(playing)
-            {
-                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
-            }
-            else
-            {
-                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
-            }
-        }
     }
 
     // Constructor
@@ -127,6 +114,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         {
             case DISCOVER:
             case TRENDING:
+            case NOTIFICATIONS:
                 itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sin_view, parent, false);
                 break;
             case USER_SETTINGS:

@@ -40,11 +40,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activities.PopularActivity"
-            android:label="@string/title_activity_popular"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
         <activity android:name=".Activities.RecordSinActivity">
         </activity>
         <activity android:name=".Activities.UserProfileActivity">
