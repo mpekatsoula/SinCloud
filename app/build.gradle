@@ -24,6 +24,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -35,7 +36,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.5'
     implementation 'com.firebaseui:firebase-ui-database:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.7'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
     implementation 'com.facebook.android:facebook-login:4.28.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'pub.devrel:easypermissions:2.0.0'
@@ -43,6 +44,7 @@ dependencies {
     implementation 'com.github.alxrm:audiowave-progressbar:0.9.2'
     implementation 'com.github.iwgang:countdownview:2.1.6'
     implementation 'com.stepstone.apprating:app-rating:2.3.0'
+    implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 }
 

@@ -1,7 +1,6 @@
 package erebus.sincloud.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -27,10 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Listeners.PlayButtonListener;
-import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
-import erebus.sincloud.Listeners.onRecycleViewClickListener;
-import erebus.sincloud.Models.Comment;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
 import erebus.sincloud.UI.SinsMenuAdapter;

@@ -212,9 +212,17 @@ public class LoginActivity extends AppCompatActivity
                 userRef.child("photoURL").setValue(user.getPhotoUrl().toString());
             }
         }
+        openOnBoardingActivity();
+//        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//        startActivity(intent);
+//        finish();
+    }
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+    private void openOnBoardingActivity()
+    {
+        Intent intent = new Intent(getApplicationContext(), OnBoardingActivity.class);
         startActivity(intent);
         finish();
     }
+
 }

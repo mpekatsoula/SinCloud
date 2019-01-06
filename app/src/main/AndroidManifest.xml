@@ -7,12 +7,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".Utils.Initialization"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".Utils.Initialization">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
@@ -49,6 +49,8 @@
         <activity android:name=".Activities.SettingsActivity">
         </activity>
         <activity android:name=".Activities.DisplaySinActivity">
+        </activity>
+        <activity android:name=".Activities.OnBoardingActivity">
         </activity>
     </application>
 
