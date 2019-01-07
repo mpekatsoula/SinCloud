@@ -47,11 +47,11 @@ public class OnBoardingActivity extends AppCompatActivity
     private ArrayList<PaperOnboardingPage> getDataForOnboarding()
     {
         // prepare data
-        PaperOnboardingPage scr1 = new PaperOnboardingPage("Welcome to SinCloud!", "When was the last time you confessed?",
+        PaperOnboardingPage scr1 = new PaperOnboardingPage(getString(R.string.welcome_onboarding), getString(R.string.welcome_onboarding_desc),
                 Color.parseColor("#CE93D8"), R.drawable.sincloud_logo, R.drawable.onboarding_pager_circle_icon);
-        PaperOnboardingPage scr2 = new PaperOnboardingPage("Sins", "Confess your sin share it with the users anonymously. Other users will help",
+        PaperOnboardingPage scr2 = new PaperOnboardingPage("Sins", "Confess your sin and share it with other users anonymously!",
                 Color.parseColor("#9FA8DA"), R.drawable.angel, R.drawable.onboarding_pager_circle_icon);
-        PaperOnboardingPage scr3 = new PaperOnboardingPage("Sins", "Discover and comment on other sins. Let's get stated!",
+        PaperOnboardingPage scr3 = new PaperOnboardingPage("Sins", "Discover other sins and be the voice of good or evil! Let's get stated!",
                 Color.parseColor("#EF9A9A"), R.drawable.devil, R.drawable.onboarding_pager_circle_icon);
 
         ArrayList<PaperOnboardingPage> elements = new ArrayList<>();

@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/comment_layout_user_photo"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,6 +23,7 @@
         android:maxWidth="240dp"
         android:padding="8dp"
         android:scaleType="centerInside"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/comment_layout_username"
         app:layout_constraintStart_toStartOf="@+id/comment_layout_username"
         app:layout_constraintTop_toBottomOf="@+id/comment_layout_username"/>
@@ -32,17 +33,18 @@
         android:id="@+id/comment_layout_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:adjustViewBounds="true"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:scaleType="centerInside"
+        android:textColor="@color/md_black_1000"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/comment_layout_time"
         app:layout_constraintStart_toEndOf="@+id/comment_layout_user_photo"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/comment_layout_time"
@@ -50,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:textSize="10sp"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -58,8 +60,9 @@
         android:id="@+id/comment_layout_like_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:background="@drawable/ic_baseline_thumb_up_alt_24px"
+        android:backgroundTint="@color/md_grey_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/comment_layout_text"
         app:layout_constraintTop_toBottomOf="@+id/comment_layout_text"/>

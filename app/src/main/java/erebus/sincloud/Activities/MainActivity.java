@@ -10,6 +10,8 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
 
@@ -176,6 +178,10 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
     @Override
     public void onPositiveButtonClicked(int i, @NotNull String s)
     {
-
+        // Store feedback to firebase
+        DatabaseReference feedbackRef = FirebaseDatabase.getInstance().getReference().child("feedback").push();
+        feedbackRef.child("feedback").setValue(s);
+        feedbackRef.child("uid").setValue(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        feedbackRef.child("stars").setValue(i);
     }
 }

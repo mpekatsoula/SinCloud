@@ -38,10 +38,11 @@ import erebus.sincloud.UI.SinsMenuAdapter;
 public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
     private static final String TAG = "TrendingFragment";
-    private SinsMenuAdapter mAdapter;
+    private SinsMenuAdapter mAdapter = null;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout = null;
+    private int scoreCounter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +85,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
                 sinsArray.clear();
                 sinsRefs.clear();
 
-                List<Pair<String, Double>> scores = new ArrayList<>();
+                final List<Pair<String, Double>> scores = new ArrayList<>();
                 for(DataSnapshot sin : dataSnapshot.getChildren())
                 {
                     Object sinKey = sin.child("key").getValue();
@@ -130,7 +131,14 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
                             int idx = 0;
                             sinsArray.add(idx, new_sin);
                             sinsRefs.add(idx, dataSnapshot.getKey());
-                            mAdapter.notifyDataSetChanged();
+                            scoreCounter++;
+
+                            // Notify adapter only when you have all the data
+                            if(scoreCounter == scores.size())
+                            {
+                                mAdapter.notifyDataSetChanged();
+                                scoreCounter = 0;
+                            }
                         }
 
                         @Override
