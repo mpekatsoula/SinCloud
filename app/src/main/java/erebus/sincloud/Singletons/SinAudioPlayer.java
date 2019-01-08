@@ -54,37 +54,30 @@ public class SinAudioPlayer
             player.setAudioStreamType(AudioManager.STREAM_SYSTEM);
         }
 
-        if(button != null)
+        if(button != null && playingButton != null && playingButton.get() == button)
         {
-            if(playingButton != null && playingButton.get() == button)
+            if(isPaused)
             {
-                if(isPaused)
-                {
-                    player.start();
-                    playingButton.get().setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
-                    isPaused = false;
-                    return;
-                }
-                if(player.isPlaying())
-                {
-                    playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
-                    player.pause();
-                    isPaused = true;
-                    return;
-                }
+                player.start();
+                isPaused = false;
+                return;
             }
-            else
+            if(player.isPlaying())
             {
-                button.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+                player.pause();
+                isPaused = true;
+                return;
             }
         }
 
         resetPlayerState();
 
+        // Change old button's state
         if(playingButton != null && playingButton.get() != null)
         {
             playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
         }
+
         playingButton = new WeakReference<>(button);
         audioPlayer = new AudioPlayer(player, button);
         audioPlayer.execute(url);

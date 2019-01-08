@@ -5,18 +5,20 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Button;
 
+import java.lang.ref.WeakReference;
+
 import erebus.sincloud.R;
 
 public class AudioPlayer extends AsyncTask<String, Void, Boolean>
 {
     private MediaPlayer mediaPlayer;
-    private Button button;
+    private WeakReference<Button> button;
     private String TAG = "AudioPlayer";
 
     public AudioPlayer(MediaPlayer mediaPlayer, Button button)
     {
         this.mediaPlayer = mediaPlayer;
-        this.button = button;
+        this.button = new WeakReference<>(button);
     }
 
     @Override
@@ -25,6 +27,10 @@ public class AudioPlayer extends AsyncTask<String, Void, Boolean>
         Boolean prepared;
         try
         {
+            if(button != null)
+            {
+                button.get().setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+            }
             mediaPlayer.setDataSource(strings[0]);
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
             {
@@ -35,7 +41,7 @@ public class AudioPlayer extends AsyncTask<String, Void, Boolean>
                     mediaPlayer.reset();
                     if(button != null)
                     {
-                        button.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
+                        button.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
                     }
                 }
             });
