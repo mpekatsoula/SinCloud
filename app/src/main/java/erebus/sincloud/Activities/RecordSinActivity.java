@@ -1,9 +1,11 @@
 package erebus.sincloud.Activities;
 
 import android.Manifest;
-import android.app.ProgressDialog;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,13 +13,15 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,15 +51,16 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private FloatingActionButton pauseRecordingButton;
     private FloatingActionButton cancelRecordingButton;
     private FloatingActionButton uploadRecordingButton;
+    private FloatingActionButton playbackRecordingButton;
     private RecordButtonStates nextRecordButtonState;
     private CountdownView countdownView;
-    private Button backToolbarButton;
     private boolean has_permissions = false;
     private String sinFilename;
-    private int MAX_CHARACTER_LIMIT = 128;
+    private int MAX_CHARACTER_LIMIT = 32;
     private final int RECORD_TIME_IN_SEC = 60;
     private final int RECORD_TIME_IN_MS = 1000 * RECORD_TIME_IN_SEC;
     private AnimationDrawable confessionAnimation;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,9 +73,11 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         pauseRecordingButton = findViewById(R.id.record_sin_activity_pause);
         cancelRecordingButton = findViewById(R.id.record_sin_activity_cancel);
         uploadRecordingButton = findViewById(R.id.record_sin_activity_upload);
+        playbackRecordingButton = findViewById(R.id.record_sin_activity_play_pause_container);
         countdownView = findViewById(R.id.record_sin_activity_countdown);
-        backToolbarButton = findViewById(R.id.record_sin_activity_back);
+        mediaPlayer = new MediaPlayer();
 
+        Button backToolbarButton = findViewById(R.id.record_sin_activity_back);
         backToolbarButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -210,11 +217,37 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             }
         });
 
+        playbackRecordingButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(mediaPlayer.isPlaying())
+                {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                    playbackRecordingButton.setImageResource(R.drawable.ic_baseline_play_circle_filled_24px);
+                }
+                else
+                {
+                    playbackRecordingButton.setImageResource(R.drawable.ic_round_stop_24px);
+                    playRecording(v.getContext());
+                }
+            }
+        });
+
         cancelRecordingButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
+                if(mediaPlayer.isPlaying())
+                {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                    playbackRecordingButton.setImageResource(R.drawable.ic_baseline_play_circle_filled_24px);
+                }
+
                 nextRecordButtonState = RecordButtonStates.START_RECORDING;
                 recordSinButton.show();
                 setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
@@ -228,8 +261,15 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             @Override
             public void onClick(View v)
             {
-                // Set up the input
-                final EditText input = new EditText(RecordSinActivity.this);
+                // Create an alert dialog to get title
+                LayoutInflater inflater = getLayoutInflater();
+                @SuppressLint("InflateParams")
+                View alertLayout = inflater.inflate(R.layout.alert_dialog_sin_name, null);
+                final TextView charactersLeft = alertLayout.findViewById(R.id.alert_dialog_characters_left);
+                final TextView charactersTotal = alertLayout.findViewById(R.id.alert_dialog_total_characters);
+                final String charLimit = "/ " + MAX_CHARACTER_LIMIT;
+                charactersTotal.setText(charLimit);
+                final TextInputEditText input = alertLayout.findViewById(R.id.alert_dialog_sin_name_text);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_CHARACTER_LIMIT) });
 
@@ -238,7 +278,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after)
                     {
-
+                        charactersLeft.setText(String.valueOf(MAX_CHARACTER_LIMIT));
                     }
 
                     @Override
@@ -250,15 +290,13 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     @Override
                     public void afterTextChanged(Editable s)
                     {
-//                        TextView tv = findViewById(R.id.yourTextViewId);
-//                        tv.setText(String.valueOf(MAX_CHARACTER_LIMIT - s.length()));
+                        charactersLeft.setText(String.valueOf(MAX_CHARACTER_LIMIT - s.length()));
                     }
                 });
 
-                // Create an alert dialog to get title
                 AlertDialog.Builder builder = new AlertDialog.Builder(RecordSinActivity.this);
                 builder.setTitle(getString(R.string.sin_name_promt));
-                builder.setView(input);
+                builder.setView(alertLayout);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {
                     @Override
@@ -291,6 +329,50 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         });
     }
 
+    private void playRecording(Context ctx)
+    {
+        try
+        {
+            mediaPlayer.setDataSource(sinFilename);
+        }
+        catch (IOException e)
+        {
+            Toast.makeText(ctx, "Error while playing audio recording", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener()
+        {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra)
+            {
+                Log.d(TAG, "what: "  + what);
+                return true;
+            }
+        });
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+        {
+            @Override
+            public void onCompletion(MediaPlayer mp)
+            {
+                playbackRecordingButton.setImageResource(R.drawable.ic_baseline_play_circle_filled_24px);
+                mp.stop();
+                mp.reset();
+            }
+        });
+
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
+        {
+            @Override
+            public void onPrepared(MediaPlayer mp)
+            {
+                mp.start();
+            }
+        });
+        mediaPlayer.prepareAsync();
+    }
+
     @Override
     public void setUploadCancelButtonsVisibility(ButtonVisibility visibility)
     {
@@ -299,10 +381,12 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             case VISIBLE:
                 cancelRecordingButton.show();
                 uploadRecordingButton.show();
+                playbackRecordingButton.show();
                 break;
             case INVISIBLE:
                 cancelRecordingButton.hide();
                 uploadRecordingButton.hide();
+                playbackRecordingButton.hide();
                 break;
         }
     }
@@ -310,12 +394,14 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private void MediaRecorderReady()
     {
         audioRecorder = new MediaRecorder();
-        audioRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION);
-        audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        audioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        audioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        audioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.MPEG_4);
+        audioRecorder.setAudioEncodingBitRate(16);
+        audioRecorder.setAudioSamplingRate(44100);
 
         sinFilename = Objects.requireNonNull(getExternalFilesDir("recordings")).getAbsolutePath();
-        sinFilename += "/" + System.currentTimeMillis() + "_sincloud.3gp";
+        sinFilename += "/" + System.currentTimeMillis() + "_sincloud.m4a";
         Log.d(TAG, "Filename for recorded audio: " + sinFilename);
         audioRecorder.setOutputFile(sinFilename);
     }
@@ -379,6 +465,12 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         {
             audioRecorder.release();
             audioRecorder = null;
+        }
+
+        if(mediaPlayer != null)
+        {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 }

@@ -4,7 +4,10 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -212,10 +215,19 @@ public class LoginActivity extends AppCompatActivity
                 userRef.child("photoURL").setValue(user.getPhotoUrl().toString());
             }
         }
-        openOnBoardingActivity();
-//        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//        startActivity(intent);
-//        finish();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPreferences.getBoolean(OnBoardingActivity.COMPLETED_ONBOARDING, false))
+        {
+            // This is the first time running the app, let's go to onboarding
+            openOnBoardingActivity();
+        }
+        else
+        {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void openOnBoardingActivity()

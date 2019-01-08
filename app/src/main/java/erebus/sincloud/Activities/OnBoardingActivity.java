@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import erebus.sincloud.R;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.ramotion.paperonboarding.PaperOnboardingEngine;
 import com.ramotion.paperonboarding.PaperOnboardingPage;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 
 public class OnBoardingActivity extends AppCompatActivity
 {
+    public static String COMPLETED_ONBOARDING = "COMPLETED_ONBOARDING";
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -64,6 +67,20 @@ public class OnBoardingActivity extends AppCompatActivity
 
     private void openMainActivity()
     {
+        // User has seen OnBoardingFragment, so mark our SharedPreferences
+        // flag as completed.
+        SharedPreferences.Editor sharedPreferencesEditor;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        }
+        else
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
+        }
+        sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
+        sharedPreferencesEditor.apply();
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();

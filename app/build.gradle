@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.github.iwgang:countdownview:2.1.6'
     implementation 'com.stepstone.apprating:app-rating:2.3.0'
     implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.1'
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 }
 

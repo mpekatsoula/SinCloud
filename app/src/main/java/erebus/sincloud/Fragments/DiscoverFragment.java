@@ -69,7 +69,7 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void getLatestSins()
     {
         final DatabaseReference sightedUsersRef = FirebaseDatabase.getInstance().getReference().child("sins");
-        sightedUsersRef.orderByChild("sinTime");
+        sightedUsersRef.orderByChild("sinTime/timestamp");
         sightedUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
