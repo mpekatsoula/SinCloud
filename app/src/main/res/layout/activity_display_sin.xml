@@ -70,7 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/display_activity_toolbar"
         app:minChunkHeight="2dp"
         app:touchable="true"
-        app:waveColor="@android:color/holo_blue_dark"/>
+        app:waveColor="@color/colorAccent"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

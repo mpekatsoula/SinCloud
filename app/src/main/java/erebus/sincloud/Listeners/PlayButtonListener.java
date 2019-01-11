@@ -35,6 +35,6 @@ public class PlayButtonListener implements View.OnClickListener
         {
             button = v.findViewById(R.id.sin_view_play_button);
         }
-        SinAudioPlayer.getInstance().playSin(sin.getUrl(), button);
+        SinAudioPlayer.getInstance().playSin(sin.getUrl(), button, null);
     }
 }

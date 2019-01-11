@@ -1,22 +1,5 @@
 package erebus.sincloud.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import erebus.sincloud.Helpers.PlayingState;
-import erebus.sincloud.Models.Comment;
-import erebus.sincloud.Models.Sin;
-import erebus.sincloud.R;
-import erebus.sincloud.UI.CommentAdapter;
-import erebus.sincloud.Utils.AudioPlayer;
-import rm.com.audiowave.AudioWaveView;
-
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,14 +30,27 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import erebus.sincloud.Models.Comment;
+import erebus.sincloud.Models.Sin;
+import erebus.sincloud.R;
+import erebus.sincloud.Singletons.SinAudioPlayer;
+import erebus.sincloud.UI.CommentAdapter;
+import rm.com.audiowave.AudioWaveView;
+
+
 public class DisplaySinActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
 {
     private String TAG = "DisplaySinActivity";
     private Sin sin;
     private Button playButton;
     private AudioWaveView waveform;
-    private MediaPlayer mediaPlayer = null;
-    private AudioPlayer audioPlayer = null;
     private TextView toolbarTextView = null;
     private TextView likesTextView = null;
     private TextView commentsTextView = null;
@@ -68,7 +64,39 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     private ArrayList<Comment> commentsArray = new ArrayList<>();
     private ArrayList<String> commentsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private PlayingState audioState = PlayingState.STOPPED_STATE;
+    private waveAnimation waveAnimationCall;
+    private Timer audioTimer;
+
+    public interface startWaveAnimationCallback
+    {
+        void startWaveAnimation();
+    }
+
+    public class waveAnimation implements startWaveAnimationCallback
+    {
+        @Override
+        public void startWaveAnimation()
+        {
+            // Needs to run on UI thread
+            final int duration =  SinAudioPlayer.getInstance().getMediaPlayerDuration();
+            final int amountToUpdate = duration / 100;
+            audioTimer.schedule(new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            waveform.setProgress(SinAudioPlayer.getInstance().getMediaPlayerProgress());
+                        }
+                    });
+                }
+            }, 0, amountToUpdate);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -87,6 +115,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         Button backToolbarButton = findViewById(R.id.display_activity_back);
         mSwipeRefreshLayout = findViewById(R.id.display_sin_activity_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        waveAnimationCall = new waveAnimation();
 
         // Get sin reference
         sinRefString = getIntent().getStringExtra("sinRef");
@@ -141,13 +170,15 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     protected void onStop()
     {
         super.onStop();
-        if(mediaPlayer != null)
+        SinAudioPlayer.getInstance().stopPlayback();
+        waveAnimationCall = null;
+        if(audioTimer != null)
         {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
+            audioTimer.cancel();
+            audioTimer = null;
         }
     }
+
     private void setupLikeButton()
     {
         likeSinButton.setOnClickListener(new View.OnClickListener()
@@ -307,81 +338,18 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     {
         waveform.setRawData(audioFileRAW);
         waveform.setTouchable(false);
+        waveform.setProgress(0);
     }
 
     private void handleAudioPlayback()
     {
-        if(mediaPlayer == null)
+        if(audioTimer != null)
         {
-            mediaPlayer = new MediaPlayer();
+            audioTimer.cancel();
+            audioTimer = null;
         }
-        switch (audioState)
-        {
-            case PLAYING_STATE:
-                mediaPlayer.pause();
-                audioState = PlayingState.PAUSED_STATE;
-                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
-                break;
-            case PAUSED_STATE:
-                mediaPlayer.start();
-                audioState = PlayingState.PLAYING_STATE;
-                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
-                break;
-            case STOPPED_STATE:
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-                audioPlayer = new AudioPlayer(mediaPlayer, null);
-                audioPlayer.execute(sin.getUrl());
-                playButton.setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
-                audioState = PlayingState.PLAYING_STATE;
-
-                // Needs to run on UI thread
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
-                {
-                    @Override
-                    public void onPrepared(MediaPlayer mp)
-                    {
-                        Timer audioTimer = new Timer();
-                        final int duration = mediaPlayer.getDuration();
-                        final int amoungToupdate = duration / 100;
-                        audioTimer.schedule(new TimerTask()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                runOnUiThread(new Runnable() {
-
-                                    @Override
-                                    public void run()
-                                    {
-                                        if(mediaPlayer != null)
-                                        {
-                                            float audioProgress = 100.f * mediaPlayer.getCurrentPosition() / (float)mediaPlayer.getDuration();
-                                            waveform.setProgress(audioProgress);
-                                        }
-
-                                    }
-                                });
-                            }
-                        }, 0, amoungToupdate);
-                    }
-                });
-                break;
-        }
-
-        // Reset media player state
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
-        {
-            @Override
-            public void onCompletion(MediaPlayer mp)
-            {
-                audioState = PlayingState.STOPPED_STATE;
-                mediaPlayer.reset();
-                mediaPlayer.release();
-                mediaPlayer = null;
-                waveform.setProgress(0);
-                playButton.setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
-            }
-        });
+        audioTimer = new Timer();
+        SinAudioPlayer.getInstance().playSin(sin.getUrl(), playButton, waveAnimationCall);
     }
 
     private void displayComments()

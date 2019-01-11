@@ -3,16 +3,16 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.widget.Button;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.R;
-import erebus.sincloud.Utils.AudioPlayer;
 
 public class SinAudioPlayer
 {
     private static SinAudioPlayer playerInstance;
     private MediaPlayer player;
-    private AudioPlayer audioPlayer;
     private WeakReference<Button> playingButton;
     private boolean isPaused = false;
 
@@ -36,17 +36,36 @@ public class SinAudioPlayer
 
     private void resetPlayerState()
     {
-        if(audioPlayer != null)
-        {
-            audioPlayer.cancel(true);
-            audioPlayer = null;
-        }
         player.stop();
         player.reset();
         isPaused = false;
+        if(playingButton != null && playingButton.get() != null)
+        {
+            playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
+        }
     }
 
-    public void playSin(String url, Button button)
+    public float getMediaPlayerProgress()
+    {
+        if(player != null)
+        {
+            return 100.f * player.getCurrentPosition() / (float) player.getDuration();
+        }
+
+        return 0.f;
+    }
+
+    public int getMediaPlayerDuration()
+    {
+        if(player != null)
+        {
+            return player.getDuration();
+        }
+
+        return 1;
+    }
+
+    public void playSin(String url, Button button, final DisplaySinActivity.waveAnimation waveAnimationCallback)
     {
         if (player == null)
         {
@@ -54,33 +73,77 @@ public class SinAudioPlayer
             player.setAudioStreamType(AudioManager.STREAM_SYSTEM);
         }
 
-        if(button != null && playingButton != null && playingButton.get() == button)
+        if(playingButton != null && playingButton.get() != null && playingButton.get() == button)
         {
+            // If the player is paused, resume playback
             if(isPaused)
             {
                 player.start();
                 isPaused = false;
+                playingButton.get().setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
                 return;
             }
+
+            // If the player is playing, pause playback
             if(player.isPlaying())
             {
                 player.pause();
                 isPaused = true;
+                playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
                 return;
             }
         }
 
-        resetPlayerState();
-
         // Change old button's state
-        if(playingButton != null && playingButton.get() != null)
+        if(playingButton != null && playingButton.get() != null && playingButton.get() != button)
         {
             playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
         }
 
+        if(player.isPlaying())
+        {
+            resetPlayerState();
+        }
+
         playingButton = new WeakReference<>(button);
-        audioPlayer = new AudioPlayer(player, button);
-        audioPlayer.execute(url);
+
+        try
+        {
+            player.setDataSource(url);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        // When the player is ready start playback
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
+        {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer)
+            {
+                mediaPlayer.start();
+                if(waveAnimationCallback != null)
+                {
+                    waveAnimationCallback.startWaveAnimation();
+                }
+            }
+        });
+        player.prepareAsync();
+
+        // Change the button's image
+        playingButton.get().setBackgroundResource(R.drawable.ic_baseline_pause_circle_outline_24px);
+
+        // When the player is completed, stop and reset it. Also change the button back
+        // to the default image
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+        {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer)
+            {
+                resetPlayerState();
+            }
+        });
     }
 
     public void stopPlayback()

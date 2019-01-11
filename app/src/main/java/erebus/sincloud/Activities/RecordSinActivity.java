@@ -379,9 +379,9 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         switch (visibility)
         {
             case VISIBLE:
+                playbackRecordingButton.show();
                 cancelRecordingButton.show();
                 uploadRecordingButton.show();
-                playbackRecordingButton.show();
                 break;
             case INVISIBLE:
                 cancelRecordingButton.hide();
