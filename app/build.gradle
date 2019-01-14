@@ -22,9 +22,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.github.iwgang:countdownview:2.1.6'
     implementation 'com.stepstone.apprating:app-rating:2.3.0'
     implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.1'
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
 }

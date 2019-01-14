@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/comment_layout_user_photo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,14 +17,14 @@
 
     <TextView
         android:id="@+id/comment_layout_text"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        android:background="@drawable/message_box"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:scaleType="centerInside"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/comment_layout_username"
         app:layout_constraintStart_toStartOf="@+id/comment_layout_username"
         app:layout_constraintTop_toBottomOf="@+id/comment_layout_username"/>
 
@@ -34,15 +34,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:scaleType="centerInside"
-        android:textColor="@color/md_black_1000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/comment_layout_time"
+        android:textColor="@color/md_grey_800"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/comment_layout_user_photo"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -58,11 +56,12 @@
 
     <Button
         android:id="@+id/comment_layout_like_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/ic_baseline_thumb_up_alt_24px"
-        android:backgroundTint="@color/md_grey_500"
+        android:backgroundTint="@color/md_black_1000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/comment_layout_text"
         app:layout_constraintTop_toBottomOf="@+id/comment_layout_text"/>

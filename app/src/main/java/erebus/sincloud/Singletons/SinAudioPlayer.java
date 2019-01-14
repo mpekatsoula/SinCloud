@@ -15,6 +15,7 @@ public class SinAudioPlayer
     private MediaPlayer player;
     private WeakReference<Button> playingButton;
     private boolean isPaused = false;
+    private boolean isPrepared = true;
 
     public static SinAudioPlayer getInstance()
     {
@@ -100,7 +101,7 @@ public class SinAudioPlayer
             playingButton.get().setBackgroundResource(R.drawable.ic_baseline_play_circle_outline_24px);
         }
 
-        if(player.isPlaying())
+        if(player.isPlaying() || !isPrepared)
         {
             resetPlayerState();
         }
@@ -109,6 +110,7 @@ public class SinAudioPlayer
 
         try
         {
+            isPrepared = false;
             player.setDataSource(url);
         }
         catch (IOException e)
@@ -123,6 +125,7 @@ public class SinAudioPlayer
             public void onPrepared(MediaPlayer mediaPlayer)
             {
                 mediaPlayer.start();
+                isPrepared = true;
                 if(waveAnimationCallback != null)
                 {
                     waveAnimationCallback.startWaveAnimation();

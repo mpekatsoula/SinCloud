@@ -4,10 +4,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -20,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -46,6 +52,7 @@ interface setUploadCancelButtonsVisibilityCallback
 public class RecordSinActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, setUploadCancelButtonsVisibilityCallback
 {
     private static final String TAG = "RecordSinActivity";
+    private static final String COMPLETED_ONBOARDING = "RecordSinActivity";
     private MediaRecorder audioRecorder;
     private FloatingActionButton recordSinButton;
     private FloatingActionButton pauseRecordingButton;
@@ -91,6 +98,14 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         checkPermissions();
         setupRecordingButtons();
         setupCountdown();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPreferences.getBoolean(COMPLETED_ONBOARDING, false))
+        {
+            // This is the first time running the app, let's go to onboarding
+            displayOnboarding();
+        }
+        displayOnboarding();
     }
 
     @Override
@@ -267,18 +282,18 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                 View alertLayout = inflater.inflate(R.layout.alert_dialog_sin_name, null);
                 final TextView charactersLeft = alertLayout.findViewById(R.id.alert_dialog_characters_left);
                 final TextView charactersTotal = alertLayout.findViewById(R.id.alert_dialog_total_characters);
-                final String charLimit = "/ " + MAX_CHARACTER_LIMIT;
+                final String charLimit = "/  " + MAX_CHARACTER_LIMIT;
                 charactersTotal.setText(charLimit);
                 final TextInputEditText input = alertLayout.findViewById(R.id.alert_dialog_sin_name_text);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_CHARACTER_LIMIT) });
 
+                charactersLeft.setText(String.valueOf(MAX_CHARACTER_LIMIT));
                 input.addTextChangedListener(new TextWatcher()
                 {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after)
                     {
-                        charactersLeft.setText(String.valueOf(MAX_CHARACTER_LIMIT));
                     }
 
                     @Override
@@ -429,6 +444,57 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             EasyPermissions.requestPermissions(this, getString(R.string.audio_and_storage_rationale),
                     RC_AUDIO_AND_STORAGE, perms);
         }
+    }
+
+    private void displayOnboarding()
+    {
+        TapTargetSequence tapSequence = new TapTargetSequence(this)
+                .targets(
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_start_stop), "Click to record.", "Click here to start recording your sin. You have 1 minute!")
+                        .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                        .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                        .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                        .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                        .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                        .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                        .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                        .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                        .drawShadow(true)                   // Whether to draw a drop shadow or not
+                        .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                        .tintTarget(true)                   // Whether to tint the target view's color
+                        .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                        .targetRadius(54),
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_upload), "Upload your sin!", "When you are done, click here to upload your sin to the cloud!")
+                                .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                                .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                                .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                                .targetCircleColor(R.color.md_red_400)
+                                .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(true)                   // Whether to tint the target view's color
+                                .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                                .icon(getDrawable(R.drawable.ic_round_cloud_upload_24px))
+                                .targetRadius(54));
+        tapSequence.start();
+
+        // User has seen OnBoarding, so mark our SharedPreferences
+        // flag as completed.
+        SharedPreferences.Editor sharedPreferencesEditor;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        }
+        else
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
+        }
+        sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
+        sharedPreferencesEditor.apply();
     }
 
     @Override

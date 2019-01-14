@@ -1,12 +1,17 @@
 package erebus.sincloud.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +40,7 @@ import erebus.sincloud.Utils.LoadPictureToView;
 
 public class MainActivity extends AppCompatActivity implements RatingDialogListener
 {
+    private static final String COMPLETED_ONBOARDING = "MainActivity";
     private FragmentAdapter pageAdapter;
 
     @Override
@@ -80,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
                 openUserProfileActivity();
             }
         });
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPreferences.getBoolean(COMPLETED_ONBOARDING, false))
+        {
+            // This is the first time running the app, let's go to onboarding
+            displayOnboarding();
+        }
     }
 
     @Override
@@ -162,6 +175,39 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         startActivity(intent);
     }
 
+    private void displayOnboarding()
+    {
+        TapTargetView.showFor(this,
+                TapTarget.forView(findViewById(R.id.fab), "Welcome!", "Click here to record a new sin!")
+                        .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                        .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                        .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                        .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                        .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                        .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                        .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                        .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                        .drawShadow(true)                   // Whether to draw a drop shadow or not
+                        .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                        .tintTarget(true)                   // Whether to tint the target view's color
+                        .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                        .targetRadius(54));
+
+        // User has seen OnBoarding, so mark our SharedPreferences
+        // flag as completed.
+        SharedPreferences.Editor sharedPreferencesEditor;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        }
+        else
+        {
+            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
+        }
+        sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
+        sharedPreferencesEditor.apply();
+    }
+
     @Override
     public void onNegativeButtonClicked()
     {
@@ -182,5 +228,11 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         feedbackRef.child("feedback").setValue(s);
         feedbackRef.child("uid").setValue(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         feedbackRef.child("stars").setValue(i);
+
+        // Ask for play store
+        if(i == 5)
+        {
+            // TODO
+        }
     }
 }

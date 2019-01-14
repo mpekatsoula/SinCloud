@@ -89,9 +89,9 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_baseline_keyboard_arrow_right_24px" />
+                            <entry key="outputName" value="ic_baseline_play_arrow_24px" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Michalis\Downloads\baseline-keyboard_arrow_right-24px (1).svg" />
+                            <entry key="sourceFile" value="C:\Users\Michalis\Downloads\baseline-play_arrow-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>

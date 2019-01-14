@@ -23,10 +23,12 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
@@ -41,6 +43,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SinsMenuAdapter mAdapter = null;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
+    private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout = null;
     private int scoreCounter = 0;
 
@@ -58,10 +61,14 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.trending_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.TRENDING);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.TRENDING);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
+        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
         LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
@@ -84,6 +91,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
             {
                 sinsArray.clear();
                 sinsRefs.clear();
+                sinsLiked.clear();
 
                 final List<Pair<String, Double>> scores = new ArrayList<>();
                 for(DataSnapshot sin : dataSnapshot.getChildren())
@@ -131,6 +139,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
                             int idx = 0;
                             sinsArray.add(idx, new_sin);
                             sinsRefs.add(idx, dataSnapshot.getKey());
+                            sinsLiked.add(false);
                             scoreCounter++;
 
                             // Notify adapter only when you have all the data

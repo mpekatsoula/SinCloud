@@ -33,24 +33,31 @@
                 <data android:scheme="@string/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.LoginActivity">
+        <activity android:name=".Activities.LoginActivity"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.RecordSinActivity">
+        <activity android:name=".Activities.RecordSinActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Activities.UserProfileActivity">
+        <activity android:name=".Activities.UserProfileActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Activities.SettingsActivity">
+        <activity android:name=".Activities.SettingsActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Activities.DisplaySinActivity">
+        <activity android:name=".Activities.DisplaySinActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Activities.OnBoardingActivity">
+        <activity android:name=".Activities.OnBoardingActivity"
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 

@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,9 +17,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
@@ -28,15 +33,21 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
 {
     private ArrayList<Sin> mDataset;
     private ArrayList<String> sinsRefs;
+    private ArrayList<Boolean> sinsLiked;
     private String TAG = "SinsMenuAdapter";
     private SinMenuAdapterTypes adapterType;
     private View.OnClickListener playButtonViewOnClickListener;
+    private View.OnClickListener likeButtonViewOnClickListener;
     private View.OnClickListener deleteButtonViewOnClickListener;
     private View.OnClickListener innerConstraintLayoutViewOnClickListener;
 
     public void setPlayClickListener(View.OnClickListener clickListener)
     {
         playButtonViewOnClickListener = clickListener;
+    }
+    public void setLikeClickListener(View.OnClickListener clickListener)
+    {
+        likeButtonViewOnClickListener = clickListener;
     }
     public void setDeleteClickListener(View.OnClickListener clickListener)
     {
@@ -56,9 +67,12 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         TextView commentsTxtView;
         TextView likesTxtView;
         TextView dateTxtView;
+        TextView durationTxtView;
         TextView nicknameTxtView;
         ConstraintLayout innerConstraintLayout;
+        ConstraintLayout innerConstraintLayout2;
         Button playButton;
+        ImageView likeButton;
         Button deleteButton = null;
 
         ViewHolder(View v, SinMenuAdapterTypes adapterType)
@@ -73,6 +87,8 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 playButton = v.findViewById(R.id.sin_view_user_play_button);
                 deleteButton = v.findViewById(R.id.sin_view_user_delete_button);
                 innerConstraintLayout = v.findViewById(R.id.sin_view_user_inner_constraint_layout);
+                innerConstraintLayout2 = v.findViewById(R.id.sin_view_user_inner_constraint_layout2);
+                likeButton = v.findViewById(R.id.sin_view_user_like_image);
                 deleteButton.setTag(this);
                 deleteButton.setOnClickListener(deleteButtonViewOnClickListener);
             }
@@ -82,25 +98,33 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 likesTxtView = v.findViewById(R.id.sin_view_likes);
                 commentsTxtView = v.findViewById(R.id.sin_view_comments);
                 dateTxtView = v.findViewById(R.id.sin_view_date);
+                durationTxtView = v.findViewById(R.id.sin_view_duration);
                 playButton = v.findViewById(R.id.sin_view_play_button);
                 nicknameTxtView = v.findViewById(R.id.sin_view_nickname);
                 innerConstraintLayout = v.findViewById(R.id.sin_view_inner_constraint_layout);
+                innerConstraintLayout2 = v.findViewById(R.id.sin_view_inner_constraint_layout2);
+                likeButton = v.findViewById(R.id.sin_view_like_image);
             }
 
             playButton.setTag(this);
             playButton.setOnClickListener(playButtonViewOnClickListener);
+            likeButton.setTag(this);
+            likeButton.setOnClickListener(likeButtonViewOnClickListener);
             innerConstraintLayout.setTag(this);
             innerConstraintLayout.setOnClickListener(innerConstraintLayoutViewOnClickListener);
+            innerConstraintLayout2.setTag(this);
+            innerConstraintLayout2.setOnClickListener(innerConstraintLayoutViewOnClickListener);
         }
     }
 
     // Constructor
-    public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs, SinMenuAdapterTypes userSettings)
+    public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs,  ArrayList<Boolean> sinsLiked, SinMenuAdapterTypes userSettings)
     {
         Log.d(TAG, "SinsMenuAdapter()");
         mDataset = sinsDataset;
         adapterType = userSettings;
         this.sinsRefs = sinsRefs;
+        this.sinsLiked = sinsLiked;
     }
 
     // Create new views (invoked by the layout manager)
@@ -132,6 +156,11 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         Log.d(TAG, "onBindViewHolder() position: " + position);
         final Sin sin = mDataset.get(position);
 
+        if(sin == null)
+        {
+            return;
+        }
+
         holder.titleTxtView.setText(sin.getTitle());
         holder.commentsTxtView.setText(String.valueOf(sin.getComments()));
         holder.likesTxtView.setText(String.valueOf(sin.getLikes()));
@@ -144,12 +173,18 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         }
         else
         {
-            holder.dateTxtView.setText(DateFormat.format("HH:mm", sin.getMessageTimeLong()));
+            holder.dateTxtView.setText("Today");
         }
 
-        // Load user's nickname
-        if (adapterType == SinMenuAdapterTypes.TRENDING || adapterType == SinMenuAdapterTypes.DISCOVER)
+        // Load user's nickname and set sin time
+        if (adapterType != SinMenuAdapterTypes.USER_SETTINGS)
         {
+            long totalSecs = sin.getTime() > 0 ? sin.getTime() : 1;
+            long minutes = (totalSecs % 3600) / 60;
+            long seconds = totalSecs % 60;
+            String timeString = String.format(Locale.ENGLISH,"%02d:%02d", minutes, seconds);
+            holder.durationTxtView.setText(timeString);
+
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(sin.getUserid()).child("nickname");
             userRef.addListenerForSingleValueEvent(new ValueEventListener()
             {
@@ -175,6 +210,9 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 }
             });
         }
+
+        // Load like status
+        checkUserLike(holder.likeButton, position);
     }
 
     @Override
@@ -184,6 +222,41 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     }
     public Sin getItem(int position){return mDataset.get(position);}
     public String getItemRef(int position){return sinsRefs.get(position);}
+    public Boolean getItemLiked(int position){return sinsLiked.get(position);}
     public void removeItem(int position){mDataset.remove(position);}
     public void removeItemRef(int position){sinsRefs.remove(position);}
+    public void setItemLiked(int position, boolean val){sinsLiked.set(position, val);}
+
+    private void checkUserLike(final ImageView likeButton, final int position)
+    {
+        // Check if the user has liked the sin before.
+        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users")
+                                          .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())
+                                          .getUid()).child("likes").child(sinsRefs.get(position));
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                Object likedStatusObject = dataSnapshot.getValue();
+                if(likedStatusObject != null)
+                {
+                    boolean likedStatus = (boolean) likedStatusObject;
+                    sinsLiked.set(position, likedStatus);
+                    if(likedStatus)
+                    {
+                        // Change the color of like button
+                        likeButton.setBackgroundTintList(ContextCompat.getColorStateList(likeButton.getContext(), R.color.colorAccent));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+    }
 }

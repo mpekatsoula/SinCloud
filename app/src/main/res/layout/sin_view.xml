@@ -12,12 +12,13 @@
 
     <Button
         android:id="@+id/sin_view_play_button"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/ic_baseline_play_circle_outline_24px"
+        android:backgroundTint="@color/md_black_1000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -26,10 +27,9 @@
         android:id="@+id/sin_view_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:textColor="@color/md_black_1000"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
         app:layout_constraintTop_toBottomOf="@+id/sin_view_nickname"/>
 
@@ -37,17 +37,31 @@
         android:id="@+id/sin_view_inner_constraint_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sin_view_date"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/sin_view_comments_image"
+        app:layout_constraintEnd_toStartOf="@+id/sin_view_duration"
         app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
         app:layout_constraintTop_toTopOf="parent">
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sin_view_inner_constraint_layout2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sin_view_duration"
+        app:layout_constraintStart_toEndOf="@+id/sin_view_comments"
+        app:layout_constraintTop_toBottomOf="@+id/sin_view_inner_constraint_layout">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
-        android:id="@+id/sin_view_date"
+        android:id="@+id/sin_view_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -55,6 +69,16 @@
         android:inputType="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/sin_view_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:inputType="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/sin_view_likes"
@@ -82,9 +106,9 @@
 
     <ImageView
         android:id="@+id/sin_view_like_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/like_image"
@@ -95,8 +119,8 @@
 
     <ImageView
         android:id="@+id/sin_view_comments_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
@@ -110,10 +134,10 @@
         android:id="@+id/sin_view_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:textColor="@color/md_grey_500"
-        android:textStyle="bold"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/sin_view_play_button"
         app:layout_constraintTop_toTopOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
