@@ -36,27 +36,30 @@ exports.updatetrending = functions.https.onRequest(async (req, res) => {
 async function getMonthlyPosts(users = [], nextPageToken) 
 {
   var db = admin.database();
-  const sinsDB = db.ref('/sins');
+  const sinsDB = db.ref('/sins').orderByChild("sinTime/timestamp");
   const trendingDB = db.ref('/trending');
   
   // Clear trending
   trendingDB.remove();
   
-  const sins = sinsDB.orderByChild("sinTime/timestamp").on("child_added", function(snapshot) 
+  const sins = sinsDB.once("value").then(function(snapshot) 
   {    
-    // Calculate weight for each sin 
-    var timeDiff = Date.now() - snapshot.child("sinTime/timestamp").val();
-    var score = snapshot.child("comments").val() * 0.5 + snapshot.child("likes").val() * 0.35 + (1.0 / (timeDiff + 1.0)) * 0.15;
-    console.log("Score: ", score);
-    console.log("TimeDiff: ", timeDiff);
-    
-    // Update trending sins
-    var newTrendingRef = trendingDB.push();
-    newTrendingRef.set({
-        key: snapshot.key,
-        score: score
-      });
+    snapshot.forEach(function(sins){
+        // Calculate weight for each sin 
+        var timeDiff = Date.now() - sins.child("sinTime/timestamp").val();
+        var score = sins.child("comments").val() * 0.5 + sins.child("likes").val() * 0.35 + (1.0 / (timeDiff + 1.0)) * 0.15;
+        console.log("Score: ", score);
+        console.log("TimeDiff: ", timeDiff);
+        
+        // Update trending sins
+        var newTrendingRef = trendingDB.push();
+        newTrendingRef.set({
+            key: sins.key,
+            score: score
+          });
+    });
+
   });
-    
+  
   return users;
 }

@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Helpers.UpdateLikeStatus;
 import erebus.sincloud.Listeners.DeleteButtonListener;
 import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
@@ -38,8 +39,9 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
-    private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private UpdateLikeStatus updateLikeStatus = null;
+    private long scoreCounter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,13 +57,22 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.sins_view_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.USER_SETTINGS);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.USER_SETTINGS);
         mAdapter.setDeleteClickListener(new DeleteButtonListener(mAdapter));
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.USER_SETTINGS));
         mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.USER_SETTINGS));
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
+        {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state)
+            {
+                super.onLayoutCompleted(state);
+                updateLikeStatus.Update();
 
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+            }
+        };
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -72,6 +83,8 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
+
+        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.USER_SETTINGS);
 
         // Get the list of my sins
         getSins();
@@ -88,7 +101,8 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
             {
                 sinsArray.clear();
                 sinsRefs.clear();
-                sinsLiked.clear();
+                final long numElements = dataSnapshot.getChildrenCount();
+
                 // For each sin set sin data
                 for(DataSnapshot sin : dataSnapshot.getChildren())
                 {
@@ -98,12 +112,18 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                         {
+                            scoreCounter++;
                             Sin new_sin = dataSnapshot.getValue(Sin.class);
                             sinsArray.add(new_sin);
                             sinsRefs.add(dataSnapshot.getKey());
-                            sinsLiked.add(false);
-                            mAdapter.notifyDataSetChanged();
-                            mSwipeRefreshLayout.setRefreshing(false);
+
+                            // Notify adapter only when we have all the data
+                            if(scoreCounter == numElements)
+                            {
+                                mSwipeRefreshLayout.setRefreshing(false);
+                                mAdapter.notifyDataSetChanged();
+                                scoreCounter = 0;
+                            }
                         }
 
                         @Override

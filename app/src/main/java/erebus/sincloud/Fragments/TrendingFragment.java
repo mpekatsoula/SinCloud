@@ -1,7 +1,6 @@
 package erebus.sincloud.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,11 +25,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Helpers.UpdateLikeStatus;
 import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
-import erebus.sincloud.Listeners.SinMenuListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
-import erebus.sincloud.Listeners.onRecycleViewClickListener;
 import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
 import erebus.sincloud.UI.SinsMenuAdapter;
@@ -43,9 +39,9 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SinsMenuAdapter mAdapter = null;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
-    private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout = null;
     private int scoreCounter = 0;
+    private UpdateLikeStatus updateLikeStatus = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,11 +57,21 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.trending_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.TRENDING);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.TRENDING);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
         mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
+        {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state)
+            {
+                super.onLayoutCompleted(state);
+                updateLikeStatus.Update();
+
+            }
+        };
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -76,6 +82,8 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
+
+        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.TRENDING);
 
         // Get the list of the latest sins
         getTrendingSins();
@@ -91,7 +99,6 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
             {
                 sinsArray.clear();
                 sinsRefs.clear();
-                sinsLiked.clear();
 
                 final List<Pair<String, Double>> scores = new ArrayList<>();
                 for(DataSnapshot sin : dataSnapshot.getChildren())
@@ -139,10 +146,9 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
                             int idx = 0;
                             sinsArray.add(idx, new_sin);
                             sinsRefs.add(idx, dataSnapshot.getKey());
-                            sinsLiked.add(false);
                             scoreCounter++;
 
-                            // Notify adapter only when you have all the data
+                            // Notify adapter only when we have all the data
                             if(scoreCounter == scores.size())
                             {
                                 mAdapter.notifyDataSetChanged();

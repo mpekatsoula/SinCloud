@@ -2,7 +2,8 @@ package erebus.sincloud.Listeners;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,17 +21,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-import erebus.sincloud.Activities.DisplaySinActivity;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
-import erebus.sincloud.Models.Sin;
 import erebus.sincloud.R;
-import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class LikeButtonListener implements View.OnClickListener
 {
     private SinsMenuAdapter mAdapter;
     private SinMenuAdapterTypes adapterType;
+
     public LikeButtonListener(SinsMenuAdapter mAdapter, SinMenuAdapterTypes adapterType)
     {
         this.mAdapter = mAdapter;
@@ -42,9 +41,9 @@ public class LikeButtonListener implements View.OnClickListener
     {
         RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
         final int position = viewHolder.getAdapterPosition();
-        final Sin sin = mAdapter.getItem(position);
         final String sinRefString = mAdapter.getItemRef(position);
-        final ImageView button;
+        final Button button;
+
         if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
         {
             button = v.findViewById(R.id.sin_view_user_like_image);
@@ -58,52 +57,70 @@ public class LikeButtonListener implements View.OnClickListener
         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("likes").child(sinRefString);
         final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinRefString).child("likes");
 
-        boolean likedStatus = !mAdapter.getItemLiked(position);
-        mAdapter.setItemLiked(position, likedStatus);
-        userRef.setValue(likedStatus);
-        // Increase/decrease the like counter
-        if(likedStatus)
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
-            sinRef.runTransaction(new Transaction.Handler()
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                @NonNull
-                @Override
-                public Transaction.Result doTransaction(@NonNull MutableData mutableData)
+                if(dataSnapshot.getValue() == null)
                 {
-                    mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
-                    return Transaction.success(mutableData);
+                    return;
                 }
 
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                {
-                }
-            });
+                final boolean likedStatus = (Boolean) dataSnapshot.getValue();
+                userRef.setValue(!likedStatus);
 
-            // Change the color of like button
-            button.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorAccent));
-        }
-        else
-        {
-            sinRef.runTransaction(new Transaction.Handler()
+                // Increase/decrease the like counter
+                if(!likedStatus)
+                {
+                    sinRef.runTransaction(new Transaction.Handler()
+                    {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData)
+                        {
+                            mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
+                        {
+                        }
+                    });
+
+                    // Change the color of like button
+                    button.setBackgroundTintList(ContextCompat.getColorStateList(button.getContext(), R.color.colorAccent));
+                }
+                else
+                {
+                    sinRef.runTransaction(new Transaction.Handler()
+                    {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData)
+                        {
+                            mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) - 1);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
+                        {
+
+                        }
+                    });
+
+                    // Change the color of like button
+                    button.setBackgroundTintList(ContextCompat.getColorStateList(button.getContext(), R.color.md_black_1000));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
             {
-                @NonNull
-                @Override
-                public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                {
-                    mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) - 1);
-                    return Transaction.success(mutableData);
-                }
 
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                {
-
-                }
-            });
-
-            // Change the color of like button
-            button.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.md_black_1000));
-        }
+            }
+        });
     }
 }

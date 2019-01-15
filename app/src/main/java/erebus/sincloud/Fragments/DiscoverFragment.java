@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Helpers.UpdateLikeStatus;
 import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
@@ -37,6 +38,7 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private UpdateLikeStatus updateLikeStatus = null;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -53,11 +55,19 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
         mSwipeRefreshLayout = view.findViewById(R.id.discover_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.DISCOVER);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.DISCOVER);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.DISCOVER));
         mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.DISCOVER));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
+        {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state)
+            {
+                super.onLayoutCompleted(state);
+                updateLikeStatus.Update();
+            }
+        };
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -69,6 +79,7 @@ public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnR
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.DISCOVER);
         // Get the list of the latest sins
         getLatestSins();
     }

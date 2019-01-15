@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,11 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
 import erebus.sincloud.Models.Sin;
@@ -33,7 +29,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
 {
     private ArrayList<Sin> mDataset;
     private ArrayList<String> sinsRefs;
-    private ArrayList<Boolean> sinsLiked;
     private String TAG = "SinsMenuAdapter";
     private SinMenuAdapterTypes adapterType;
     private View.OnClickListener playButtonViewOnClickListener;
@@ -72,7 +67,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         ConstraintLayout innerConstraintLayout;
         ConstraintLayout innerConstraintLayout2;
         Button playButton;
-        ImageView likeButton;
+        Button likeButton;
         Button deleteButton = null;
 
         ViewHolder(View v, SinMenuAdapterTypes adapterType)
@@ -118,13 +113,12 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     }
 
     // Constructor
-    public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs,  ArrayList<Boolean> sinsLiked, SinMenuAdapterTypes userSettings)
+    public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs, SinMenuAdapterTypes userSettings)
     {
         Log.d(TAG, "SinsMenuAdapter()");
         mDataset = sinsDataset;
         adapterType = userSettings;
         this.sinsRefs = sinsRefs;
-        this.sinsLiked = sinsLiked;
     }
 
     // Create new views (invoked by the layout manager)
@@ -139,6 +133,7 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
             case DISCOVER:
             case TRENDING:
             case NOTIFICATIONS:
+            case HISTORY:
                 itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sin_view, parent, false);
                 break;
             case USER_SETTINGS:
@@ -210,9 +205,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
                 }
             });
         }
-
-        // Load like status
-        checkUserLike(holder.likeButton, position);
     }
 
     @Override
@@ -222,41 +214,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     }
     public Sin getItem(int position){return mDataset.get(position);}
     public String getItemRef(int position){return sinsRefs.get(position);}
-    public Boolean getItemLiked(int position){return sinsLiked.get(position);}
     public void removeItem(int position){mDataset.remove(position);}
     public void removeItemRef(int position){sinsRefs.remove(position);}
-    public void setItemLiked(int position, boolean val){sinsLiked.set(position, val);}
-
-    private void checkUserLike(final ImageView likeButton, final int position)
-    {
-        // Check if the user has liked the sin before.
-        final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users")
-                                          .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())
-                                          .getUid()).child("likes").child(sinsRefs.get(position));
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                Object likedStatusObject = dataSnapshot.getValue();
-                if(likedStatusObject != null)
-                {
-                    boolean likedStatus = (boolean) likedStatusObject;
-                    sinsLiked.set(position, likedStatus);
-                    if(likedStatus)
-                    {
-                        // Change the color of like button
-                        likeButton.setBackgroundTintList(ContextCompat.getColorStateList(likeButton.getContext(), R.color.colorAccent));
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-
-            }
-        });
-    }
 }

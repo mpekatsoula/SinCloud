@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Helpers.UpdateLikeStatus;
 import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
@@ -37,8 +38,9 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
     private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
-    private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private UpdateLikeStatus updateLikeStatus = null;
+    private long scoreCounter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,11 +56,21 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
         mSwipeRefreshLayout = view.findViewById(R.id.trending_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.NOTIFICATIONS);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.NOTIFICATIONS);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.NOTIFICATIONS));
         mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.NOTIFICATIONS));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
+        {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state)
+            {
+                super.onLayoutCompleted(state);
+                updateLikeStatus.Update();
+
+            }
+        };
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -69,6 +81,8 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
+
+        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.NOTIFICATIONS);
 
         // Get the list of the latest sins
         getNotifications();
@@ -87,7 +101,8 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
             {
                 sinsArray.clear();
                 sinsRefs.clear();
-                sinsLiked.clear();
+                final long numElements = dataSnapshot.getChildrenCount();
+
                 for(DataSnapshot data : dataSnapshot.getChildren())
                 {
                     if(data.getKey() != null)
@@ -108,11 +123,18 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                                         {
+                                            scoreCounter++;
                                             Sin new_sin = dataSnapshot.getValue(Sin.class);
                                             sinsArray.add(new_sin);
                                             sinsRefs.add(dataSnapshot.getKey());
-                                            sinsLiked.add(false);
-                                            mAdapter.notifyDataSetChanged();
+
+                                            // Notify adapter only when we have all the data
+                                            if(scoreCounter == numElements)
+                                            {
+                                                mAdapter.notifyDataSetChanged();
+                                                updateLikeStatus.Update();
+                                                scoreCounter = 0;
+                                            }
                                         }
 
                                         @Override

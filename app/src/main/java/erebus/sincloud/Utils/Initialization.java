@@ -10,6 +10,6 @@ public class Initialization extends android.app.Application
         super.onCreate();
 
         /* Enable disk persistence  */
-        FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 }

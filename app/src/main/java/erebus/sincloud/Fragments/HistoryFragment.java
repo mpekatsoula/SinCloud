@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
+import erebus.sincloud.Helpers.UpdateLikeStatus;
 import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
@@ -37,8 +38,9 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
-    private ArrayList<Boolean> sinsLiked = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private UpdateLikeStatus updateLikeStatus = null;
+    private long scoreCounter = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,16 +52,26 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
-        RecyclerView mRecyclerView = view.findViewById(R.id.trending_fragment_recycle_view);
+        final RecyclerView mRecyclerView = view.findViewById(R.id.trending_fragment_recycle_view);
         mSwipeRefreshLayout = view.findViewById(R.id.trending_fragment_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, sinsLiked, SinMenuAdapterTypes.TRENDING);
+        mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.HISTORY);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
-        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
-        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
+        mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.HISTORY));
+        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.HISTORY));
 
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
+        {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state)
+            {
+                super.onLayoutCompleted(state);
+                updateLikeStatus.Update();
+
+            }
+        };
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -71,6 +83,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
+        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.HISTORY);
         // Get the list of the user's history
         getHistory();
     }
@@ -87,7 +100,6 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
             {
                 sinsArray.clear();
                 sinsRefs.clear();
-                sinsLiked.clear();
 
                 ArrayList<String> sinsStrRefs = new ArrayList<>();
                 // For each sin set sin data
@@ -103,6 +115,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     }
                 }
 
+                final long numElements = sinsStrRefs.size();
                 for(final String sinStrRef : sinsStrRefs)
                 {
                     final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinStrRef);
@@ -111,6 +124,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                         {
+                            scoreCounter++;
                             if(dataSnapshot.getValue() == null)
                             {
                                 FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("scomments").child(sinStrRef).removeValue();
@@ -120,8 +134,13 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             Sin new_sin = dataSnapshot.getValue(Sin.class);
                             sinsArray.add(new_sin);
                             sinsRefs.add(dataSnapshot.getKey());
-                            sinsLiked.add(false);
-                            mAdapter.notifyDataSetChanged();
+
+                            // Notify adapter only when we have all the data
+                            if(scoreCounter == numElements)
+                            {
+                                mAdapter.notifyDataSetChanged();
+                                scoreCounter = 0;
+                            }
                         }
 
                         @Override
