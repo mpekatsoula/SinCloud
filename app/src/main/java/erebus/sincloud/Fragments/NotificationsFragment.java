@@ -39,7 +39,6 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private UpdateLikeStatus updateLikeStatus = null;
     private long scoreCounter = 0;
 
     @Override
@@ -59,17 +58,7 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.NOTIFICATIONS);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.NOTIFICATIONS));
-        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.NOTIFICATIONS));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
-        {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state)
-            {
-                super.onLayoutCompleted(state);
-                updateLikeStatus.Update();
-
-            }
-        };
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
@@ -81,8 +70,6 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
-
-        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.NOTIFICATIONS);
 
         // Get the list of the latest sins
         getNotifications();
@@ -132,7 +119,6 @@ public class NotificationsFragment extends Fragment implements SwipeRefreshLayou
                                             if(scoreCounter == numElements)
                                             {
                                                 mAdapter.notifyDataSetChanged();
-                                                updateLikeStatus.Update();
                                                 scoreCounter = 0;
                                             }
                                         }

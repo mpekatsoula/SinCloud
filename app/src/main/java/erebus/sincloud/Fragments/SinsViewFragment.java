@@ -61,17 +61,7 @@ public class SinsViewFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAdapter.setDeleteClickListener(new DeleteButtonListener(mAdapter));
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.USER_SETTINGS));
-        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.USER_SETTINGS));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
-        {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state)
-            {
-                super.onLayoutCompleted(state);
-                updateLikeStatus.Update();
-
-            }
-        };
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);

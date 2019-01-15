@@ -39,7 +39,6 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private UpdateLikeStatus updateLikeStatus = null;
     private long scoreCounter = 0;
 
     @Override
@@ -59,19 +58,8 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.HISTORY);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.HISTORY));
-        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.HISTORY));
 
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
-        {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state)
-            {
-                super.onLayoutCompleted(state);
-                updateLikeStatus.Update();
-
-            }
-        };
-
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -83,7 +71,6 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.HISTORY);
         // Get the list of the user's history
         getHistory();
     }

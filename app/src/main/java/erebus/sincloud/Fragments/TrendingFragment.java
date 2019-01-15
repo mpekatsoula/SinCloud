@@ -41,7 +41,6 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
     private ArrayList<String> sinsRefs = new ArrayList<>();
     private SwipeRefreshLayout mSwipeRefreshLayout = null;
     private int scoreCounter = 0;
-    private UpdateLikeStatus updateLikeStatus = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,17 +59,7 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAdapter = new SinsMenuAdapter(sinsArray, sinsRefs, SinMenuAdapterTypes.TRENDING);
         mAdapter.setInnerConstraintLayoutClickListener(new SinsRecycleViewInnerLayoutListener(this.getContext(), mAdapter));
         mAdapter.setPlayClickListener(new PlayButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
-        mAdapter.setLikeClickListener(new LikeButtonListener(mAdapter, SinMenuAdapterTypes.TRENDING));
-        LinearLayoutManager manager = new LinearLayoutManager(view.getContext())
-        {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state)
-            {
-                super.onLayoutCompleted(state);
-                updateLikeStatus.Update();
-
-            }
-        };
+        LinearLayoutManager manager = new LinearLayoutManager(view.getContext());
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 DividerItemDecoration.VERTICAL);
@@ -82,8 +71,6 @@ public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnR
         // Use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
-
-        updateLikeStatus = new UpdateLikeStatus(mAdapter, manager, this.getContext(), SinMenuAdapterTypes.TRENDING);
 
         // Get the list of the latest sins
         getTrendingSins();
