@@ -45,7 +45,7 @@ public class UploadFirebase
         StorageReference storageRef = storage.getReference();
 
         // Create a reference to sin
-        final StorageReference fileRef = storageRef.child("/sins" + UUID.randomUUID().toString() + ".3gp");
+        final StorageReference fileRef = storageRef.child("/sins/" + UUID.randomUUID().toString() + ".3gp");
 
         Log.d(TAG, "Local filename: " + localFilename);
         Uri file = Uri.fromFile(new File(localFilename));

@@ -25,10 +25,13 @@ import android.widget.Toast;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.nightonke.boommenu.BoomButtons.HamButton;
+import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
+import com.nightonke.boommenu.BoomMenuButton;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -37,9 +40,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import cn.iwgang.countdownview.CountdownView;
+import erebus.sincloud.Helpers.AudioEffect;
 import erebus.sincloud.Helpers.ButtonVisibility;
 import erebus.sincloud.Helpers.RecordButtonStates;
 import erebus.sincloud.R;
+import erebus.sincloud.Utils.AudioFilters;
 import erebus.sincloud.Utils.UploadFirebase;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -59,15 +64,19 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     private FloatingActionButton cancelRecordingButton;
     private FloatingActionButton uploadRecordingButton;
     private FloatingActionButton playbackRecordingButton;
+    private BoomMenuButton filtersMenuButton;
     private RecordButtonStates nextRecordButtonState;
     private CountdownView countdownView;
     private boolean has_permissions = false;
     private String sinFilename;
+    private String sinFilenameFinal;
     private int MAX_CHARACTER_LIMIT = 32;
     private final int RECORD_TIME_IN_SEC = 60;
     private final int RECORD_TIME_IN_MS = 1000 * RECORD_TIME_IN_SEC;
     private AnimationDrawable confessionAnimation;
     private MediaPlayer mediaPlayer;
+    AudioFilters audioFilters;
+    private AudioEffect audioEffect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -82,7 +91,10 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         uploadRecordingButton = findViewById(R.id.record_sin_activity_upload);
         playbackRecordingButton = findViewById(R.id.record_sin_activity_play_pause_container);
         countdownView = findViewById(R.id.record_sin_activity_countdown);
+        filtersMenuButton = findViewById(R.id.record_sin_activity_filters_button);
         mediaPlayer = new MediaPlayer();
+        audioEffect = AudioEffect.NONE;
+        audioFilters = new AudioFilters();
 
         Button backToolbarButton = findViewById(R.id.record_sin_activity_back);
         backToolbarButton.setOnClickListener(new View.OnClickListener()
@@ -98,6 +110,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         checkPermissions();
         setupRecordingButtons();
         setupCountdown();
+        setupFilterButtons();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(!sharedPreferences.getBoolean(COMPLETED_ONBOARDING, false))
@@ -105,7 +118,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             // This is the first time running the app, let's go to onboarding
             displayOnboarding();
         }
-        displayOnboarding();
     }
 
     @Override
@@ -148,6 +160,15 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         pauseRecordingButton.hide();
         nextRecordButtonState = RecordButtonStates.UPLOAD_CANCEL;
         countdownView.pause();
+
+        if(audioEffect != AudioEffect.NONE)
+        {
+            applyFilter();
+        }
+        else
+        {
+            sinFilenameFinal = sinFilename;
+        }
     }
 
     private void setupRecordingButtons()
@@ -338,9 +359,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                     }
                 });
                 builder.show();
-
             }
-
         });
     }
 
@@ -348,7 +367,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     {
         try
         {
-            mediaPlayer.setDataSource(sinFilename);
+            mediaPlayer.setDataSource(sinFilenameFinal);
         }
         catch (IOException e)
         {
@@ -425,7 +444,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     {
         final UploadFirebase uploadFile = new UploadFirebase();
         long timeRecored = RECORD_TIME_IN_SEC - countdownView.getRemainTime() / 1000;
-        uploadFile.UploadSinToFirebase(sinFilename, sinName, timeRecored, recordSinButton, this);
+        uploadFile.UploadSinToFirebase(sinFilenameFinal, sinName, timeRecored, recordSinButton, this);
         cancelRecordingButton.setClickable(false);
         uploadRecordingButton.setClickable(false);
     }
@@ -444,6 +463,87 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             EasyPermissions.requestPermissions(this, getString(R.string.audio_and_storage_rationale),
                     RC_AUDIO_AND_STORAGE, perms);
         }
+    }
+
+    private void deleteOldFile()
+    {
+        if(!sinFilenameFinal.equals(sinFilename))
+        {
+            File file = new File(sinFilenameFinal);
+            file.delete();
+        }
+    }
+    private void setupFilterButtons()
+    {
+        HamButton.Builder noFilterBld = new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_baseline_not_interested_24px)
+                .normalText("None!")
+                .subNormalText("No filter applied!")
+                .listener(new OnBMClickListener()
+                {
+                    @Override
+                    public void onBoomButtonClick(int index)
+                    {
+                        // Remove filter
+                        if(audioEffect != AudioEffect.NONE)
+                        {
+                            deleteOldFile();
+                            sinFilenameFinal = sinFilename;
+                        }
+
+                        audioEffect = AudioEffect.NONE;
+                    }
+                });
+
+        HamButton.Builder slowFilterBld = new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_baseline_exposure_neg_2_24px)
+                .normalText("Slow voice!")
+                .subNormalText("Slow down the pitch of your voice!")
+                .listener(new OnBMClickListener()
+                {
+                    @Override
+                    public void onBoomButtonClick(int index)
+                    {
+                        // Remove filter
+                        if(audioEffect != AudioEffect.SLOW)
+                        {
+                            deleteOldFile();
+                            audioEffect = AudioEffect.SLOW;
+                            applyFilter();
+                        }
+                        audioEffect = AudioEffect.SLOW;
+                    }
+                });
+
+        HamButton.Builder fastFilterBld = new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_baseline_exposure_plus_2_24px)
+                .normalText("Fast voice!")
+                .subNormalText("Make your voice sound faster!")
+                .listener(new OnBMClickListener()
+                {
+                    @Override
+                    public void onBoomButtonClick(int index)
+                    {
+                        // Remove filter
+                        if(audioEffect != AudioEffect.FAST)
+                        {
+                            deleteOldFile();
+                            audioEffect = AudioEffect.FAST;
+                            applyFilter();
+                        }
+                        audioEffect = AudioEffect.FAST;
+                    }
+                });
+
+        filtersMenuButton.addBuilder(noFilterBld);
+        filtersMenuButton.addBuilder(slowFilterBld);
+        filtersMenuButton.addBuilder(fastFilterBld);
+
+    }
+
+    private void applyFilter()
+    {
+        sinFilenameFinal = audioFilters.changePlaybackSpeed(sinFilename, RecordSinActivity.this, audioEffect);
     }
 
     private void displayOnboarding()
@@ -485,14 +585,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         // User has seen OnBoarding, so mark our SharedPreferences
         // flag as completed.
         SharedPreferences.Editor sharedPreferencesEditor;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        }
-        else
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
-        }
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
         sharedPreferencesEditor.apply();
     }

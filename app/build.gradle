@@ -10,12 +10,19 @@ android {
         versionCode 1
         versionName "0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'x86', 'armeabi-v7a'
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    aaptOptions {
+        ignoreAssetsPattern "!*ffprobe"
     }
 }
 
@@ -47,7 +54,10 @@ dependencies {
     implementation 'com.ramotion.paperonboarding:paper-onboarding:1.1.1'
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.12.0'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
+    implementation 'com.nightonke:boommenu:2.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+
+    implementation 'nl.bravobit:android-ffmpeg:1.1.5'
 }
 
 buildscript {
@@ -59,7 +69,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
     }
 }
 

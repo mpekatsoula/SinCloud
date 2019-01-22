@@ -14,6 +14,9 @@
         android:layout_height="56dp"
         android:background="?attr/colorPrimary"
         android:padding="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_scrollFlags="scroll|enterAlways"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:title="@string/app_name">
@@ -165,13 +168,25 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="24dp"
         android:adjustViewBounds="false"
         android:contentDescription="@string/confession_animation_description"
         app:layout_constraintBottom_toTopOf="@+id/record_sin_activity_countdown"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/record_sin_activity_filters_button"/>
+
+    <com.nightonke.boommenu.BoomMenuButton
+        android:id="@+id/record_sin_activity_filters_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:bmb_buttonEnum="ham"
+        app:bmb_buttonPlaceEnum="buttonPlace_ham_3"
+        app:bmb_piecePlaceEnum="piecePlace_ham_3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_activity_toolbar"/>
 
