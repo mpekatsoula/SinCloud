@@ -116,6 +116,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             // This is the first time running the app, let's go to onboarding
             displayOnboarding();
         }
+        displayOnboarding();
     }
 
     @Override
@@ -565,6 +566,21 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         .tintTarget(true)                   // Whether to tint the target view's color
                         .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                         .targetRadius(54),
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_filters_button), "Apply voice filters!", "Change your voice before uploading by selecting a filter!")
+                                .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                                .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                                .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                                .targetCircleColor(R.color.md_red_400)
+                                .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(true)                   // Whether to tint the target view's color
+                                .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                                .targetRadius(54),
                         TapTarget.forView(findViewById(R.id.record_sin_activity_upload), "Upload your sin!", "When you are done, click here to upload your sin to the cloud!")
                                 .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
                                 .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
@@ -580,7 +596,8 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
                                 .icon(getDrawable(R.drawable.ic_round_cloud_upload_24px))
-                                .targetRadius(54));
+                                .targetRadius(54)
+                        );
         tapSequence.start();
 
         // User has seen OnBoarding, so mark our SharedPreferences

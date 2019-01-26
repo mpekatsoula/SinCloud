@@ -156,7 +156,10 @@ public class SignupActivity extends AppCompatActivity
                                 map.put("provider", "unknown");
                             }
 
-                            map.put("displayName", "Anonymous");
+                            map.put("nickname", "Anonymous");
+
+                            int index = email.indexOf('@');
+                            map.put("displayName",email.substring(0,index));
                             users_ref.child(user.getUid()).setValue(map);
 
                             user.updateProfile(profileUpdates)

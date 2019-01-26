@@ -31,6 +31,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/ic_baseline_arrow_back_24px"
+                android:backgroundTint="@android:color/white"
                 app:icon="@drawable/ic_baseline_arrow_back_24px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -149,12 +150,12 @@
         android:id="@+id/activity_user_profile_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/md_black_1000"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/activity_user_profile_image"
+        app:layout_constraintStart_toStartOf="@+id/activity_user_profile_image"
         app:layout_constraintTop_toBottomOf="@+id/activity_user_profile_image"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
