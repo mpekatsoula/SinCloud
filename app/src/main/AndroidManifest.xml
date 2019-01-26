@@ -59,6 +59,9 @@
         <activity android:name=".Activities.OnBoardingActivity"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".Activities.SignupActivity"
+                  android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

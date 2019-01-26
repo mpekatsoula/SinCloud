@@ -2,6 +2,7 @@ package erebus.sincloud.Listeners;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
@@ -26,7 +27,7 @@ public class PlayButtonListener implements View.OnClickListener
         RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
         final int position = viewHolder.getAdapterPosition();
         final Sin sin = mAdapter.getItem(position);
-        Button button;
+        ImageView button;
         if(adapterType == SinMenuAdapterTypes.USER_SETTINGS)
         {
             button = v.findViewById(R.id.sin_view_user_play_button);

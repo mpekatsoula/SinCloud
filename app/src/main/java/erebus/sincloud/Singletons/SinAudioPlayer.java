@@ -1,7 +1,7 @@
 package erebus.sincloud.Singletons;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.widget.Button;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -13,7 +13,7 @@ public class SinAudioPlayer
 {
     private static SinAudioPlayer playerInstance;
     private MediaPlayer player;
-    private WeakReference<Button> playingButton;
+    private WeakReference<ImageView> playingButton;
     private boolean isPaused = false;
     private boolean isPrepared = true;
 
@@ -66,7 +66,7 @@ public class SinAudioPlayer
         return 1;
     }
 
-    public void playSin(String url, Button button, final DisplaySinActivity.waveAnimation waveAnimationCallback)
+    public void playSin(String url, ImageView button, final DisplaySinActivity.waveAnimation waveAnimationCallback)
     {
         if (player == null)
         {

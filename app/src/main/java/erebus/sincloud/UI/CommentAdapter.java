@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,7 +49,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         TextView commentTextView;
         TextView messageTimeTextView;
         TextView likesTextView;
-        Button likeCommentButton;
+        ImageView likeCommentButton;
 
         ViewHolder(View v)
         {

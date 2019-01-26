@@ -10,7 +10,7 @@
                                                  android:focusable="true"
                                                  android:orientation="vertical">
 
-    <Button
+    <ImageView
         android:id="@+id/sin_view_play_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -18,7 +18,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/ic_baseline_play_circle_outline_24px"
-        android:backgroundTint="@color/md_black_1000"
+        app:icon="@drawable/ic_baseline_play_circle_outline_24px"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -104,7 +104,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sin_view_title"
         app:layout_constraintVertical_bias="0.0"/>
 
-    <Button
+    <ImageView
         android:id="@+id/sin_view_like_image"
         android:layout_width="18dp"
         android:layout_height="18dp"

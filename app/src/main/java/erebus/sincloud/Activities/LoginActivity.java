@@ -97,6 +97,16 @@ public class LoginActivity extends AppCompatActivity
                 startActivityForResult(signInIntent, GOOGLE_RC_SIGN_IN);
             }
         });
+
+        findViewById(R.id.activity_login_signup_button).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // Open signup activity
+                openSignupActivity();
+            }
+        });
     }
 
     @Override
@@ -235,6 +245,11 @@ public class LoginActivity extends AppCompatActivity
         Intent intent = new Intent(getApplicationContext(), OnBoardingActivity.class);
         startActivity(intent);
         finish();
+    }
+    private void openSignupActivity()
+    {
+        Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+        startActivity(intent);
     }
 
 }

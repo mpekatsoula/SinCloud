@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -66,9 +67,9 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
         TextView nicknameTxtView;
         ConstraintLayout innerConstraintLayout;
         ConstraintLayout innerConstraintLayout2;
-        Button playButton;
-        Button likeButton;
-        Button deleteButton = null;
+        ImageView playButton;
+        ImageView likeButton;
+        ImageView deleteButton;
 
         ViewHolder(View v, SinMenuAdapterTypes adapterType)
         {

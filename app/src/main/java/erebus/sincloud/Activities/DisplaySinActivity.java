@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,14 +52,14 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
 {
     private String TAG = "DisplaySinActivity";
     private Sin sin;
-    private Button playButton;
+    private ImageView playButton;
     private AudioWaveView waveform;
     private TextView toolbarTextView = null;
     private TextView likesTextView = null;
     private TextView commentsTextView = null;
     private EditText chatMessageText = null;
-    private Button sendMessageButton = null;
-    private Button likeSinButton = null;
+    private ImageView sendMessageButton = null;
+    private ImageView likeSinButton = null;
     private String sinRefString;
     private byte[] audioFileRAW;
     final long MAX_DATA_SIZE = 1024 * 1024;
@@ -151,7 +152,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         chatMessageText = findViewById(R.id.display_sin_activity_chat_message_text);
         sendMessageButton = findViewById(R.id.activity_display_chat_send_button);
         likeSinButton = findViewById(R.id.display_sin_activity_like_button);
-        Button backToolbarButton = findViewById(R.id.display_activity_back);
+        ImageView backToolbarButton = findViewById(R.id.display_activity_back);
         mSwipeRefreshLayout = findViewById(R.id.display_sin_activity_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         waveAnimationCall = new waveAnimation();

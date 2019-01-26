@@ -92,11 +92,9 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         playbackRecordingButton = findViewById(R.id.record_sin_activity_play_pause_container);
         countdownView = findViewById(R.id.record_sin_activity_countdown);
         filtersMenuButton = findViewById(R.id.record_sin_activity_filters_button);
-        mediaPlayer = new MediaPlayer();
         audioEffect = AudioEffect.NONE;
-        audioFilters = new AudioFilters();
 
-        Button backToolbarButton = findViewById(R.id.record_sin_activity_back);
+        ImageView backToolbarButton = findViewById(R.id.record_sin_activity_back);
         backToolbarButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -129,6 +127,9 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         rocketImage.setBackgroundResource(R.drawable.confession_animation);
         confessionAnimation = (AnimationDrawable) rocketImage.getBackground();
         confessionAnimation.setOneShot(false);
+
+        mediaPlayer = new MediaPlayer();
+        audioFilters = new AudioFilters();
     }
 
     private void setupCountdown()
@@ -630,6 +631,20 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         {
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+    }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        if (audioRecorder != null)
+        {
+            audioRecorder.stop();
+        }
+
+        if(mediaPlayer != null  && mediaPlayer.isPlaying())
+        {
+            mediaPlayer.stop();
         }
     }
 }

@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
@@ -48,7 +49,7 @@ public class UserProfileActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        Button backToolbarButton = findViewById(R.id.activity_user_profile_back);
+        ImageView backToolbarButton = findViewById(R.id.activity_user_profile_back);
         nicknameTxtView = findViewById(R.id.activity_user_profile_nickname);
         backToolbarButton.setOnClickListener(new View.OnClickListener()
         {
