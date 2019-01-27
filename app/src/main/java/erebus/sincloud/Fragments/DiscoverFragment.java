@@ -22,8 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import erebus.sincloud.Helpers.SinMenuAdapterTypes;
-import erebus.sincloud.Helpers.UpdateLikeStatus;
-import erebus.sincloud.Listeners.LikeButtonListener;
 import erebus.sincloud.Listeners.PlayButtonListener;
 import erebus.sincloud.Listeners.SinsRecycleViewInnerLayoutListener;
 import erebus.sincloud.Models.Sin;
@@ -32,7 +30,6 @@ import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class DiscoverFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
-    private static final String TAG = "DiscoverFragment";
     private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SinCloud</string>
+    <string name="login_fb_failed">Η σύνδεση με το Facebook απέτυχε.</string>
+    <string name="main_activity_onboarding_text">Πάτησε εδώ για να ηχογραφίσεις μία νέα αμαρτία!</string>
+    <string name="record_sin_onboarding_upload_title">Μοιράσου την αμαρτία σου!</string>
+    <string name="oboarding_title2">Ανακάλυψε</string>
+    <string name="onboarding_title1">Αμαρτίες</string>
+    <string name="singup_weak_password">Αδύναμος κωδικός</string>
+    <string name="signup_invalid_credentials">Λάθος στοιχεία</string>
+    <string name="singup_user_already_exists">Ο χρήστης υπάρχει ήδη</string>
+    <string name="singup_generic_error">Κάτι πήγε λάθος</string>
+    <string name="singup_email_empty_error">Η ηλεκτρονική διεύθυνση δεν γίνεται να είναι κενή</string>
+    <string name="signup_passwords_match_error">Οι κωδικοί δεν ταιριάζουν</string>
+    <string name="signup_password_empty_error">Ο κωδικός δεν μπορεί να είναι κενός</string>
+    <string name="record_sin_activity_toolbar_text">Εξομολογητήριο</string>
+    <string name="nickname">Ψευδώνυμο</string>
+    <string name="setup_nickname_dialog_promt">Διάλεξε ψευδώνυμο</string>
+    <string name="sin_name_promt">Ποιά είναι η αμαρτία σου;</string>
+    <string name="anonymous">Ανώνυμος</string>
+    <string name="welcome_onboarding">Καλώς ήρθες στο SinCloud!</string>
+    <string name="welcome_onboarding_desc">Πότε ήταν η τελευταία φορά που εξομολογήθηκες;</string>
+    <string name="onboarding_sin">Εξομολογήσου και μοιράσου την αμαρτία σου με άλλους χρήστες ανώνυμα! Μπορείς να χρησιμοποιήσεις φίλτρα για να αλλάξεις την φωνή σου!</string>
+    <string name="oboarding_discover">Ανακάλυψε άλλες αμαρτίες και βοήθησε δίνοντας συμβουλές ή.. και όχι αν νιώθεις διαβολικός! Είναι στο χέρι σου! Ας ξεκινήσουμε!</string>
+    <string name="action_settings">Ρυθμίσεις</string>
+    <string name="main_activity_favourites_tag_string">Αγαπημένα</string>
+    <string name="main_activity_discovery_tag_string">Ανακάλυψε</string>
+    <string name="main_activity_popular_tag_string">Δημοφιλή</string>
+    <string name="delete_sin_prompt_text">Είσαι σίγουρος/η ότι θες να διαγράψεις αυτή την αμαρτία;</string>
+    <string name="record_sin_onboarding_record_title">Πάτησε για να ξεκινήσει η ηχογράφιση</string>
+    <string name="record_sin_onboarding_record_text">Πάτησε εδώ για να ξεκινήσει η ηχογράφιση. Έχεις ένα λεπτό!</string>
+    <string name="record_sin_onboarding_filters_title">Πρόσθεσε φίλτρα φωνής!</string>
+    <string name="record_sin_onboarding_filters_text">Άλλαξε την φωνή σου διαλέγοντας ένα φίλτρο!</string>
+    <string name="record_sin_onboarding_upload_text">Μόλις τελειώσεις πάτησε εδώ για να μοιραστείς την αμαρτία σου!</string>
+    <string name="error_playing_audio">Σφάλμα αναπαραγωγής</string>
+    <string name="main_activity_onboarding_title">Καλώς ήρθες!</string>
+</resources>

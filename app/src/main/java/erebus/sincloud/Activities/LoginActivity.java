@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,13 +33,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Objects;
-
 import erebus.sincloud.R;
 
 public class LoginActivity extends AppCompatActivity
 {
-    private static final String TAG = "LoginActivity";
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
 
@@ -156,8 +152,6 @@ public class LoginActivity extends AppCompatActivity
 
     private void handleGoogleAccessToken(GoogleSignInAccount acct)
     {
-        Log.d(TAG, "handleGoogleAccessToken:" + acct.getId());
-
         // Get the auth credential
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 
@@ -170,14 +164,12 @@ public class LoginActivity extends AppCompatActivity
                     {
                         if (task.isSuccessful())
                         {
-                            Log.d(TAG, "handleGoogleAccessToken:success");
                             openMainActivity(false);
                         }
                         else
                         {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "handleGoogleAccessToken:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, getString(R.string.authentication_failed),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -196,14 +188,12 @@ public class LoginActivity extends AppCompatActivity
                         if (task.isSuccessful())
                         {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "handleFacebookAccessToken:success");
                             openMainActivity(false);
                         }
                         else
                         {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "handleFacebookAccessToken:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Facebook login failed.",
+                            Toast.makeText(LoginActivity.this, getString(R.string.login_fb_failed),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

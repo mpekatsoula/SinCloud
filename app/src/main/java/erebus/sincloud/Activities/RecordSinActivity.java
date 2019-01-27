@@ -56,7 +56,6 @@ interface setUploadCancelButtonsVisibilityCallback
 
 public class RecordSinActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, setUploadCancelButtonsVisibilityCallback
 {
-    private static final String TAG = "RecordSinActivity";
     private static final String COMPLETED_ONBOARDING = "RecordSinActivity";
     private MediaRecorder audioRecorder;
     private FloatingActionButton recordSinButton;
@@ -197,7 +196,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         uploadRecordingButton.setClickable(true);
 
                         MediaRecorderReady();
-                        Log.d(TAG, "State: recordSinButton START_RECORDING" );
                         recordSinButton.setImageResource(R.drawable.ic_round_stop_24px);
                         try
                         {
@@ -218,9 +216,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         countdownView.start(RECORD_TIME_IN_MS);
                         break;
                     case STOP_RECORDING:
-                        Log.d(TAG, "State:recordSinButton  STOP_RECORDING" );
                     case PAUSE_RECORDING:
-                        Log.d(TAG, "State:recordSinButton  PAUSE_RECORDING" );
                         pauseStopRecordingAction();
                         confessionAnimation.stop();
                         break;
@@ -236,7 +232,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                 switch (nextRecordButtonState)
                 {
                     case STOP_RECORDING:
-                        Log.d(TAG, "State: pauseRecordingButton STOP_RECORDING" );
                         audioRecorder.pause();
                         countdownView.stop();
                         confessionAnimation.stop();
@@ -244,7 +239,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         nextRecordButtonState = RecordButtonStates.PAUSE_RECORDING;
                         break;
                     case PAUSE_RECORDING:
-                        Log.d(TAG, "State: pauseRecordingButton PAUSE_RECORDING" );
                         audioRecorder.resume();
                         countdownView.start(countdownView.getRemainTime());
                         confessionAnimation.start();
@@ -373,7 +367,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         }
         catch (IOException e)
         {
-            Toast.makeText(ctx, "Error while playing audio recording", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, getString(R.string.error_playing_audio), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -382,7 +376,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra)
             {
-                Log.d(TAG, "what: "  + what);
                 return true;
             }
         });
@@ -438,7 +431,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
         sinFilename = Objects.requireNonNull(getExternalFilesDir("recordings")).getAbsolutePath();
         sinFilename += "/" + System.currentTimeMillis() + "_sincloud.m4a";
-        Log.d(TAG, "Filename for recorded audio: " + sinFilename);
         audioRecorder.setOutputFile(sinFilename);
     }
 
@@ -552,7 +544,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     {
         TapTargetSequence tapSequence = new TapTargetSequence(this)
                 .targets(
-                        TapTarget.forView(findViewById(R.id.record_sin_activity_start_stop), "Click to record.", "Click here to start recording your sin. You have 1 minute!")
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_start_stop), getString(R.string.record_sin_onboarding_record_title), getString(R.string.record_sin_onboarding_record_text))
                         .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
                         .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
                         .titleTextSize(25)                  // Specify the size (in sp) of the title text
@@ -566,7 +558,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         .tintTarget(true)                   // Whether to tint the target view's color
                         .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                         .targetRadius(54),
-                        TapTarget.forView(findViewById(R.id.record_sin_activity_filters_button), "Apply voice filters!", "Change your voice before uploading by selecting a filter!")
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_filters_button), getString(R.string.record_sin_onboarding_filters_title), getString(R.string.record_sin_onboarding_filters_text))
                                 .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
                                 .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
                                 .titleTextSize(25)                  // Specify the size (in sp) of the title text
@@ -581,7 +573,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                                 .targetRadius(54),
-                        TapTarget.forView(findViewById(R.id.record_sin_activity_upload), "Upload your sin!", "When you are done, click here to upload your sin to the cloud!")
+                        TapTarget.forView(findViewById(R.id.record_sin_activity_upload), getString(R.string.record_sin_onboarding_upload_title), getString(R.string.record_sin_onboarding_upload_text))
                                 .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
                                 .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
                                 .titleTextSize(25)                  // Specify the size (in sp) of the title text
@@ -620,7 +612,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms)
     {
-        Log.d(TAG, "Permissions grated!");
         has_permissions = true;
     }
 

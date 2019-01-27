@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
     private void displayOnboarding()
     {
         TapTargetView.showFor(this,
-                TapTarget.forView(findViewById(R.id.fab), "Welcome!", "Click here to record a new sin!")
+                TapTarget.forView(findViewById(R.id.fab), getString(R.string.main_activity_onboarding_title), getString(R.string.main_activity_onboarding_text))
                         .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
                         .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
                         .titleTextSize(25)                  // Specify the size (in sp) of the title text
@@ -196,14 +196,7 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         // User has seen OnBoarding, so mark our SharedPreferences
         // flag as completed.
         SharedPreferences.Editor sharedPreferencesEditor;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        }
-        else
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
-        }
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
         sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
         sharedPreferencesEditor.apply();
     }

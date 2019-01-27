@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SinCloud</string>
+    <string name="app_name" translatable="false">SinCloud</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="main_activity_popular_tag_string">Popular</string>
     <string name="main_activity_discovery_tag_string">Discover</string>
@@ -10,8 +10,8 @@
     <string name="title_activity_popular">PopularActivity</string>
 
     <!--Facebook-->
-    <string name="facebook_app_id">2191489807732464</string>
-    <string name="fb_login_protocol_scheme">fb2191489807732464</string>
+    <string name="facebook_app_id" translatable="false">2191489807732464</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb2191489807732464</string>
 
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -96,9 +96,8 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="record_sin_activity_toolbar_text">Confess</string>
+    <string name="record_sin_activity_toolbar_text">Confession room</string>
     <string name="like_image">Like image</string>
     <string name="comments_image">Comments image</string>
     <string name="title_activity_test">Test</string>
@@ -113,12 +112,37 @@
     <string name="zero">0</string>
     <string name="nickname">Nickname:</string>
     <string name="click_to_change_username">Select a nickname!</string>
-    <string name="setup_nickname_dialog_promt">What is your nickname?</string>
+    <string name="setup_nickname_dialog_promt">Choose your nickname:</string>
     <string name="history">history</string>
     <string name="sin_name_promt">What is your sin?</string>
     <string name="anonymous">Anonymous</string>
-    <string name="confession_animation_description">Confession_animation</string>
-    <string name="feedback">Feedback</string>
+    <string name="confession_animation_description" translatable="false">Confession_animation</string>
+    <string name="feedback" translatable="false">Feedback</string>
     <string name="welcome_onboarding">Welcome to SinCloud!</string>
     <string name="welcome_onboarding_desc">When was the last time you confessed?</string>
+    <string name="onboarding_sin">Confess your sin and share it with other users anonymously! You can also use filters to alter your voice!</string>
+    <string name="oboarding_discover">Discover other sins and try to help by giving advice or.. mock if you feel bad! It\'s up to you! Let\'s get stated!</string>
+    <string name="oboarding_title2">Discover</string>
+    <string name="onboarding_title1">Sins</string>
+    <string name="singup_weak_password">Weak Password.</string>
+    <string name="signup_invalid_credentials">Invalid credentials.</string>
+    <string name="singup_user_already_exists">User already exists.</string>
+    <string name="singup_generic_error">Something went wrong.</string>
+    <string name="singup_email_empty_error">Email cannot be empty.</string>
+    <string name="signup_passwords_match_error">Passwords don\'t match.</string>
+    <string name="signup_password_empty_error">Passwords cannot be empty.</string>
+    <string name="singup_progress_dialog_title">Signing up</string>
+    <string name="singup_progress_dialog_text">Connecting with the cloud!</string>
+    <string name="delete_sin_prompt_text">Are you sure you want to delete this sin?</string>
+    <string name="record_sin_onboarding_record_title">Click to record.</string>
+    <string name="record_sin_onboarding_record_text">Click here to start recording your sin. You have 1 minute!</string>
+    <string name="record_sin_onboarding_filters_title">Apply voice filters!</string>
+    <string name="record_sin_onboarding_filters_text">Change your voice before uploading by selecting a filter!</string>
+    <string name="record_sin_onboarding_upload_text">When you are done, click here to upload your sin to the cloud!</string>
+    <string name="record_sin_onboarding_upload_title">Upload your sin!</string>
+    <string name="error_playing_audio">Error while playing audio recording</string>
+    <string name="main_activity_onboarding_title">Welcome!</string>
+    <string name="main_activity_onboarding_text">Click here to record a new sin!</string>
+    <string name="authentication_failed">Authentication failed.</string>
+    <string name="login_fb_failed">Facebook login failed.</string>
 </resources>

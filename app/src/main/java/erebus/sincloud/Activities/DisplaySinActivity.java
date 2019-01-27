@@ -50,7 +50,6 @@ import rm.com.audiowave.AudioWaveView;
 
 public class DisplaySinActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
 {
-    private String TAG = "DisplaySinActivity";
     private Sin sin;
     private ImageView playButton;
     private AudioWaveView waveform;
@@ -343,7 +342,6 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 }
                 catch (Exception e)
                 {
-                    Log.e(TAG, e.getMessage());
                     return;
                 }
                 chatMessageText.setText("");
@@ -403,8 +401,6 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
 
     private void displayComments()
     {
-        Log.d(TAG, "displayChatMessages");
-
         RecyclerView mRecyclerView = findViewById(R.id.display_sin_activity_recycleview);
         mAdapter = new CommentAdapter(commentsArray, commentsRefs, sinRefString);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -455,13 +451,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         if(sin != null)
         {
             StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(sin.getUrl());
-            Log.d(TAG, "loading url: " + sin.getUrl());
             storageRef.getBytes(MAX_DATA_SIZE).addOnSuccessListener(new OnSuccessListener<byte[]>()
             {
                 @Override
                 public void onSuccess(byte[] bytes)
                 {
-                    Log.d(TAG, "getFirebaseFile success");
                     audioFileRAW = bytes;
                     loadWaveform();
                 }
@@ -470,7 +464,6 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 @Override
                 public void onFailure(@NonNull Exception exception)
                 {
-                    Log.d(TAG, "getFirebaseFile failure");
                 }
             });
         }

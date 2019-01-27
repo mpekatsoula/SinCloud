@@ -34,7 +34,6 @@ import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class NotificationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
-    private static final String TAG = "NotificationsFragment";
     private SinsMenuAdapter mAdapter;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();

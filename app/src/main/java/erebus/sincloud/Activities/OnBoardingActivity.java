@@ -41,7 +41,6 @@ public class OnBoardingActivity extends AppCompatActivity
             @Override
             public void onRightOut()
             {
-                // Probably here will be your exit action
                 openMainActivity();
             }
         });
@@ -49,12 +48,11 @@ public class OnBoardingActivity extends AppCompatActivity
 
     private ArrayList<PaperOnboardingPage> getDataForOnboarding()
     {
-        // prepare data
         PaperOnboardingPage scr1 = new PaperOnboardingPage(getString(R.string.welcome_onboarding), getString(R.string.welcome_onboarding_desc),
                 Color.parseColor("#CE93D8"), R.drawable.sincloud_logo, R.drawable.onboarding_pager_circle_icon);
-        PaperOnboardingPage scr2 = new PaperOnboardingPage("Sins", "Confess your sin and share it with other users anonymously!",
+        PaperOnboardingPage scr2 = new PaperOnboardingPage(getString(R.string.onboarding_title1), getString(R.string.onboarding_sin),
                 Color.parseColor("#9FA8DA"), R.drawable.angel, R.drawable.onboarding_pager_circle_icon);
-        PaperOnboardingPage scr3 = new PaperOnboardingPage("Sins", "Discover other sins and be the voice of good or evil! Let's get stated!",
+        PaperOnboardingPage scr3 = new PaperOnboardingPage(getString(R.string.oboarding_title2), getString(R.string.oboarding_discover),
                 Color.parseColor("#EF9A9A"), R.drawable.devil, R.drawable.onboarding_pager_circle_icon);
 
         ArrayList<PaperOnboardingPage> elements = new ArrayList<>();
@@ -70,14 +68,8 @@ public class OnBoardingActivity extends AppCompatActivity
         // User has seen OnBoardingFragment, so mark our SharedPreferences
         // flag as completed.
         SharedPreferences.Editor sharedPreferencesEditor;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        }
-        else
-        {
-            sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
-        }
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).edit();
+
         sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
         sharedPreferencesEditor.apply();
 

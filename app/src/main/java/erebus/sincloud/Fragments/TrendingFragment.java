@@ -35,7 +35,6 @@ import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class TrendingFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
-    private static final String TAG = "TrendingFragment";
     private SinsMenuAdapter mAdapter = null;
     private ArrayList<Sin> sinsArray = new ArrayList<>();
     private ArrayList<String> sinsRefs = new ArrayList<>();

@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+import erebus.sincloud.R;
 import erebus.sincloud.UI.SinsMenuAdapter;
 
 public class DeleteButtonListener implements View.OnClickListener
@@ -26,7 +27,7 @@ public class DeleteButtonListener implements View.OnClickListener
     public void onClick(View v)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-        builder.setTitle("Are you sure you want to delete this sin?");
+        builder.setTitle(v.getResources().getString(R.string.delete_sin_prompt_text));
         RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
 
         final int pos = viewHolder.getAdapterPosition();

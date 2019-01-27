@@ -32,7 +32,6 @@ import erebus.sincloud.R;
 
 public class SignupActivity extends AppCompatActivity
 {
-    private static final String TAG = "LoginActivity";
     private FirebaseAuth mAuth;
     private TextView emailView;
     private TextView password;
@@ -77,28 +76,26 @@ public class SignupActivity extends AppCompatActivity
         String pass_repeat = passwordRepeat.getText().toString();
         if(email.isEmpty())
         {
-            Toast.makeText(SignupActivity.this, "Email cannot be empty.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupActivity.this, getString(R.string.singup_email_empty_error), Toast.LENGTH_SHORT).show();
             return;
         }
         if(!pass_repeat.equals(pass))
         {
-            Toast.makeText(SignupActivity.this, "Passwords don't match.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupActivity.this, getString(R.string.signup_passwords_match_error), Toast.LENGTH_SHORT).show();
             return;
         }
         if(pass.isEmpty())
         {
-            Toast.makeText(SignupActivity.this, "Passwords cannot be empty.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupActivity.this, getString(R.string.signup_password_empty_error), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        final ProgressDialog signup_progress = ProgressDialog.show(this, "Signing up", "Connecting with the cloud!", true);
+        final ProgressDialog signup_progress = ProgressDialog.show(this, getString(R.string.singup_progress_dialog_title), getString(R.string.singup_progress_dialog_text), true);
         mAuth.createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task)
                     {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -110,22 +107,21 @@ public class SignupActivity extends AppCompatActivity
                             }
                             catch(FirebaseAuthWeakPasswordException e)
                             {
-                                Toast.makeText(SignupActivity.this, "Weak Password.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, getString(R.string.singup_weak_password), Toast.LENGTH_SHORT).show();
                             }
                             catch(FirebaseAuthInvalidCredentialsException e)
                             {
-                                Toast.makeText(SignupActivity.this, "Invalid credentials.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, getString(R.string.signup_invalid_credentials), Toast.LENGTH_SHORT).show();
                             }
                             catch(FirebaseAuthUserCollisionException e)
                             {
-                                Toast.makeText(SignupActivity.this, "User already exists.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, getString(R.string.singup_user_already_exists), Toast.LENGTH_SHORT).show();
                             }
                             catch(Exception e)
                             {
-                                Toast.makeText(SignupActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivity.this, getString(R.string.singup_generic_error), Toast.LENGTH_SHORT).show();
                                 Crashlytics.logException(e);
                             }
-                            Log.w(TAG, "signInWithEmail", task.getException());
                             signup_progress.dismiss();
                         }
                         else
@@ -171,7 +167,6 @@ public class SignupActivity extends AppCompatActivity
                                             signup_progress.dismiss();
                                             if (task.isSuccessful())
                                             {
-                                                Log.d(TAG, "User profile updated.");
                                                 finish();
                                             }
                                         }
@@ -180,7 +175,7 @@ public class SignupActivity extends AppCompatActivity
                                 @Override
                                 public void onFailure(@NonNull Exception e)
                                 {
-                                    Toast.makeText(SignupActivity.this, "Something went wrong, please try again.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignupActivity.this, R.string.singup_generic_error, Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

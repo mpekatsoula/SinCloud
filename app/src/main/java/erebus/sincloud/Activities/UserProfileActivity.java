@@ -38,7 +38,6 @@ import erebus.sincloud.Utils.LoadPictureToView;
 
 public class UserProfileActivity extends AppCompatActivity
 {
-    private final String TAG = "UserProfileActivity";
     private TextView nicknameTxtView;
     private FragmentAdapter pageAdapter;
     private int MAX_NICKNAME_CHARACTER_LIMIT = 10;
