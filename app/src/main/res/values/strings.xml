@@ -109,7 +109,7 @@
     <string name="notifications">notifications</string>
     <string name="sins">Sins</string>
     <string name="comments">Comments</string>
-    <string name="zero">0</string>
+    <string name="zero" translatable="false">0</string>
     <string name="nickname">Nickname:</string>
     <string name="click_to_change_username">Select a nickname!</string>
     <string name="setup_nickname_dialog_promt">Choose your nickname:</string>

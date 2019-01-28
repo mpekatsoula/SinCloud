@@ -15,10 +15,8 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,7 +113,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             // This is the first time running the app, let's go to onboarding
             displayOnboarding();
         }
-        displayOnboarding();
     }
 
     @Override

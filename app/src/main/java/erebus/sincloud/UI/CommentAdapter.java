@@ -25,6 +25,7 @@ import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import erebus.sincloud.Models.Comment;
@@ -36,7 +37,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     private ArrayList<Comment> commentsDataset;
     private ArrayList<String> commentsRefs;
     private String sinRefString;
-    private String TAG = "CommentAdapter";
     private Context context;
 
     // Provide a reference to the views for each data item
@@ -68,7 +68,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         this.commentsDataset = commentsDataset;
         this.commentsRefs = commentsRefs;
         this.sinRefString = sinRefString;
-        Log.d(TAG, "Constructor()");
     }
 
     // Create new views (invoked by the layout manager)
@@ -76,7 +75,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     @Override
     public CommentAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        Log.d(TAG, "onCreateViewHolder()");
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_layout, parent, false);
         context = itemView.getContext();
 
@@ -87,7 +85,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     public void onBindViewHolder(@NonNull final CommentAdapter.ViewHolder holder, final int position)
     {
         final Comment comment = commentsDataset.get(position);
-        // Get data from firebase
+
         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(comment.getUsername());
         userRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -116,6 +114,32 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 {
                     holder.usernameTextView.setText(context.getString(R.string.anonymous));
                 }
+
+                // Change comment like color if the user has liked it before
+                final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("users").child(comment.getUsername()).child("clikes").child(comment.getKey());
+                likesRef.addListenerForSingleValueEvent(new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        Object likedStatusObject = dataSnapshot.getValue();
+                        if(likedStatusObject != null && (boolean) likedStatusObject)
+                        {
+                            holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
+                        }
+                        else
+                        {
+                            holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError)
+                    {
+
+                    }
+                });
+
             }
 
             @Override
@@ -141,7 +165,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
 
         holder.likesTextView.setText(String.valueOf(comment.getLikes()));
-
         holder.likeCommentButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -171,6 +194,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                             {
                                 comment.setLikes(comment.getLikes() + 1);
                                 holder.likesTextView.setText(String.valueOf(comment.getLikes()));
+                                holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
                                 commentRef.runTransaction(new Transaction.Handler()
                                 {
                                     @NonNull
@@ -192,6 +216,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                             {
                                 comment.setLikes(comment.getLikes() - 1);
                                 holder.likesTextView.setText(String.valueOf(comment.getLikes()));
+                                holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
                                 commentRef.runTransaction(new Transaction.Handler()
                                 {
                                     @NonNull

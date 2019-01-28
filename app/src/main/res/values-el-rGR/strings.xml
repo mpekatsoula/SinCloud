@@ -34,4 +34,16 @@
     <string name="record_sin_onboarding_upload_text">Μόλις τελειώσεις πάτησε εδώ για να μοιραστείς την αμαρτία σου!</string>
     <string name="error_playing_audio">Σφάλμα αναπαραγωγής</string>
     <string name="main_activity_onboarding_title">Καλώς ήρθες!</string>
+    <string name="trending">Δημοφιλη</string>
+    <string name="discover">Νεα</string>
+    <string name="logout">Αποσύνδεση</string>
+    <string name="profile">Προφιλ</string>
+    <string name="sins">Αμαρτίες</string>
+    <string name="my_sins">Οι Αμαρτιες μου</string>
+    <string name="notifications">Ειδοποιησεις</string>
+    <string name="comments">Σχόλια</string>
+    <string name="history">Ιστορικο</string>
+    <string name="title_activity_user_settings">Ρυθμίσεις</string>
+    <string name="singup_progress_dialog_title">Εγγραφή</string>
+    <string name="singup_progress_dialog_text">Σύνδεση με το cloud!</string>
 </resources>

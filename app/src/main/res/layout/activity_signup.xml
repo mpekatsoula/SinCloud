@@ -40,12 +40,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorAccent"
-            android:backgroundTintMode="@color/colorAccent"
+            android:background="@drawable/ic_baseline_email_24px"
+            android:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/email_signup_textview"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/email_signup_textview"
-            app:srcCompat="@drawable/ic_baseline_email_24px"/>
+            app:layout_constraintTop_toTopOf="@+id/email_signup_textview"/>
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/email_signup_textview"
@@ -67,22 +66,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/ic_baseline_lock_24px"
+            android:backgroundTint="@color/md_white_1000"
             app:layout_constraintBottom_toBottomOf="@+id/password_signup_textview"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/password_signup_textview"
-            app:srcCompat="@drawable/ic_baseline_lock_24px"/>
+            app:layout_constraintTop_toTopOf="@+id/password_signup_textview"/>
 
         <ImageView
             android:id="@+id/signup_activity_lock_image_repeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:background="@drawable/ic_baseline_lock_24px"
+            android:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/password_signup_repeat"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/password_signup_repeat"
-            app:srcCompat="@drawable/ic_baseline_lock_24px"/>
+            app:layout_constraintTop_toTopOf="@+id/password_signup_repeat"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signup_login_signup_button"
