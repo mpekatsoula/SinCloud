@@ -19,12 +19,12 @@
     <string name="sin_name_promt">Ποιά είναι η αμαρτία σου;</string>
     <string name="anonymous">Ανώνυμος</string>
     <string name="welcome_onboarding">Καλώς ήρθες στο SinCloud!</string>
-    <string name="welcome_onboarding_desc">Πότε ήταν η τελευταία φορά που εξομολογήθηκες;</string>
+    <string name="welcome_onboarding_desc">Εξομολογήθηκες σήμερα;</string>
     <string name="onboarding_sin">Εξομολογήσου και μοιράσου την αμαρτία σου με άλλους χρήστες ανώνυμα! Μπορείς να χρησιμοποιήσεις φίλτρα για να αλλάξεις την φωνή σου!</string>
     <string name="oboarding_discover">Ανακάλυψε άλλες αμαρτίες και βοήθησε δίνοντας συμβουλές ή.. και όχι αν νιώθεις διαβολικός! Είναι στο χέρι σου! Ας ξεκινήσουμε!</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="main_activity_favourites_tag_string">Αγαπημένα</string>
-    <string name="main_activity_discovery_tag_string">Ανακάλυψε</string>
+    <string name="main_activity_discovery_tag_string">Νέα</string>
     <string name="main_activity_popular_tag_string">Δημοφιλή</string>
     <string name="delete_sin_prompt_text">Είσαι σίγουρος/η ότι θες να διαγράψεις αυτή την αμαρτία;</string>
     <string name="record_sin_onboarding_record_title">Πάτησε για να ξεκινήσει η ηχογράφιση</string>

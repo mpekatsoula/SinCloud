@@ -104,8 +104,8 @@
         android:layout_marginBottom="16dp"
         android:layout_gravity="end|bottom"
         android:elevation="0dp"
-        app:elevation="0dp"
         android:src="@drawable/ic_round_mic_24px"
+        app:elevation="0dp"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -119,7 +119,7 @@
     <string name="confession_animation_description" translatable="false">Confession_animation</string>
     <string name="feedback" translatable="false">Feedback</string>
     <string name="welcome_onboarding">Welcome to SinCloud!</string>
-    <string name="welcome_onboarding_desc">When was the last time you confessed?</string>
+    <string name="welcome_onboarding_desc">Have you confessed today?</string>
     <string name="onboarding_sin">Confess your sin and share it with other users anonymously! You can also use filters to alter your voice!</string>
     <string name="oboarding_discover">Discover other sins and try to help by giving advice or.. mock if you feel bad! It\'s up to you! Let\'s get stated!</string>
     <string name="oboarding_title2">Discover</string>

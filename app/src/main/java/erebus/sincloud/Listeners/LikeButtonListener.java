@@ -68,7 +68,6 @@ public class LikeButtonListener implements View.OnClickListener
                 }
 
                 final boolean likedStatus = (Boolean) dataSnapshot.getValue();
-                userRef.setValue(!likedStatus);
 
                 // Increase/decrease the like counter
                 if(!likedStatus)
