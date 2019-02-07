@@ -46,4 +46,8 @@
     <string name="title_activity_user_settings">Ρυθμίσεις</string>
     <string name="singup_progress_dialog_title">Εγγραφή</string>
     <string name="singup_progress_dialog_text">Σύνδεση με το cloud!</string>
+    <string name="authentication_failed">Αποτυχία σύνδεσης</string>
+    <string name="password">κωδικός</string>
+    <string name="login">Σύνδεση</string>
+    <string name="signup">Εγγραφή</string>
 </resources>

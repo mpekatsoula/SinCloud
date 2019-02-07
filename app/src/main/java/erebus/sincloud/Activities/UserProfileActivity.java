@@ -152,6 +152,7 @@ public class UserProfileActivity extends AppCompatActivity
     private void loadUserInfo()
     {
         final TextView sinsNumber = findViewById(R.id.activity_user_profile_sins_number);
+        final TextView commentNumber = findViewById(R.id.activity_user_profile_comment_number);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null)
@@ -174,6 +175,7 @@ public class UserProfileActivity extends AppCompatActivity
                     }
 
                     sinsNumber.setText(String.valueOf(dataSnapshot.child("sins").getChildrenCount()));
+                    commentNumber.setText(String.valueOf(dataSnapshot.child("scomments").getChildrenCount()));
                 }
 
                 @Override

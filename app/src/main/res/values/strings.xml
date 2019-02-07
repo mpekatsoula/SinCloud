@@ -145,4 +145,7 @@
     <string name="main_activity_onboarding_text">Click here to record a new sin!</string>
     <string name="authentication_failed">Authentication failed.</string>
     <string name="login_fb_failed">Facebook login failed.</string>
+    <string name="password">password</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
 </resources>

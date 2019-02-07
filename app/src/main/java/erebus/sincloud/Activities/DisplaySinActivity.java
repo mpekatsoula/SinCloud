@@ -69,6 +69,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     private waveAnimation waveAnimationCall;
     private Timer audioTimer;
     private boolean likedStatus = false;
+    private long localSinLikes;
 
     public interface startWaveAnimationCallback
     {
@@ -110,7 +111,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         // Get sin reference
         sinRefString = getIntent().getStringExtra("sinRef");
         final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinRefString);
-        sinRef.addValueEventListener(new ValueEventListener()
+        sinRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
@@ -129,6 +130,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 displayComments();
                 toolbarTextView.setText(sin.getTitle());
                 likesTextView.setText(String.valueOf(sin.getLikes()));
+                localSinLikes = sin.getLikes();
                 // Update notify
                 if(sin.getUserid().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()))
                 {
@@ -187,15 +189,15 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
         }
     }
 
-    // Checks if the user has likes the message before
+    // Checks if the user has liked the message
     private void checkUserLike()
     {
         // Check if the user has liked the sin before.
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null)
         {
-            final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("likes").child(sinRefString);
-            userRef.addListenerForSingleValueEvent(new ValueEventListener()
+            final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("slikes").child(sinRefString).child(user.getUid());
+            userRef.addValueEventListener(new ValueEventListener()
             {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot)
@@ -233,54 +235,24 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("likes").child(sinRefString);
-                    final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinRefString).child("likes");
-
+                    // Change like status
                     likedStatus = !likedStatus;
-                    userRef.setValue(likedStatus);
+                    FirebaseDatabase.getInstance().getReference().child("slikes").child(sinRefString).child(user.getUid()).setValue(likedStatus);
+
                     // Increase/decrease the like counter
                     if(likedStatus)
                     {
-                        sinRef.runTransaction(new Transaction.Handler()
-                        {
-                            @NonNull
-                            @Override
-                            public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                            {
-                                mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
-                                return Transaction.success(mutableData);
-                            }
-
-                                @Override
-                                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                                {
-                                }
-                        });
-
                         // Change the color of like button
                         likeSinButton.setBackgroundTintList(ContextCompat.getColorStateList(DisplaySinActivity.this, R.color.colorAccent));
+                        localSinLikes++;
+                        likesTextView.setText(String.valueOf(localSinLikes));
                     }
                     else
                     {
-                        sinRef.runTransaction(new Transaction.Handler()
-                        {
-                            @NonNull
-                            @Override
-                            public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                            {
-                                mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) - 1);
-                                return Transaction.success(mutableData);
-                            }
-
-                            @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                            {
-
-                            }
-                        });
-
                         // Change the color of like button
                         likeSinButton.setBackgroundTintList(ContextCompat.getColorStateList(DisplaySinActivity.this, R.color.md_black_1000));
+                        localSinLikes--;
+                        likesTextView.setText(String.valueOf(localSinLikes));
                     }
                 }
             }

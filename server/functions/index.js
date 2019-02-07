@@ -63,3 +63,56 @@ async function getMonthlyPosts(users = [], nextPageToken)
   
   return users;
 }
+
+exports.storeLikedSin = functions.database.ref('/slikes/{sin_id}/{user_id}')
+    .onWrite((snapshot, context) => {
+      var db = admin.database();
+      const beforeData = snapshot.before.val(); // data before the write
+      const afterData = snapshot.after.val(); // data after the write
+      if(beforeData != afterData)
+      {
+        if(afterData)
+        {
+            db.ref('/sins/' + context.params.sin_id + "/likes/").transaction(function(likes) {
+            likes++;
+            return likes;
+            });
+        }
+        else
+        {
+            db.ref('/sins/' + context.params.sin_id + "/likes/").transaction(function(likes) {
+            likes--;
+            return likes;
+            });
+       }
+      }
+      return 0;
+    });
+    
+exports.storeLikedComment = functions.database.ref('/clikes/{sin_id}/{comment_id}/{user_id}')
+    .onWrite((snapshot, context) => {
+      var db = admin.database();
+      const beforeData = snapshot.before.val(); // data before the write
+      const afterData = snapshot.after.val(); // data after the write
+      
+        console.log("before data: ", beforeData);
+        console.log("afterData data: ", afterData);
+      if(beforeData != afterData)
+      {
+        if(afterData)
+        {
+            db.ref('/comments/' + context.params.sin_id + "/" + context.params.comment_id + "/likes/").transaction(function(likes) {
+            likes++;
+            return likes;
+            });
+        }
+        else
+        {
+            db.ref('/comments/' + context.params.sin_id + "/" + context.params.comment_id + "/likes/").transaction(function(likes) {
+            likes--;
+            return likes;
+            });
+       }
+      }
+      return 0;
+    });

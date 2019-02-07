@@ -116,7 +116,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 }
 
                 // Change comment like color if the user has liked it before
-                final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("users").child(comment.getUsername()).child("clikes").child(comment.getKey());
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("clikes").child(sinRefString).child(comment.getKey()).child(user.getUid());
                 likesRef.addListenerForSingleValueEvent(new ValueEventListener()
                 {
                     @Override
@@ -171,10 +172,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             public void onClick(View v)
             {
                 // Check if the user has liked the comment before.
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("clikes").child(comment.getKey());
+                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("clikes").child(sinRefString).child(comment.getKey()).child(user.getUid());
                     userRef.addListenerForSingleValueEvent(new ValueEventListener()
                     {
                         @Override
@@ -186,53 +187,20 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                             {
                                 likedStatus = (boolean) likedStatusObject;
                             }
-                            userRef.setValue(!likedStatus);
 
-                            final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child("comments").child(sinRefString).child(comment.getKey()).child("likes");
+                            userRef.setValue(!likedStatus);
                             // Increase/decrease the like counter
                             if(!likedStatus)
                             {
                                 comment.setLikes(comment.getLikes() + 1);
                                 holder.likesTextView.setText(String.valueOf(comment.getLikes()));
                                 holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
-                                commentRef.runTransaction(new Transaction.Handler()
-                                {
-                                    @NonNull
-                                    @Override
-                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                                    {
-                                        mutableData.setValue(Long.parseLong(mutableData.getValue().toString()) + 1);
-                                        return Transaction.success(mutableData);
-                                    }
-
-                                    @Override
-                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                                    {
-
-                                    }
-                                });
                             }
                             else
                             {
                                 comment.setLikes(comment.getLikes() - 1);
                                 holder.likesTextView.setText(String.valueOf(comment.getLikes()));
                                 holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
-                                commentRef.runTransaction(new Transaction.Handler()
-                                {
-                                    @NonNull
-                                    @Override
-                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                                    {
-                                        mutableData.setValue(Long.parseLong(mutableData.getValue().toString()) - 1);
-                                        return Transaction.success(mutableData);
-                                    }
-
-                                    @Override
-                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                                    {
-
-                                    }
-                                });
                             }
                         }
 
