@@ -1,10 +1,13 @@
 package erebus.sincloud.Utils;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,6 +22,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.UUID;
 
@@ -26,6 +30,7 @@ import androidx.annotation.NonNull;
 import erebus.sincloud.Activities.RecordSinActivity;
 import erebus.sincloud.Helpers.ButtonVisibility;
 import erebus.sincloud.Models.Sin;
+import erebus.sincloud.R;
 
 public class UploadFirebase
 {
@@ -52,8 +57,8 @@ public class UploadFirebase
         final UploadTask uploadTask = fileRef.putFile(file);
 
         // Show waiting dialog
-        final ProgressDialog uploadingDialog = ProgressDialog.show(recordSinActivity, "Uploading sin",
-                "Sending to god, please wait...", true);
+        final ProgressDialog uploadingDialog = ProgressDialog.show(recordSinActivity, recordSinActivity.getString(R.string.uploading_sin_title),
+                recordSinActivity.getString(R.string.uploading_sin_message), true);
         uploadingDialog.create();
 
         // Register observers to listen for when the download is done or if it fails
@@ -100,21 +105,58 @@ public class UploadFirebase
                         }
                     });
             }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>()
-        {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot)
-            {
-                double progress = (100.f * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                Log.d(TAG, "Upload is " + progress + "% done");
-            }
-        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>()
-        {
+        });
+    }
 
+    public void UploadProfilePicFirebase(Bitmap image, final Activity activity)
+    {
+        // Create a storage reference from our app
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to sin
+        final StorageReference fileRef = storageRef.child("/pics/" + UUID.randomUUID().toString() + ".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        final UploadTask uploadTask = fileRef.putBytes(data);
+
+        // Show waiting dialog
+        final ProgressDialog uploadingDialog = ProgressDialog.show(activity, "Uploading image",
+                "Please wait", true);
+        uploadingDialog.create();
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener()
+        {
             @Override
-            public void onPaused(UploadTask.TaskSnapshot taskSnapshot)
+            public void onFailure(@NonNull Exception exception)
             {
-                Log.d(TAG, "Upload is paused");
+                // Handle unsuccessful uploads
+                uploadingDialog.dismiss();
+                Toast.makeText(activity, "Something went wrong while uploading", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+        {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                    {
+                        @Override
+                        public void onSuccess(Uri uri)
+                        {
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if(user != null)
+                            {
+                                FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("photoURL").setValue(uri.toString());
+                            }
+
+                            uploadingDialog.dismiss();
+                        }
+                    });
             }
         });
     }

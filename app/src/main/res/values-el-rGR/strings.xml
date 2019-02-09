@@ -50,4 +50,23 @@
     <string name="password">κωδικός</string>
     <string name="login">Σύνδεση</string>
     <string name="signup">Εγγραφή</string>
+    <string name="very_bad">Πολύ κακή</string>
+    <string name="not_good">Κακή</string>
+    <string name="quite_ok">Μέτρια</string>
+    <string name="very_good">Πολύ καλή</string>
+    <string name="excellent">Τέλεια!</string>
+    <string name="feedback_description">Πως σου φαίνεται η εφαρμογή;</string>
+    <string name="feedback_hint">Γράψε το σχόλιο οσυ εδώ...</string>
+    <string name="feedback_title">Πες μας την γνώμη σου για το SinCloud</string>
+    <string name="later">Αργότερα</string>
+    <string name="cancel">Άκυρο</string>
+    <string name="submit">Αποστολή</string>
+    <string name="user_profile_onboarding_nickname_title">Πάτησε εδώ για να αλλάξεις το ψευδώνυμό σου.</string>
+    <string name="user_profile_onboarding_nickname_text">Το ψευδώνυμο αυτό θα χρησιμοποιείται στις αμαρτίες που ανεβάζεις. Άστο κενό για να είσαι \"Ανώνυμος\".</string>
+    <string name="uploading_sin_title">Η αμαρτία σου ανεβαίνει</string>
+    <string name="uploading_sin_message">Αποστολή στον Θεό, παρακαλώ περίμενε...</string>
+    <string name="user_profile_onboarding_profilepic_title">Άλλαξε φωτογραφία προφίλ</string>
+    <string name="user_profile_onboarding_profilepic_text">Πάτησε εδώ για να αλλάξεις την φωτογραφία σου</string>
+    <string name="media_photo_error_message">Κάτι πήγε στραβά</string>
+    <string name="click_to_change_username">Ψευδώνυμο!</string>
 </resources>

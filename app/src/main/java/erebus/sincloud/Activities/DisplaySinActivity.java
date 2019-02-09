@@ -331,24 +331,6 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 Comment comment = new Comment(userUid, message, 0, commentsRef.getKey());
                 commentsRef.setValue(comment);
                 getComments();
-
-                // Increase the comment counter
-                final DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinRefString).child("comments");
-                sinRef.runTransaction(new Transaction.Handler()
-                {
-                    @NonNull
-                    @Override
-                    public Transaction.Result doTransaction(@NonNull MutableData mutableData)
-                    {
-                        mutableData.setValue(Integer.parseInt(mutableData.getValue().toString()) + 1);
-                        return Transaction.success(mutableData);
-                    }
-
-                    @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot)
-                    {
-                    }
-                });
             }
         });
     }

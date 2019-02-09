@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
         {
-            openMainActivity(true);
+            openMainActivity(false);
         }
     }
 
@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity
                     {
                         if (task.isSuccessful())
                         {
-                            openMainActivity(false);
+                            openMainActivity(task.getResult().getAdditionalUserInfo().isNewUser());
                         }
                         else
                         {
@@ -188,7 +188,7 @@ public class LoginActivity extends AppCompatActivity
                         if (task.isSuccessful())
                         {
                             // Sign in success, update UI with the signed-in user's information
-                            openMainActivity(false);
+                            openMainActivity(task.getResult().getAdditionalUserInfo().isNewUser());
                         }
                         else
                         {
@@ -200,12 +200,12 @@ public class LoginActivity extends AppCompatActivity
                 });
     }
 
-    private void openMainActivity(boolean returningLogin)
+    private void openMainActivity(boolean isNewUser)
     {
         // If it's the first time the user logs in,
         // create/update the firebase database with the username
         // and photoURL
-        if(!returningLogin)
+        if(isNewUser)
         {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null)

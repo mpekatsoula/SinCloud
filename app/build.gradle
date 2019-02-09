@@ -71,9 +71,10 @@ buildscript {
             url 'https://maven.google.com/'
             name 'Google'
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0'
+        classpath 'com.android.tools.build:gradle:3.3.1'
     }
 }
 

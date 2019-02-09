@@ -1,18 +1,29 @@
 package erebus.sincloud.Activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.InputStream;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -35,13 +47,16 @@ import erebus.sincloud.Fragments.SinsViewFragment;
 import erebus.sincloud.R;
 import erebus.sincloud.Singletons.SinAudioPlayer;
 import erebus.sincloud.Utils.LoadPictureToView;
+import erebus.sincloud.Utils.UploadFirebase;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class UserProfileActivity extends AppCompatActivity
 {
+    private static final String COMPLETED_ONBOARDING = "UserProfileActivity";
     private TextView nicknameTxtView;
     private FragmentAdapter pageAdapter;
     private int MAX_NICKNAME_CHARACTER_LIMIT = 10;
-    private AlertDialog changeUsernameDialog;
+    private final int GALLERY_IMAGE = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,6 +87,14 @@ public class UserProfileActivity extends AppCompatActivity
         loadProfilePic();
         loadUserInfo();
         setupNicknameListener();
+        setupProfilePicListener();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPreferences.getBoolean(COMPLETED_ONBOARDING, false))
+        {
+            // This is the first time running the app, let's go to onboarding
+            displayOnboarding();
+        }
     }
 
     @Override
@@ -83,36 +106,48 @@ public class UserProfileActivity extends AppCompatActivity
 
     private void setupNicknameListener()
     {
-        // Set up the input
-        final EditText input = new EditText(UserProfileActivity.this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_NICKNAME_CHARACTER_LIMIT) });
-
-        input.addTextChangedListener(new TextWatcher()
+        nicknameTxtView.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            public void onClick(View v)
             {
+                // Create an alert dialog to get title
+                LayoutInflater inflater = getLayoutInflater();
+                @SuppressLint("InflateParams")
+                View alertLayout = inflater.inflate(R.layout.alert_dialog_nickname, null);
+                final TextView charactersLeft = alertLayout.findViewById(R.id.alert_dialog_characters_left);
+                final TextView charactersTotal = alertLayout.findViewById(R.id.alert_dialog_total_characters);
+                final String charLimit = "/  " + MAX_NICKNAME_CHARACTER_LIMIT;
+                charactersTotal.setText(charLimit);
+                final TextInputEditText input = alertLayout.findViewById(R.id.alert_dialog_nickname_text);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_NICKNAME_CHARACTER_LIMIT) });
 
-            }
+                charactersLeft.setText(String.valueOf(MAX_NICKNAME_CHARACTER_LIMIT));
+                input.addTextChangedListener(new TextWatcher()
+                {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                    {
+                    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count)
-            {
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count)
+                    {
 
-            }
+                    }
 
-            @Override
-            public void afterTextChanged(Editable s)
-            {
-//                        TextView tv = findViewById(R.id.yourTextViewId);
-//                        tv.setText(String.valueOf(MAX_CHARACTER_LIMIT - s.length()));
-            }
-        });
+                    @Override
+                    public void afterTextChanged(Editable s)
+                    {
+                        charactersLeft.setText(String.valueOf(MAX_NICKNAME_CHARACTER_LIMIT - s.length()));
+                    }
+                });
 
-        changeUsernameDialog = new AlertDialog.Builder(UserProfileActivity.this)
-                .setTitle(getString(R.string.setup_nickname_dialog_promt))
-                .setView(input).setPositiveButton("OK", new DialogInterface.OnClickListener()
+                final AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+                builder.setTitle(getString(R.string.setup_nickname_dialog_promt));
+                builder.setView(alertLayout);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
@@ -122,29 +157,21 @@ public class UserProfileActivity extends AppCompatActivity
                         {
                             return;
                         }
-
                         // Store nickname to firebase
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(user).getUid()).child("nickname");
                         userRef.setValue(sinName);
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
                         dialog.cancel();
                     }
-                })
-                .create();
-
-        nicknameTxtView.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                changeUsernameDialog.show();
+                });
+                builder.show();
             }
         });
     }
@@ -187,6 +214,20 @@ public class UserProfileActivity extends AppCompatActivity
         }
     }
 
+    // Open intent for uploading picture
+    private void setupProfilePicListener()
+    {
+        CircleImageView profilePic = findViewById(R.id.activity_user_profile_image);
+        profilePic.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                requestStoragePermissions();
+            }
+        });
+    }
+
     private void loadProfilePic()
     {
         CircleImageView profilePic = findViewById(R.id.activity_user_profile_image);
@@ -205,5 +246,104 @@ public class UserProfileActivity extends AppCompatActivity
         pageAdapter.addFragment(new SinsViewFragment(), "My Sins");
         pageAdapter.addFragment(new HistoryFragment(), "History");
         viewPager.setAdapter(pageAdapter);
+    }
+
+    private void requestStoragePermissions()
+    {
+        String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms))
+        {
+            openGalleryIntent();
+        }
+        else
+        {
+            // Do not have permissions, request them now
+            int PERMISSIONS_REQUEST_STORAGE = 32;
+            EasyPermissions.requestPermissions(this, "SinCloud needs to access your external storage!", PERMISSIONS_REQUEST_STORAGE, perms);
+        }
+    }
+
+    private void openGalleryIntent()
+    {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, GALLERY_IMAGE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        Bitmap bitmap = null;
+        CircleImageView profilePic = findViewById(R.id.activity_user_profile_image);
+
+        try
+        {
+            if(data.getData() == null)
+            {
+                throw new Exception();
+            }
+            InputStream is = getContentResolver().openInputStream(data.getData());
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(UserProfileActivity.this, getString(R.string.media_photo_error_message), Toast.LENGTH_SHORT).show();
+        }
+        if (resultCode == RESULT_OK)
+        {
+            if (bitmap != null)
+            {
+                // Upload picture to server
+                UploadFirebase uploadFirebase = new UploadFirebase();
+                uploadFirebase.UploadProfilePicFirebase(bitmap, UserProfileActivity.this);
+                profilePic.setImageBitmap(bitmap);
+            }
+            else
+            {
+                Toast.makeText(UserProfileActivity.this, getString(R.string.media_photo_error_message), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void displayOnboarding()
+    {
+        TapTargetSequence tapSequence = new TapTargetSequence(this)
+                .targets(
+                        TapTarget.forView(findViewById(R.id.activity_user_profile_nickname), getString(R.string.user_profile_onboarding_nickname_title), getString(R.string.user_profile_onboarding_nickname_text))
+                                .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                                .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                                .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                                .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(true)                   // Whether to tint the target view's color
+                                .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                                .targetRadius(54),
+                        TapTarget.forView(findViewById(R.id.activity_user_profile_image), getString(R.string.user_profile_onboarding_profilepic_title), getString(R.string.user_profile_onboarding_profilepic_text))
+                                .outerCircleColor(R.color.md_blue_A700)      // Specify a color for the outer circle
+                                .outerCircleAlpha(0.95f)            // Specify the alpha amount for the outer circle
+                                .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                                .titleTextColor(R.color.md_white_1000)      // Specify the color of the title text
+                                .descriptionTextSize(16)            // Specify the size (in sp) of the description text
+                                .targetCircleColor(R.color.md_red_400)
+                                .textColor(R.color.md_black_1000)            // Specify a color for both the title and description text
+                                .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                                .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
+                                .drawShadow(true)                   // Whether to draw a drop shadow or not
+                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .tintTarget(true)                   // Whether to tint the target view's color
+                                .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
+                                .targetRadius(54)
+                );
+        tapSequence.start();
+
+        // User has seen OnBoarding, so mark our SharedPreferences
+        // flag as completed.
+        SharedPreferences.Editor sharedPreferencesEditor;
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        sharedPreferencesEditor.putBoolean(COMPLETED_ONBOARDING, true);
+        sharedPreferencesEditor.apply();
     }
 }

@@ -116,3 +116,15 @@ exports.storeLikedComment = functions.database.ref('/clikes/{sin_id}/{comment_id
       }
       return 0;
     });
+    
+exports.updateCommentCounter = functions.database.ref('/comments/{sin_id}/')
+    .onUpdate((snapshot, context) => {
+      var db = admin.database();
+      db.ref('/sins/' + context.params.sin_id + "/comments/").transaction(function(comments) {
+      comments++;
+      return comments;
+      });
+      
+      return 0;
+    });
+    
