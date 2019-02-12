@@ -8,13 +8,13 @@ import java.util.HashMap;
 public class Sin
 {
     // Sin class
-    private String url;
-    private String title;
-    private String userid;
-    private long time;
-    private long likes;
-    private long comments;
-    private HashMap<String, Object> sinTime;
+    public String url;
+    public String title;
+    public String userid;
+    public long time;
+    public long likes;
+    public long comments;
+    public HashMap<String, Object> sinTime;
 
     public Sin()
     {

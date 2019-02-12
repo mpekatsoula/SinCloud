@@ -212,7 +212,14 @@ public class LoginActivity extends AppCompatActivity
             {
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
                 userRef.child("displayName").setValue(user.getDisplayName());
-                userRef.child("photoURL").setValue(user.getPhotoUrl().toString());
+                if(user.getPhotoUrl() != null)
+                {
+                    userRef.child("photoURL").setValue(user.getPhotoUrl().toString());
+                }
+                else
+                {
+                    userRef.child("photoURL").setValue("https://sincloud.app/images/logo.png");
+                }
             }
         }
 
