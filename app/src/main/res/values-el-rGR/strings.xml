@@ -19,9 +19,9 @@
     <string name="sin_name_promt">Ποιά είναι η αμαρτία σου;</string>
     <string name="anonymous">Ανώνυμος</string>
     <string name="welcome_onboarding">Καλώς ήρθες στο SinCloud!</string>
-    <string name="welcome_onboarding_desc">Εξομολογήθηκες σήμερα;</string>
+    <string name="welcome_onboarding_desc">Εσύ, εξομολογήθηκες σήμερα;</string>
     <string name="onboarding_sin">Εξομολογήσου και μοιράσου την αμαρτία σου με άλλους χρήστες ανώνυμα! Μπορείς να χρησιμοποιήσεις φίλτρα για να αλλάξεις την φωνή σου!</string>
-    <string name="oboarding_discover">Ανακάλυψε άλλες αμαρτίες και βοήθησε δίνοντας συμβουλές ή.. και όχι αν νιώθεις διαβολικός! Είναι στο χέρι σου! Ας ξεκινήσουμε!</string>
+    <string name="oboarding_discover">Ανακάλυψε νέες και δημοφιλείς αμαρτίες και συμβούλεψε τους αμαρτωλούς!</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="main_activity_favourites_tag_string">Αγαπημένα</string>
     <string name="main_activity_discovery_tag_string">Νέα</string>
@@ -69,4 +69,10 @@
     <string name="user_profile_onboarding_profilepic_text">Πάτησε εδώ για να αλλάξεις την φωτογραφία σου</string>
     <string name="media_photo_error_message">Κάτι πήγε στραβά</string>
     <string name="click_to_change_username">Ψευδώνυμο!</string>
+    <string name="no_thanks">Οχι, ευχαριστώ</string>
+    <string name="new_version_text">Για να συνεχίσεις πρέπει πρώτα να κατεβάσεις την καινούρια έκδοση</string>
+    <string name="update">Αναβάθμιση</string>
+    <string name="apply_filter_text">Παρακαλώ περίμενε</string>
+    <string name="new_version_title">Νέα έκδοση διαθέσιμη</string>
+    <string name="applying_filter_title">Εφαρμογή φίλτρου</string>
 </resources>

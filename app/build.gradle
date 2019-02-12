@@ -8,7 +8,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
-        versionName "0.1b"
+        versionName "0.1.1b"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'x86', 'armeabi-v7a'
@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
     implementation 'com.google.firebase:firebase-database:16.0.6'
+    implementation 'com.google.firebase:firebase-config:16.3.0'
     implementation 'com.firebaseui:firebase-ui-database:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'

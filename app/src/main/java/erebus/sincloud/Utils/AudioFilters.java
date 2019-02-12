@@ -1,10 +1,10 @@
 package erebus.sincloud.Utils;
 
 import android.app.ProgressDialog;
-import android.util.Log;
 
 import erebus.sincloud.Activities.RecordSinActivity;
 import erebus.sincloud.Helpers.AudioEffect;
+import erebus.sincloud.R;
 import nl.bravobit.ffmpeg.ExecuteBinaryResponseHandler;
 import nl.bravobit.ffmpeg.FFmpeg;
 
@@ -33,56 +33,51 @@ public class AudioFilters
                   "asetrate=44100"+factor,
                   convertedFile};
 
-         Log.d("1337", "asetrate=44100"+factor);
-
          if (FFmpeg.getInstance(recordSinActivity).isSupported())
          {
 
              // Show waiting dialog
-             final ProgressDialog uploadingDialog = ProgressDialog.show(recordSinActivity, "Applying filter",
-                     "Please wait...", true);
+             final ProgressDialog uploadingDialog = ProgressDialog.show(recordSinActivity, recordSinActivity.getString(R.string.applying_filter_title),
+                     recordSinActivity.getString(R.string.apply_filter_text), true);
              uploadingDialog.create();
 
              FFmpeg ffmpeg = FFmpeg.getInstance(recordSinActivity);
-             Log.d("1337", "supported");
              ffmpeg.execute(args, new ExecuteBinaryResponseHandler()
              {
 
                  @Override
                  public void onStart()
                  {
-                     Log.d("1337", "onStart");
+
                  }
 
                  @Override
                  public void onProgress(String message)
                  {
-                     Log.d("1337", "onProgress " + message);
+
                  }
 
                  @Override
                  public void onFailure(String message)
                  {
-                     Log.d("1337", "onFailure " + message);
+
                  }
 
                  @Override
                  public void onSuccess(String message)
                  {
-                     Log.d("1337", "onSuccess " + message);
+
                  }
 
                  @Override
                  public void onFinish()
                  {
-                     Log.d("1337", "onFinish");
                      uploadingDialog.dismiss();
                  }
              });
          }
          else
          {
-                 Log.d("1337", " Not supported");
          }
 
          return convertedFile;

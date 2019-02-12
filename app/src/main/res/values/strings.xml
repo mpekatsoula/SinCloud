@@ -166,4 +166,10 @@
     <string name="user_profile_onboarding_nickname_text">This will be used as your nickname in your uploaded sins. Leave empty for \"Anonymous\".</string>
     <string name="user_profile_onboarding_profilepic_title">Press here to change your profile picture</string>
     <string name="user_profile_onboarding_profilepic_text">Choose a picture from your image gallery</string>
+    <string name="applying_filter_title">Applying filter</string>
+    <string name="apply_filter_text">Please wait...</string>
+    <string name="new_version_title">New version available</string>
+    <string name="new_version_text">Please, update app to new version to continue.</string>
+    <string name="update">Update</string>
+    <string name="no_thanks">No, thanks</string>
 </resources>

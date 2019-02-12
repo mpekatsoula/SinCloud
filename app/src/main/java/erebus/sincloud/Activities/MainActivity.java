@@ -1,8 +1,10 @@
 package erebus.sincloud.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -36,9 +39,10 @@ import erebus.sincloud.Fragments.NotificationsFragment;
 import erebus.sincloud.Fragments.TrendingFragment;
 import erebus.sincloud.R;
 import erebus.sincloud.Singletons.SinAudioPlayer;
+import erebus.sincloud.Utils.ForceUpdateChecker;
 import erebus.sincloud.Utils.LoadPictureToView;
 
-public class MainActivity extends AppCompatActivity implements RatingDialogListener
+public class MainActivity extends AppCompatActivity implements RatingDialogListener, ForceUpdateChecker.OnUpdateNeededListener
 {
     private static final String COMPLETED_ONBOARDING = "MainActivity";
     private FragmentAdapter pageAdapter;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
 
         Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -227,5 +233,31 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         {
             // TODO
         }
+    }
+    @Override
+    public void onUpdateNeeded(final String updateUrl) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.new_version_title))
+                .setMessage(getString(R.string.new_version_text))
+                .setPositiveButton(getString(R.string.update),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                redirectStore(updateUrl);
+                            }
+                        }).setNegativeButton(getString(R.string.no_thanks),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        }).create();
+        dialog.show();
+    }
+
+    private void redirectStore(String updateUrl) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
