@@ -92,11 +92,9 @@ exports.storeLikedSin = functions.database.ref('/slikes/{sin_id}/{user_id}')
 exports.storeLikedComment = functions.database.ref('/clikes/{sin_id}/{comment_id}/{user_id}')
     .onWrite((snapshot, context) => {
       var db = admin.database();
-      const beforeData = snapshot.before.val(); // data before the write
-      const afterData = snapshot.after.val(); // data after the write
+      const beforeData = snapshot.before.val();
+      const afterData = snapshot.after.val();
       
-        console.log("before data: ", beforeData);
-        console.log("afterData data: ", afterData);
       if(beforeData != afterData)
       {
         if(afterData)
@@ -121,10 +119,36 @@ exports.updateCommentCounter = functions.database.ref('/comments/{sin_id}/')
     .onUpdate((snapshot, context) => {
       var db = admin.database();
       db.ref('/sins/' + context.params.sin_id + "/comments/").transaction(function(comments) {
+        console.log("before comments: ", comments);
       comments++;
       return comments;
       });
       
+      db.ref('/users/' + context.auth.uid + "/comments/").transaction(function(comments) {
+        console.log("before comments user: ", comments);
+      comments++;
+      return comments;
+      });
       return 0;
     });
     
+exports.newUserRegister = functions.auth.user().onCreate((user) => {
+  
+  
+});
+    
+exports.onSinDelete  = functions.database.ref('/sins/{sin_id}')
+    .onDelete((snapshot, context) => {
+  
+// Remove trending reference
+      var db = admin.database();
+      db.ref('/trending').orderByChild('key').equalTo(context.params.sin_id).once("value", function(snapshot) {
+          
+         snapshot.forEach(function(child) {
+        console.log("before comments user: ", child.ref);
+          child.ref.remove();
+            });
+        //snapshot.ref.remove();
+    });
+    return 0;
+});

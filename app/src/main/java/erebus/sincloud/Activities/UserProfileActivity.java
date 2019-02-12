@@ -202,7 +202,11 @@ public class UserProfileActivity extends AppCompatActivity
                     }
 
                     sinsNumber.setText(String.valueOf(dataSnapshot.child("sins").getChildrenCount()));
-                    commentNumber.setText(String.valueOf(dataSnapshot.child("scomments").getChildrenCount()));
+                    Object commentsObj = dataSnapshot.child("comments").getValue();
+                    if(commentsObj != null)
+                    {
+                        commentNumber.setText(String.valueOf(commentsObj));
+                    }
                 }
 
                 @Override
@@ -317,7 +321,7 @@ public class UserProfileActivity extends AppCompatActivity
                                 .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
                                 .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
                                 .drawShadow(true)                   // Whether to draw a drop shadow or not
-                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                                 .targetRadius(54),
@@ -332,7 +336,7 @@ public class UserProfileActivity extends AppCompatActivity
                                 .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
                                 .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
                                 .drawShadow(true)                   // Whether to draw a drop shadow or not
-                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                                 .targetRadius(54)

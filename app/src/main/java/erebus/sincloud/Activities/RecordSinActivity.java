@@ -458,7 +458,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
     private void deleteOldFile()
     {
-        if(!sinFilenameFinal.equals(sinFilename))
+        if(sinFilenameFinal != null && sinFilename != null && !sinFilenameFinal.equals(sinFilename))
         {
             File file = new File(sinFilenameFinal);
             file.delete();
@@ -534,7 +534,10 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
     private void applyFilter()
     {
-        sinFilenameFinal = audioFilters.changePlaybackSpeed(sinFilename, RecordSinActivity.this, audioEffect);
+        if(sinFilename != null)
+        {
+            sinFilenameFinal = audioFilters.changePlaybackSpeed(sinFilename, RecordSinActivity.this, audioEffect);
+        }
     }
 
     private void displayOnboarding()
@@ -551,7 +554,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                         .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
                         .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
                         .drawShadow(true)                   // Whether to draw a drop shadow or not
-                        .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                        .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
                         .tintTarget(true)                   // Whether to tint the target view's color
                         .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                         .targetRadius(54),
@@ -566,7 +569,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                                 .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
                                 .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
                                 .drawShadow(true)                   // Whether to draw a drop shadow or not
-                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(true)           // Specify whether the target is transparent (displays the content underneath)
                                 .targetRadius(54),
@@ -581,7 +584,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
                                 .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
                                 .dimColor(R.color.md_black_1000)            // If set, will dim behind the view with 30% opacity of the given color
                                 .drawShadow(true)                   // Whether to draw a drop shadow or not
-                                .cancelable(true)                  // Whether tapping outside the outer circle dismisses the view
+                                .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
                                 .tintTarget(true)                   // Whether to tint the target view's color
                                 .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
                                 .icon(getDrawable(R.drawable.ic_round_cloud_upload_24px))

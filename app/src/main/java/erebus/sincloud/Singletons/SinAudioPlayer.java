@@ -48,12 +48,21 @@ public class SinAudioPlayer
 
     public float getMediaPlayerProgress()
     {
+        float progress = 0.f;
         if(player != null)
         {
-            return 100.f * player.getCurrentPosition() / (float) player.getDuration();
+            progress = 100.f * player.getCurrentPosition() / (float) player.getDuration();
+            if (progress > 100.f)
+            {
+                progress = 100.f;
+            }
+            else if (progress < 0.f)
+            {
+                progress = 0.f;
+            }
         }
 
-        return 0.f;
+        return progress;
     }
 
     public int getMediaPlayerDuration()
