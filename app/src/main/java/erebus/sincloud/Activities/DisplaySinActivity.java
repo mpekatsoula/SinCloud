@@ -89,7 +89,12 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                         @Override
                         public void run()
                         {
-                            waveform.setProgress(SinAudioPlayer.getInstance().getMediaPlayerProgress());
+                            float progress = SinAudioPlayer.getInstance().getMediaPlayerProgress();
+                            if (progress > 100 || progress < 0)
+                            {
+                                progress = 0;
+                            }
+                            waveform.setProgress(progress);
                         }
                     });
                 }

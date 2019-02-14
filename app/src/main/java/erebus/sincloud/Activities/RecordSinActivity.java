@@ -468,8 +468,8 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     {
         HamButton.Builder noFilterBld = new HamButton.Builder()
                 .normalImageRes(R.drawable.ic_baseline_not_interested_24px)
-                .normalText("None!")
-                .subNormalText("No filter applied!")
+                .normalText(getString(R.string.filter_none_title))
+                .subNormalText(getString(R.string.filter_none_text))
                 .listener(new OnBMClickListener()
                 {
                     @Override

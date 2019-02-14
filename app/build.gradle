@@ -7,20 +7,32 @@ android {
         applicationId "erebus.sincloud"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 3
+        versionCode 6
         versionName "0.1.1b"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'x86', 'armeabi-v7a'
         }
     }
+    signingConfigs {
+        release {
+            keyPassword '$d~IeQl8DXm\\NFxr?P#$'
+            storeFile file('D:\\Dropbox\\Documents\\SinCloud\\releasekey.jks')
+            storePassword '$d~IeQl8DXm\\NFxr?P#$'
+            keyAlias 'releasekey0'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled true
+            signingConfig signingConfigs.release
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            minifyEnabled true
             pseudoLocalesEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 

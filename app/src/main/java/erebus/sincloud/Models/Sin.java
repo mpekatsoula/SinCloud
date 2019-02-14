@@ -3,9 +3,13 @@ package erebus.sincloud.Models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Sin
+import androidx.annotation.Keep;
+
+@Keep
+public class Sin implements Serializable
 {
     // Sin class
     public String url;

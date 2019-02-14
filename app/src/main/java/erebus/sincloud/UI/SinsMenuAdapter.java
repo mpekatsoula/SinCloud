@@ -30,7 +30,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
 {
     private ArrayList<Sin> mDataset;
     private ArrayList<String> sinsRefs;
-    private String TAG = "SinsMenuAdapter";
     private SinMenuAdapterTypes adapterType;
     private View.OnClickListener playButtonViewOnClickListener;
     private View.OnClickListener likeButtonViewOnClickListener;
@@ -116,7 +115,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     // Constructor
     public SinsMenuAdapter(ArrayList<Sin> sinsDataset, ArrayList<String> sinsRefs, SinMenuAdapterTypes userSettings)
     {
-        Log.d(TAG, "SinsMenuAdapter()");
         mDataset = sinsDataset;
         adapterType = userSettings;
         this.sinsRefs = sinsRefs;
@@ -127,7 +125,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     @Override
     public SinsMenuAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        Log.d(TAG, "onCreateViewHolder()");
         View itemView;
         switch (adapterType)
         {
@@ -149,7 +146,6 @@ public class SinsMenuAdapter extends RecyclerView.Adapter<SinsMenuAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position)
     {
-        Log.d(TAG, "onBindViewHolder() position: " + position);
         final Sin sin = mDataset.get(position);
 
         if(sin == null)

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 import erebus.sincloud.Activities.DisplaySinActivity;
@@ -24,6 +25,12 @@ public class SinsRecycleViewInnerLayoutListener implements View.OnClickListener
     {
         RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
         final int pos = viewHolder.getAdapterPosition();
+
+        // Make sure adapter is not empty
+        if(adapter.getItemCount() <= 0)
+        {
+            return;
+        }
 
         Intent intent = new Intent(context, DisplaySinActivity.class);
         Bundle bundle = new Bundle();

@@ -172,4 +172,6 @@
     <string name="new_version_text">Please, update app to new version to continue.</string>
     <string name="update">Update</string>
     <string name="no_thanks">No, thanks</string>
+    <string name="filter_none_title">None!</string>
+    <string name="filter_none_text">No filter applied!</string>
 </resources>

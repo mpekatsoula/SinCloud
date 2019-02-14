@@ -3,16 +3,20 @@ package erebus.sincloud.Models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ServerValue;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Comment
+import androidx.annotation.Keep;
+
+@Keep
+public class Comment implements Serializable
 {
     // Sin class
-    private String username;
-    private String comment;
-    private String key;
-    private HashMap<String, Object> commentTime;
-    private long likes;
+    public String username;
+    public String comment;
+    public String key;
+    public HashMap<String, Object> commentTime;
+    public long likes;
 
     public Comment()
     {

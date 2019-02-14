@@ -17,8 +17,6 @@ import androidx.annotation.NonNull;
 
 public class LoadPictureToView
 {
-    private static final String TAG = "GetProfilePicture";
-
     public void GetAndLoadProfilePictureToView(final Context context, final ImageView imageView)
     {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -48,6 +46,19 @@ public class LoadPictureToView
 
     public void LoadProfilePictureToView(final Context context, final ImageView imageView, final String photoURL)
     {
-        Glide.with(context).load(photoURL).into(imageView);
+        // Check if context is valid
+        if(context == null)
+        {
+            return;
+        }
+
+        try
+        {
+            Glide.with(context).load(photoURL).into(imageView);
+        }
+        catch (Exception e)
+        {
+            // Do nothing
+        }
     }
 }
