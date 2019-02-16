@@ -44,9 +44,14 @@ public class UploadFirebase
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)
+        {
+            return;
+        }
 
         // Create a reference to sin
-        final StorageReference fileRef = storageRef.child("/sins/" + UUID.randomUUID().toString() + ".3gp");
+        final StorageReference fileRef = storageRef.child("/sins/" + user.getUid() + "/" + UUID.randomUUID().toString() + ".3gp");
 
         Log.d(TAG, "Local filename: " + localFilename);
         Uri file = Uri.fromFile(new File(localFilename));
@@ -78,21 +83,16 @@ public class UploadFirebase
                         @Override
                         public void onSuccess(Uri uri)
                         {
-
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            if(user != null)
+                            String sinId = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").push().getKey();
+                            if(sinId != null)
                             {
-                                String sinId = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").push().getKey();
-                                if(sinId != null)
-                                {
-                                    DatabaseReference sinRefUser = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").child(sinId);
-                                    sinRefUser.setValue(true);
+                                DatabaseReference sinRefUser = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("sins").child(sinId);
+                                sinRefUser.setValue(true);
 
-                                    // Store sin to sin database
-                                    Sin newSin = new Sin(uri.toString(), sinName, user.getUid(), timeRecored, 0, 0);
-                                    DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinId);
-                                    sinRef.setValue(newSin);
-                                }
+                                // Store sin to sin database
+                                Sin newSin = new Sin(uri.toString(), sinName, user.getUid(), timeRecored, 0, 0);
+                                DatabaseReference sinRef = FirebaseDatabase.getInstance().getReference().child("sins").child(sinId);
+                                sinRef.setValue(newSin);
                             }
 
                             recordSinActivity.setUploadCancelButtonsVisibility(ButtonVisibility.INVISIBLE);
@@ -109,9 +109,14 @@ public class UploadFirebase
         // Create a storage reference from our app
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)
+        {
+            return;
+        }
 
-        // Create a reference to sin
-        final StorageReference fileRef = storageRef.child("/pics/" + UUID.randomUUID().toString() + ".jpg");
+        // Create a reference to pic
+        final StorageReference fileRef = storageRef.child("/pics/" + user.getUid() + "/" + UUID.randomUUID().toString() + ".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -144,12 +149,7 @@ public class UploadFirebase
                         @Override
                         public void onSuccess(Uri uri)
                         {
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            if(user != null)
-                            {
-                                FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("photoURL").setValue(uri.toString());
-                            }
-
+                            FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("photoURL").setValue(uri.toString());
                             uploadingDialog.dismiss();
                         }
                     });

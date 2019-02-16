@@ -116,7 +116,7 @@ exports.storeLikedComment = functions.database.ref('/clikes/{sin_id}/{comment_id
     });
     
 exports.updateCommentCounter = functions.database.ref('/comments/{sin_id}/')
-    .onUpdate((snapshot, context) => {
+    .onWrite((snapshot, context) => {
       var db = admin.database();
       db.ref('/sins/' + context.params.sin_id + "/comments/").transaction(function(comments) {
         console.log("before comments: ", comments);
