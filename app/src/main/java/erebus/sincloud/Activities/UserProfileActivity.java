@@ -55,7 +55,7 @@ public class UserProfileActivity extends AppCompatActivity
     private static final String COMPLETED_ONBOARDING = "UserProfileActivity";
     private TextView nicknameTxtView;
     private FragmentAdapter pageAdapter;
-    private int MAX_NICKNAME_CHARACTER_LIMIT = 10;
+    private int MAX_NICKNAME_CHARACTER_LIMIT = 20;
     private final int GALLERY_IMAGE = 11;
 
     @Override

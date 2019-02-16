@@ -33,6 +33,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Random;
+
 import erebus.sincloud.R;
 
 public class LoginActivity extends AppCompatActivity
@@ -218,7 +220,10 @@ public class LoginActivity extends AppCompatActivity
                 }
                 else
                 {
-                    userRef.child("photoURL").setValue("https://sincloud.app/images/logo.png");
+                    String[] images = {"https://firebasestorage.googleapis.com/v0/b/sincloud-3c2ea.appspot.com/o/app%2Favatar_bad_small.png?alt=media&token=350c7391-a97b-4a2b-a188-38a29417d8be",
+                                       "https://firebasestorage.googleapis.com/v0/b/sincloud-3c2ea.appspot.com/o/app%2Favatar_good_small.png?alt=media&token=a30995bd-6b73-4cbb-8f5d-e3be5d4f7e4a"};
+                    Random rand = new Random();
+                    userRef.child("photoURL").setValue(images[rand.nextInt(1)]);
                 }
             }
         }

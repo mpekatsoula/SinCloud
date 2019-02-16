@@ -51,13 +51,13 @@ public class SinAudioPlayer
         if(player != null)
         {
             progress = 100.f * player.getCurrentPosition() / (float) player.getDuration();
-            if (progress > 100.f)
+            if (progress > 99.f)
             {
-                progress = 100.f;
+                progress = 99.f;
             }
-            else if (progress < 0.f)
+            else if (progress < 1.f)
             {
-                progress = 0.f;
+                progress = 1.f;
             }
         }
 

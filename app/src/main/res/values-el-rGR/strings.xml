@@ -75,4 +75,10 @@
     <string name="apply_filter_text">Παρακαλώ περίμενε</string>
     <string name="new_version_title">Νέα έκδοση διαθέσιμη</string>
     <string name="applying_filter_title">Εφαρμογή φίλτρου</string>
+    <string name="filter_none_title">Κανένα</string>
+    <string name="filter_none_text">Μην εφαρμόσεις κανένα φίλτρο</string>
+    <string name="filter_slow_title">Αργή φωνή!</string>
+    <string name="filter_fast_title">Γρήγορη φωνή!</string>
+    <string name="filter_slow_text">Κάνε την φωνή σου να ακούγεται μπάσα!</string>
+    <string name="filter_fast_text">Κάνε την φωνή σου να ακούγεται ψιλή!</string>
 </resources>

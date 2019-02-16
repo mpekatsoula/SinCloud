@@ -488,8 +488,8 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
         HamButton.Builder slowFilterBld = new HamButton.Builder()
                 .normalImageRes(R.drawable.ic_baseline_exposure_neg_2_24px)
-                .normalText("Slow voice!")
-                .subNormalText("Slow down the pitch of your voice!")
+                .normalText(getString(R.string.filter_slow_title))
+                .subNormalText(getString(R.string.filter_slow_title))
                 .listener(new OnBMClickListener()
                 {
                     @Override
@@ -508,8 +508,8 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
 
         HamButton.Builder fastFilterBld = new HamButton.Builder()
                 .normalImageRes(R.drawable.ic_baseline_exposure_plus_2_24px)
-                .normalText("Fast voice!")
-                .subNormalText("Make your voice sound faster!")
+                .normalText(getString(R.string.filter_fast_title))
+                .subNormalText(getString(R.string.filter_fast_title))
                 .listener(new OnBMClickListener()
                 {
                     @Override

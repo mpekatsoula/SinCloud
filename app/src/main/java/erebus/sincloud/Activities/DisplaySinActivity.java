@@ -266,7 +266,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after)
             {
-
+                // Enable button only when the user has typed something
+                if (s.length() <= 0)
+                {
+                    sendMessageButton.setEnabled(false);
+                }
             }
 
             @Override
@@ -286,7 +290,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void afterTextChanged(Editable s)
             {
-
+                // Enable button only when the user has typed something
+                if (s.length() <= 0)
+                {
+                    sendMessageButton.setEnabled(false);
+                }
             }
         });
 
@@ -297,6 +305,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
             {
                 String message;
                 String userUid;
+                if(chatMessageText.getText().length() <= 0)
+                {
+                    return;
+                }
+
                 if(FirebaseAuth.getInstance().getCurrentUser() != null)
                 {
                     userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();

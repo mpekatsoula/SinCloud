@@ -174,4 +174,8 @@
     <string name="no_thanks">No, thanks</string>
     <string name="filter_none_title">None!</string>
     <string name="filter_none_text">No filter applied!</string>
+    <string name="filter_slow_title">Slow voice!</string>
+    <string name="filter_slow_text">Slow down the pitch of your voice!</string>
+    <string name="filter_fast_title">Fast voice!</string>
+    <string name="filter_fast_text">Make your voice sound faster!</string>
 </resources>

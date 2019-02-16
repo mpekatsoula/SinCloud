@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -156,8 +157,13 @@ public class SignupActivity extends AppCompatActivity
 
                             int index = email.indexOf('@');
                             map.put("displayName",email.substring(0,index));
-                            users_ref.child(user.getUid()).setValue(map);
 
+                            String[] images = {"https://firebasestorage.googleapis.com/v0/b/sincloud-3c2ea.appspot.com/o/app%2Favatar_bad_small.png?alt=media&token=350c7391-a97b-4a2b-a188-38a29417d8be",
+                                    "https://firebasestorage.googleapis.com/v0/b/sincloud-3c2ea.appspot.com/o/app%2Favatar_good_small.png?alt=media&token=a30995bd-6b73-4cbb-8f5d-e3be5d4f7e4a"};
+                            Random rand = new Random();
+                            map.put("photoURL", images[rand.nextInt(1)]);
+
+                            users_ref.child(user.getUid()).setValue(map);
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(new OnCompleteListener<Void>()
                                     {
