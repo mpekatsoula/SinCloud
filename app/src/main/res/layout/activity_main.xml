@@ -36,7 +36,6 @@
                 tools:layout_editor_absoluteX="16dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/main_activity_profile_image"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
@@ -68,6 +67,7 @@
             android:id="@+id/main_activity_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:tabTextAppearance="@style/MainTabTextAppearance"
             >
 
             <com.google.android.material.tabs.TabItem

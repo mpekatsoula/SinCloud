@@ -2,13 +2,11 @@ package erebus.sincloud.Activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.facebook.CallbackManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -18,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -137,15 +137,8 @@ public class SignupActivity extends AppCompatActivity
                             Map<String, String> map = new HashMap<>();
                             try
                             {
-                                List<String> providers = user.getProviders();
-                                if (providers != null)
-                                {
-                                    map.put("provider", providers.get(0));
-                                }
-                                else
-                                {
-                                    map.put("provider", "unknown");
-                                }
+                                List<? extends UserInfo> providers = Objects.requireNonNull(user).getProviderData();
+                                map.put("provider", providers.get(0).getProviderId());
                             }
                             catch (NullPointerException e)
                             {
@@ -163,7 +156,7 @@ public class SignupActivity extends AppCompatActivity
                             Random rand = new Random();
                             map.put("photoURL", images[rand.nextInt(1)]);
 
-                            users_ref.child(user.getUid()).setValue(map);
+                            users_ref.child(Objects.requireNonNull(user).getUid()).setValue(map);
                             user.updateProfile(profileUpdates)
                                     .addOnCompleteListener(new OnCompleteListener<Void>()
                                     {

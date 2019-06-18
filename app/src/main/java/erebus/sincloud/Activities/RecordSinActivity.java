@@ -103,9 +103,6 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         countdownView.updateShow(RECORD_TIME_IN_MS);
 
         checkPermissions();
-        setupRecordingButtons();
-        setupCountdown();
-        setupFilterButtons();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(!sharedPreferences.getBoolean(COMPLETED_ONBOARDING, false))
@@ -125,8 +122,17 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         confessionAnimation = (AnimationDrawable) rocketImage.getBackground();
         confessionAnimation.setOneShot(false);
 
-        mediaPlayer = new MediaPlayer();
-        audioFilters = new AudioFilters();
+        if(mediaPlayer == null)
+        {
+            mediaPlayer = new MediaPlayer();
+        }
+        if(audioFilters == null)
+        {
+            audioFilters = new AudioFilters();
+        }
+        setupRecordingButtons();
+        setupFilterButtons();
+        setupCountdown();
     }
 
     private void setupCountdown()
@@ -626,28 +632,32 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
     }
 
     @Override
-    public void onStop()
+    public void onDestroy()
     {
-        super.onStop();
+        super.onDestroy();
         if (audioRecorder != null)
         {
             audioRecorder.release();
             audioRecorder = null;
         }
 
-        if(mediaPlayer != null)
-        {
+        if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
     }
+
     @Override
     public void onPause()
     {
         super.onPause();
         if (audioRecorder != null)
         {
-            audioRecorder.stop();
+            audioRecorder.pause();
+            countdownView.stop();
+            confessionAnimation.stop();
+            pauseRecordingButton.setImageResource(R.drawable.ic_round_mic_24px);
+            nextRecordButtonState = RecordButtonStates.PAUSE_RECORDING;
         }
 
         if(mediaPlayer != null  && mediaPlayer.isPlaying())
@@ -655,4 +665,5 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
             mediaPlayer.stop();
         }
     }
+
 }

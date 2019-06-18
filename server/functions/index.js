@@ -115,20 +115,25 @@ exports.storeLikedComment = functions.database.ref('/clikes/{sin_id}/{comment_id
       return 0;
     });
     
-exports.updateCommentCounter = functions.database.ref('/comments/{sin_id}/')
-    .onWrite((snapshot, context) => {
+exports.updateCommentCounter = functions.database.ref('/comments/{sin_id}/{comment_id}')
+    .onCreate((snapshot, context) => 
+    {
       var db = admin.database();
-      db.ref('/sins/' + context.params.sin_id + "/comments/").transaction(function(comments) {
-        console.log("before comments: ", comments);
-      comments++;
-      return comments;
+    
+      db.ref('/sins/' + context.params.sin_id + "/comments/").transaction(function(comments) 
+      {
+          comments++;
+          return comments;
       });
       
-      db.ref('/users/' + context.auth.uid + "/comments/").transaction(function(comments) {
-        console.log("before comments user: ", comments);
-      comments++;
-      return comments;
+      var uid = context.auth.uid;
+      console.log(uid);
+      db.ref('/users/' + uid + "/comments/").transaction(function(comments) 
+      {
+          comments++;
+          return comments;
       });
+      
       return 0;
     });
     

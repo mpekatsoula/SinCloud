@@ -90,11 +90,10 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                         public void run()
                         {
                             float progress = SinAudioPlayer.getInstance().getMediaPlayerProgress();
-                            if (progress > 100 || progress < 0)
+                            if (Float.compare(progress, 100.f ) < 0 && Float.compare(progress, 1.f ) > 0)
                             {
-                                progress = 0;
+                                waveform.setProgress(progress);
                             }
-                            waveform.setProgress(progress);
                         }
                     });
                 }

@@ -17,7 +17,8 @@ public class ForceUpdateChecker
     private OnUpdateNeededListener onUpdateNeededListener;
     private Context context;
 
-    public interface OnUpdateNeededListener {
+    public interface OnUpdateNeededListener
+    {
         void onUpdateNeeded(String updateUrl);
     }
 
@@ -42,7 +43,8 @@ public class ForceUpdateChecker
             String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
 
             if (!TextUtils.equals(currentVersion, appVersion)
-                    && onUpdateNeededListener != null) {
+                    && onUpdateNeededListener != null)
+            {
                 onUpdateNeededListener.onUpdateNeeded(updateUrl);
             }
         }
@@ -65,7 +67,8 @@ public class ForceUpdateChecker
         return result;
     }
 
-    public static class Builder {
+    public static class Builder
+    {
 
         private Context context;
         private OnUpdateNeededListener onUpdateNeededListener;
@@ -74,16 +77,19 @@ public class ForceUpdateChecker
             this.context = context;
         }
 
-        public Builder onUpdateNeeded(OnUpdateNeededListener onUpdateNeededListener) {
+        public Builder onUpdateNeeded(OnUpdateNeededListener onUpdateNeededListener)
+        {
             this.onUpdateNeededListener = onUpdateNeededListener;
             return this;
         }
 
-        public ForceUpdateChecker build() {
+        public ForceUpdateChecker build()
+        {
             return new ForceUpdateChecker(context, onUpdateNeededListener);
         }
 
-        public ForceUpdateChecker check() {
+        public ForceUpdateChecker check()
+        {
             ForceUpdateChecker forceUpdateChecker = build();
             forceUpdateChecker.check();
 

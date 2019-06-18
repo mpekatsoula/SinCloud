@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.login.LoginManager;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,10 +20,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.annotations.NotNull;
 import com.stepstone.apprating.AppRatingDialog;
 import com.stepstone.apprating.listener.RatingDialogListener;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -175,6 +175,12 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
     private void logout()
     {
         FirebaseAuth.getInstance().signOut();
+
+        // In case of Facebook login, perform extra logout step
+        if(LoginManager.getInstance() != null)
+        {
+            LoginManager.getInstance().logOut();
+        }
         finish();
 
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
