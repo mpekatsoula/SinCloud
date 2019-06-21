@@ -157,17 +157,17 @@
     <string name="very_good">Very Good</string>
     <string name="feedback_title">Provide feedback about SinCloud</string>
     <string name="feedback_description">How did you find the overall experience?</string>
-    <string name="feedback_hint">Please write your comment here ...</string>
+    <string name="feedback_hint">Please write your comment here …</string>
     <string name="excellent">Excellent !!!</string>
     <string name="media_photo_error_message">Something went wrong while getting picture data.</string>
     <string name="uploading_sin_title">Uploading sin</string>
-    <string name="uploading_sin_message">Sending to god, please wait...</string>
+    <string name="uploading_sin_message">Sending to god, please wait…</string>
     <string name="user_profile_onboarding_nickname_title">Click here to change your nickname.</string>
     <string name="user_profile_onboarding_nickname_text">This will be used as your nickname in your uploaded sins. Leave empty for \"Anonymous\".</string>
     <string name="user_profile_onboarding_profilepic_title">Press here to change your profile picture</string>
     <string name="user_profile_onboarding_profilepic_text">Choose a picture from your image gallery</string>
     <string name="applying_filter_title">Applying filter</string>
-    <string name="apply_filter_text">Please wait...</string>
+    <string name="apply_filter_text">Please wait…</string>
     <string name="new_version_title">New version available</string>
     <string name="new_version_text">Please, update app to new version to continue.</string>
     <string name="update">Update</string>
@@ -178,4 +178,10 @@
     <string name="filter_slow_text">Slow down the pitch of your voice!</string>
     <string name="filter_fast_title">Fast voice!</string>
     <string name="filter_fast_text">Make your voice sound faster!</string>
+    <string name="email">email</string>
+    <string name="todo">TODO</string>
+    <string name="back">Back</string>
+    <string name="finish">Finish</string>
+    <string name="repeat_password">repeat password</string>
+    <string name="google_login">Google login</string>
 </resources>

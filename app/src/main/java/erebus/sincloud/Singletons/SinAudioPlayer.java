@@ -51,14 +51,6 @@ public class SinAudioPlayer
         if(player != null)
         {
             progress = 100.f * player.getCurrentPosition() / (float) player.getDuration();
-            if (progress > 99.f)
-            {
-                progress = 99.f;
-            }
-            else if (progress < 1.f)
-            {
-                progress = 1.f;
-            }
         }
 
         return progress;
@@ -79,7 +71,7 @@ public class SinAudioPlayer
         if (player == null)
         {
             player = new MediaPlayer();
-            player.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             player.setVolume(1, 1);
         }
 

@@ -49,12 +49,12 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/email_signup_textview"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/colorAccent"
-            android:hint="emall"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/signup_activity_email_image"
@@ -70,7 +70,8 @@
             android:backgroundTint="@color/md_white_1000"
             app:layout_constraintBottom_toBottomOf="@+id/password_signup_textview"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/password_signup_textview"/>
+            app:layout_constraintTop_toTopOf="@+id/password_signup_textview"
+            android:contentDescription="@string/todo"/>
 
         <ImageView
             android:id="@+id/signup_activity_lock_image_repeat"
@@ -81,7 +82,8 @@
             android:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/password_signup_repeat"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/password_signup_repeat"/>
+            app:layout_constraintTop_toTopOf="@+id/password_signup_repeat"
+            android:contentDescription="@string/todo"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signup_login_signup_button"
@@ -91,7 +93,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:elevation="1dp"
-            android:text="Finish"
+            android:text="@string/finish"
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password_signup_repeat"/>
@@ -104,7 +106,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:elevation="1dp"
-            android:text="Back"
+            android:text="@string/back"
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password_signup_repeat"/>
@@ -112,12 +114,12 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/password_signup_textview"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/colorAccent"
-            android:hint="password"
+            android:hint="@string/password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/signup_activity_lock_image"
@@ -127,12 +129,12 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/password_signup_repeat"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/colorAccent"
-            android:hint="repeat password"
+            android:hint="@string/repeat_password"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

@@ -81,4 +81,5 @@
     <string name="filter_fast_title">Γρήγορη φωνή!</string>
     <string name="filter_slow_text">Κάνε την φωνή σου να ακούγεται μπάσα!</string>
     <string name="filter_fast_text">Κάνε την φωνή σου να ακούγεται ψιλή!</string>
+    <string name="google_login">Σύνδεση με google</string>
 </resources>
