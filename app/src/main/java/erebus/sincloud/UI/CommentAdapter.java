@@ -2,6 +2,7 @@ package erebus.sincloud.UI;
 
 import android.content.Context;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         TextView messageTimeTextView;
         TextView likesTextView;
         ImageView likeCommentButton;
+        private long localSinLikes;
+        private boolean likedStatus;
 
         ViewHolder(View v)
         {
@@ -119,13 +122,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                     {
                         Object likedStatusObject = dataSnapshot.getValue();
+                        holder.localSinLikes = comment.getLikes();
+
                         if(likedStatusObject != null && (boolean) likedStatusObject)
                         {
                             holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
+                            holder.likedStatus = true;
                         }
                         else
                         {
                             holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
+                            holder.likedStatus = false;
                         }
                     }
 
@@ -169,41 +176,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    final DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("clikes").child(sinRefString).child(comment.getKey()).child(user.getUid());
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener()
+                    // Change like status and update server
+                    holder.likedStatus = !holder.likedStatus;
+                    FirebaseDatabase.getInstance().getReference().child("clikes").child(sinRefString).child(comment.getKey()).child(user.getUid()).setValue(holder.likedStatus);
+
+                    if(holder.likedStatus)
                     {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                        {
-                            Object likedStatusObject = dataSnapshot.getValue();
-                            boolean likedStatus = false;
-                            if(likedStatusObject != null)
-                            {
-                                likedStatus = (boolean) likedStatusObject;
-                            }
-
-                            userRef.setValue(!likedStatus);
-                            // Increase/decrease the like counter
-                            if(!likedStatus)
-                            {
-                                comment.setLikes(comment.getLikes() + 1);
-                                holder.likesTextView.setText(String.valueOf(comment.getLikes()));
-                                holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
-                            }
-                            else
-                            {
-                                comment.setLikes(comment.getLikes() - 1);
-                                holder.likesTextView.setText(String.valueOf(comment.getLikes()));
-                                holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError)
-                        {
-
-                        }
-                    });
+                        holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
+                        holder.localSinLikes++;
+                    }
+                    else
+                    {
+                        holder.likeCommentButton.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.md_black_1000));
+                        holder.localSinLikes--;
+                    }
+                    holder.likesTextView.setText(String.valueOf(holder.localSinLikes));
                 }
             }
         });

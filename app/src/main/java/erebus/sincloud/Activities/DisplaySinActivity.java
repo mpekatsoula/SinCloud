@@ -234,7 +234,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    // Change like status
+                    // Change like status and update server
                     likedStatus = !likedStatus;
                     FirebaseDatabase.getInstance().getReference().child("slikes").child(sinRefString).child(user.getUid()).setValue(likedStatus);
 
