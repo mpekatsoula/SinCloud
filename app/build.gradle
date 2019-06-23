@@ -7,8 +7,8 @@ android {
         applicationId "erebus.sincloud"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 9
-        versionName "0.1.4b"
+        versionCode 10
+        versionName "0.1.5b"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters 'x86', 'armeabi-v7a'
