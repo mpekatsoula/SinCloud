@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.facebook.login.LoginManager;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         setContentView(R.layout.activity_main);
 
         ForceUpdateChecker.with(this).onUpdateNeeded(this).check();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));

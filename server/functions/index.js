@@ -145,12 +145,11 @@ exports.newUserRegister = functions.auth.user().onCreate((user) => {
 exports.onSinDelete  = functions.database.ref('/sins/{sin_id}')
     .onDelete((snapshot, context) => {
   
-// Remove trending reference
+    // Remove trending reference
       var db = admin.database();
       db.ref('/trending').orderByChild('key').equalTo(context.params.sin_id).once("value", function(snapshot) {
           
          snapshot.forEach(function(child) {
-        console.log("before comments user: ", child.ref);
           child.ref.remove();
             });
         //snapshot.ref.remove();

@@ -17,6 +17,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,6 +82,7 @@ public class RecordSinActivity extends AppCompatActivity implements EasyPermissi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_sin);
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         nextRecordButtonState = RecordButtonStates.START_RECORDING;
         recordSinButton = findViewById(R.id.record_sin_activity_start_stop);
         pauseRecordingButton = findViewById(R.id.record_sin_activity_pause);

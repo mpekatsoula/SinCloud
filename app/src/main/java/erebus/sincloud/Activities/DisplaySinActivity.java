@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -106,6 +107,8 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_sin);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Get sin reference
         sinRefString = getIntent().getStringExtra("sinRef");
