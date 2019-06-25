@@ -184,4 +184,6 @@
     <string name="finish">Finish</string>
     <string name="repeat_password">repeat password</string>
     <string name="google_login">Google login</string>
+    <string name="logo">logo</string>
+    <string name="lock_image">Lock image</string>
 </resources>

@@ -125,6 +125,7 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
                     finish();
                     return;
                 }
+
                 getFirebaseFile();
                 setupLikeButton();
                 checkUserLike();
@@ -365,7 +366,11 @@ public class DisplaySinActivity extends AppCompatActivity implements SwipeRefres
             audioTimer = null;
         }
         audioTimer = new Timer();
-        SinAudioPlayer.getInstance().playSin(sin.getUrl(), playButton, waveAnimationCall);
+
+        if(sin != null)
+        {
+            SinAudioPlayer.getInstance().playSin(sin.getUrl(), playButton, waveAnimationCall);
+        }
     }
 
     private void displayComments()

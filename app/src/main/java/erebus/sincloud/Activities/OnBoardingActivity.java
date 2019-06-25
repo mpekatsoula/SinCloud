@@ -49,11 +49,15 @@ public class OnBoardingActivity extends AppCompatActivity
     private ArrayList<PaperOnboardingPage> getDataForOnboarding()
     {
         PaperOnboardingPage scr1 = new PaperOnboardingPage(getString(R.string.welcome_onboarding), getString(R.string.welcome_onboarding_desc),
-                Color.parseColor("#2196F3"), R.drawable.sincloud_logo_small, R.drawable.onboarding_pager_circle_icon);
+                Color.parseColor("#2177f3"), R.drawable.sincloud_logo_small, R.drawable.onboarding_pager_circle_icon);
         PaperOnboardingPage scr2 = new PaperOnboardingPage(getString(R.string.onboarding_title1), getString(R.string.onboarding_sin),
                 Color.parseColor("#9FA8DA"), R.drawable.angel, R.drawable.onboarding_pager_circle_icon);
         PaperOnboardingPage scr3 = new PaperOnboardingPage(getString(R.string.oboarding_title2), getString(R.string.oboarding_discover),
                 Color.parseColor("#EF9A9A"), R.drawable.devil, R.drawable.onboarding_pager_circle_icon);
+
+        scr1.setDescriptionText("Welcome screen 1");
+        scr2.setDescriptionText("Welcome screen 2");
+        scr3.setDescriptionText("Welcome screen 3");
 
         ArrayList<PaperOnboardingPage> elements = new ArrayList<>();
         elements.add(scr1);

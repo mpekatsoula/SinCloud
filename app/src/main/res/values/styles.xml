@@ -10,6 +10,7 @@
         <item name="windowNoTitle">true</item>
         <item name="colorSecondary">@color/colorAccent</item>
         <item name="colorOnSecondary">@color/md_black_1000</item>
+        <item name="android:textColor">@color/md_grey_900</item>
     </style>
 
     <style name="Theme.MaterialComponents.NoActionBar">
